@@ -138,10 +138,11 @@ $(document).ready(function () {
 });
 
 function checkKey() {
+    var p = players[0];
     if (keyPressedLeft) {
-        players[0].direction -= DEFAULT_SNAKE_CURVE * (Math.PI / 180);
+        p.direction -= p.curve * (Math.PI / 180);
     }
     else if (keyPressedRight) {
-        players[0].direction += DEFAULT_SNAKE_CURVE * (Math.PI / 180);
+        p.direction += p.curve * (Math.PI / 180);
     }
 }
