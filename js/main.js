@@ -10,7 +10,8 @@ const DEFAULT_SNAKE_CURVE = 3;
 const DEFAULT_BEGIN_PADDING = 30;
 const DEFAULT_NO_COLLISIONS_TIME = 200;
 
-const DEFAULT_SNAKE_HOLE_SIZE = 8;
+const DEFAULT_SNAKE_HOLE_SIZE_MIN = 8;
+const DEFAULT_SNAKE_HOLE_SIZE_MAX = 16;
 const DEFAULT_SNAKE_HOLE_MINIMUM_TIME = 20;
 const DEFAULT_SNAKE_HOLE_PROBABILITY = 0.5;
 
@@ -30,6 +31,10 @@ function setRandomY() {
 
 function setRandomAngle() {
     return Math.random() * Math.PI;
+}
+
+function setRandomHoleSize() {
+    return Math.floor(Math.random() * (DEFAULT_SNAKE_HOLE_SIZE_MAX - DEFAULT_SNAKE_HOLE_SIZE_MIN)) + DEFAULT_SNAKE_HOLE_SIZE_MIN;
 }
 
 function update(delta) {

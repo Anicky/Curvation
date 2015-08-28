@@ -15,8 +15,7 @@ Player.prototype.init = function () {
     this.speed = DEFAULT_SNAKE_SPEED;
     this.size = DEFAULT_SNAKE_SIZE;
     this.curve = DEFAULT_SNAKE_CURVE;
-    this.holeSize = DEFAULT_SNAKE_HOLE_SIZE;
-    this.holeMinimumTime = DEFAULT_SNAKE_HOLE_MINIMUM_TIME;
+    this.holeSize = 0;
     this.holeProbability = DEFAULT_SNAKE_HOLE_PROBABILITY;
     this.holeTimer = 0;
     this.currentHole = false;
@@ -31,9 +30,10 @@ Player.prototype.update = function (delta) {
                 this.holeTimer = 0;
                 this.currentHole = false;
             }
-        } else if (this.holeTimer > this.holeMinimumTime) {
+        } else if (this.holeTimer > DEFAULT_SNAKE_HOLE_MINIMUM_TIME) {
             var holeProbability = Math.random() * 100;
-            if (holeProbability < this.holeProbability) {
+            if (holeProbability <= this.holeProbability) {
+                this.holeSize = setRandomHoleSize();
                 this.currentHole = true;
                 this.holeTimer = 0;
             } else {
