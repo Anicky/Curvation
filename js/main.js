@@ -5,6 +5,8 @@ const DEFAULT_SNAKE_SIZE = 3;
 const DEFAULT_SNAKE_SPEED = 2;
 const DEFAULT_SNAKE_CURVE = 3;
 
+const DEFAULT_BEGIN_PADDING = 30;
+
 var players = new Array();
 var canvas = null;
 var context = null;
@@ -71,8 +73,8 @@ $(document).ready(function () {
     context = canvas.getContext("2d");
 	
 	// Position aléatoire
-	randomX = Math.floor(Math.random() * (canvas.width - 30 * 2)) + 30;
-	randomY = Math.floor(Math.random() * (canvas.height - 30 * 2)) + 30;
+	randomX = Math.floor(Math.random() * (canvas.width - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
+	randomY = Math.floor(Math.random() * (canvas.height - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
 	
     players.push(new Player("Jérémie", 'pink', randomX, randomY));
     $(this).keydown(function (e) {
@@ -103,8 +105,8 @@ function retry() {
     $('#gameover').modal('hide');
     context.clearRect(0, 0, canvas.width, canvas.height);
 	// Position aléatoire
-	randomX = Math.floor(Math.random() * (canvas.width - 30 * 2)) + 30;
-	randomY = Math.floor(Math.random() * (canvas.height - 30 * 2)) + 30;
+	randomX = Math.floor(Math.random() * (canvas.width - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
+	randomY = Math.floor(Math.random() * (canvas.height - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
     players[0].x = randomX;
     players[0].y = randomY;
     players[0].direction = 1;
