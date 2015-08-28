@@ -28,6 +28,10 @@ function setRandomY() {
     return Math.floor(Math.random() * (canvas.height - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
 }
 
+function setRandomAngle() {
+    return Math.random() * Math.PI;
+}
+
 function update(delta) {
     if (gameRunning) {
         if (noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME) {
