@@ -30,13 +30,13 @@ function updateCanvas() {
         if (noCollisionsTimer >= DEFAULT_NO_COLLISIONS_TIME) {
             if (p.currentHole) {
                 p.holeTimer++;
-                if (p.holeTimer > DEFAULT_SNAKE_HOLE_SIZE) {
+                if (p.holeTimer > p.holeSize) {
                     p.holeTimer = 0;
                     p.currentHole = false;
                 }
-            } else if (p.holeTimer > DEFAULT_SNAKE_HOLE_MINIMUM_TIME) {
+            } else if (p.holeTimer > p.holeMinimumTime) {
                 var holeProbability = Math.random() * 100;
-                if (holeProbability < DEFAULT_SNAKE_HOLE_PROBABILITY) {
+                if (holeProbability < p.holeProbability) {
                     p.currentHole = true;
                     p.holeTimer = 0;
                 } else {
@@ -46,13 +46,13 @@ function updateCanvas() {
                 p.holeTimer++;
             }
         }
-        p.x += Math.cos(p.direction) * DEFAULT_SNAKE_SPEED;
-        p.y += Math.sin(p.direction) * DEFAULT_SNAKE_SPEED;
+        p.x += Math.cos(p.direction) * p.speed;
+        p.y += Math.sin(p.direction) * p.speed;
         var tempX = p.x;
         var tempY = p.y;
         checkKey();
-        tempX += Math.cos(p.direction) * DEFAULT_SNAKE_SIZE;
-        tempY += Math.sin(p.direction) * DEFAULT_SNAKE_SIZE;
+        tempX += Math.cos(p.direction) * p.size;
+        tempY += Math.sin(p.direction) * p.size;
         context.fillStyle = p.color;
         if (noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME) {
             noCollisionsTimer++;
@@ -61,7 +61,7 @@ function updateCanvas() {
         }
         if (!p.currentHole) {
             context.beginPath();
-            context.arc(p.x, p.y, DEFAULT_SNAKE_SIZE, 0, 2 * Math.PI);
+            context.arc(p.x, p.y, p.size, 0, 2 * Math.PI);
             context.fill();
         }
     }
