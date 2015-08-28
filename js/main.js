@@ -22,11 +22,11 @@ var gameRunning = true;
 var noCollisionsTimer = 0;
 
 function setRandomX() {
-    return Math.floor(Math.random() * (canvas.width - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
+    return Math.floor(Math.random() * (canvas.width - DEFAULT_BEGIN_PADDING * 2 + 1)) + DEFAULT_BEGIN_PADDING;
 }
 
 function setRandomY() {
-    return Math.floor(Math.random() * (canvas.height - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
+    return Math.floor(Math.random() * (canvas.height - DEFAULT_BEGIN_PADDING * 2 + 1)) + DEFAULT_BEGIN_PADDING;
 }
 
 function setRandomAngle() {
@@ -34,7 +34,7 @@ function setRandomAngle() {
 }
 
 function setRandomHoleSize() {
-    return Math.floor(Math.random() * (DEFAULT_SNAKE_HOLE_SIZE_MAX - DEFAULT_SNAKE_HOLE_SIZE_MIN)) + DEFAULT_SNAKE_HOLE_SIZE_MIN;
+    return Math.floor(Math.random() * (DEFAULT_SNAKE_HOLE_SIZE_MAX - DEFAULT_SNAKE_HOLE_SIZE_MIN + 1)) + DEFAULT_SNAKE_HOLE_SIZE_MIN;
 }
 
 function update(delta) {
