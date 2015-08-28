@@ -17,6 +17,8 @@ function Player(name, color, x, y) {
     this.x = x;
     this.y = y;
     this.direction = 1;
+    this.speed = snake_speed;
+    this.size = snake_size;
 }
 
 function updateCanvas() {
