@@ -8,6 +8,10 @@ const DEFAULT_SNAKE_CURVE = 3;
 const DEFAULT_BEGIN_PADDING = 30;
 const DEFAULT_NO_COLLISIONS_TIME = 200;
 
+const DEFAULT_SNAKE_HOLE_SIZE = 8;
+const DEFAULT_SNAKE_HOLE_MINIMUM_TIME = 20;
+const DEFAULT_SNAKE_HOLE_PROBABILITY = 0.5;
+
 var players = new Array();
 var canvas = null;
 var context = null;
@@ -16,27 +20,34 @@ var keyPressedRight = 0;
 var gameRunning = true;
 var noCollisionsTimer = 0;
 
-function Player(name, color, x, y) {
-    this.name = name;
-    this.color = color;
-    this.x = x;
-    this.y = y;
-    this.direction = 1;
-    this.speed = DEFAULT_SNAKE_SPEED;
-    this.size = DEFAULT_SNAKE_SIZE;
-}
-
 function updateCanvas() {
     var collisionsCheck = false;
-    if(noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME) {
+    if (noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME) {
         context.clearRect(0, 0, canvas.width, canvas.height);
     }
     for (var i = 0; i < players.length; i++) {
         var p = players[i];
-        var dX = Math.cos(p.direction) * DEFAULT_SNAKE_SPEED;
-        var dY = Math.sin(p.direction) * DEFAULT_SNAKE_SPEED;
-        p.x += dX;
-        p.y += dY;
+        if (noCollisionsTimer >= DEFAULT_NO_COLLISIONS_TIME) {
+            if (p.currentHole) {
+                p.holeTimer++;
+                if (p.holeTimer > DEFAULT_SNAKE_HOLE_SIZE) {
+                    p.holeTimer = 0;
+                    p.currentHole = false;
+                }
+            } else if (p.holeTimer > DEFAULT_SNAKE_HOLE_MINIMUM_TIME) {
+                var holeProbability = Math.random() * 100;
+                if (holeProbability < DEFAULT_SNAKE_HOLE_PROBABILITY) {
+                    p.currentHole = true;
+                    p.holeTimer = 0;
+                } else {
+                    p.holeTimer++;
+                }
+            } else {
+                p.holeTimer++;
+            }
+        }
+        p.x += Math.cos(p.direction) * DEFAULT_SNAKE_SPEED;
+        p.y += Math.sin(p.direction) * DEFAULT_SNAKE_SPEED;
         var tempX = p.x;
         var tempY = p.y;
         checkKey();
@@ -45,12 +56,14 @@ function updateCanvas() {
         context.fillStyle = p.color;
         if (noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME) {
             noCollisionsTimer++;
-        } else {
+        } else if (!p.currentHole) {
             collisionsCheck = checkCollisions(p, tempX, tempY);
         }
-        context.beginPath();
-        context.arc(p.x, p.y, DEFAULT_SNAKE_SIZE, 0, 2 * Math.PI);
-        context.fill();
+        if (!p.currentHole) {
+            context.beginPath();
+            context.arc(p.x, p.y, DEFAULT_SNAKE_SIZE, 0, 2 * Math.PI);
+            context.fill();
+        }
     }
     if (collisionsCheck) {
         $('#gameover').modal('show');
@@ -75,17 +88,30 @@ function refresh() {
     }, 10);
 }
 
+function setRandomX() {
+    return Math.floor(Math.random() * (canvas.width - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
+}
+
+function setRandomY() {
+    return Math.floor(Math.random() * (canvas.height - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
+}
+
+function init() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < players.length; i++) {
+        players[i].init();
+    }
+    gameRunning = true;
+    noCollisionsTimer = 0
+    refresh();
+}
+
 $(document).ready(function () {
     canvas = document.getElementById('game');
     canvas.width = $('.panel-body').width();
-	canvas.height = $('.panel-body').height();
+    canvas.height = $('.panel-body').height();
     context = canvas.getContext("2d");
-	
-	// Position aléatoire
-	randomX = Math.floor(Math.random() * (canvas.width - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
-	randomY = Math.floor(Math.random() * (canvas.height - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
-	
-    players.push(new Player("Jérémie", 'pink', randomX, randomY));
+    players.push(new Player("Jérémie", 'pink'));
     $(this).keydown(function (e) {
         e.preventDefault();
         if (e.keyCode == KEY_LEFT) {
@@ -104,26 +130,12 @@ $(document).ready(function () {
             keyPressedRight = 0;
         }
     });
-    refresh();
     $('#retry').click(function () {
-        retry();
+        $('#gameover').modal('hide');
+        init();
     });
+    init();
 });
-
-function retry() {
-    $('#gameover').modal('hide');
-    context.clearRect(0, 0, canvas.width, canvas.height);
-	// Position aléatoire
-	randomX = Math.floor(Math.random() * (canvas.width - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
-	randomY = Math.floor(Math.random() * (canvas.height - DEFAULT_BEGIN_PADDING * 2)) + DEFAULT_BEGIN_PADDING;
-    players[0].x = randomX;
-    players[0].y = randomY;
-    players[0].direction = 1;
-    gameRunning = true;
-    noCollisionsTimer = 0
-    refresh();
-}
-
 
 function checkKey() {
     if (keyPressedLeft) {
