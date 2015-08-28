@@ -71,8 +71,8 @@ $(document).ready(function () {
     context = canvas.getContext("2d");
 	
 	// Position aléatoire
-	randomX = Math.floor(Math.random() * canvas.width - 30) + 1;
-	randomY = Math.floor(Math.random() * canvas.height - 30) + 1;
+	randomX = Math.floor(Math.random() * (canvas.width - 30 * 2)) + 30;
+	randomY = Math.floor(Math.random() * (canvas.height - 30 * 2)) + 30;
 	
     players.push(new Player("Jérémie", 'pink', randomX, randomY));
     $(this).keydown(function (e) {
@@ -103,8 +103,8 @@ function retry() {
     $('#gameover').modal('hide');
     context.clearRect(0, 0, canvas.width, canvas.height);
 	// Position aléatoire
-	randomX = Math.floor(Math.random() * canvas.width - 30) + 1;
-	randomY = Math.floor(Math.random() * canvas.height - 30) + 1;
+	randomX = Math.floor(Math.random() * (canvas.width - 30 * 2)) + 30;
+	randomY = Math.floor(Math.random() * (canvas.height - 30 * 2)) + 30;
     players[0].x = randomX;
     players[0].y = randomY;
     players[0].direction = 1;
