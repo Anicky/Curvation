@@ -14,7 +14,7 @@ var context = null;
 var keyPressedLeft = 0;
 var keyPressedRight = 0;
 var gameRunning = true;
-var no_collisions_timer = 0;
+var noCollisionsTimer = 0;
 
 function Player(name, color, x, y) {
     this.name = name;
@@ -28,7 +28,7 @@ function Player(name, color, x, y) {
 
 function updateCanvas() {
     var collisionsCheck = false;
-    if(no_collisions_timer < DEFAULT_NO_COLLISIONS_TIME) {
+    if(noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME) {
         context.clearRect(0, 0, canvas.width, canvas.height);
     }
     for (var i = 0; i < players.length; i++) {
@@ -43,8 +43,8 @@ function updateCanvas() {
         tempX += Math.cos(p.direction) * DEFAULT_SNAKE_SIZE;
         tempY += Math.sin(p.direction) * DEFAULT_SNAKE_SIZE;
         context.fillStyle = p.color;
-        if (no_collisions_timer < DEFAULT_NO_COLLISIONS_TIME) {
-            no_collisions_timer++;
+        if (noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME) {
+            noCollisionsTimer++;
         } else {
             collisionsCheck = checkCollisions(p, tempX, tempY);
         }
@@ -120,7 +120,7 @@ function retry() {
     players[0].y = randomY;
     players[0].direction = 1;
     gameRunning = true;
-    no_collisions_timer = 0
+    noCollisionsTimer = 0
     refresh();
 }
 
