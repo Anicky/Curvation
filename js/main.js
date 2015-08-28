@@ -30,7 +30,7 @@ function setRandomY() {
 }
 
 function setRandomAngle() {
-    return Math.random() * Math.PI;
+    return Math.random() * (2 * Math.PI);
 }
 
 function setRandomHoleSize() {
