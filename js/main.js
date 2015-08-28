@@ -64,8 +64,14 @@ function refresh() {
 $(document).ready(function () {
     canvas = document.getElementById('game');
     canvas.width = $('.panel-body').width();
+	canvas.height = $('.panel-body').height();
     context = canvas.getContext("2d");
-    players.push(new Player("Jérémie", '#000000', 10, 10));
+	
+	// Position aléatoire
+	random_x = Math.floor(Math.random() * canvas.width - 30) + 1;
+	random_y = Math.floor(Math.random() * canvas.height - 30) + 1;
+	
+    players.push(new Player("Jérémie", 'pink', random_x, random_y));
     $(this).keydown(function (e) {
         e.preventDefault();
         if (e.keyCode == KEY_LEFT) {
@@ -93,8 +99,11 @@ $(document).ready(function () {
 function retry() {
     $('#gameover').modal('hide');
     context.clearRect(0, 0, canvas.width, canvas.height);
-    players[0].x = 10;
-    players[0].y = 10;
+	// Position aléatoire
+	random_x = Math.floor(Math.random() * canvas.width - 30) + 1;
+	random_y = Math.floor(Math.random() * canvas.height - 30) + 1;
+    players[0].x = random_x;
+    players[0].y = random_y;
     players[0].direction = 1;
     game_running = true;
     refresh();
