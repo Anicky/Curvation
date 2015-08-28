@@ -6,6 +6,7 @@ const DEFAULT_SNAKE_SPEED = 2;
 const DEFAULT_SNAKE_CURVE = 3;
 
 const DEFAULT_BEGIN_PADDING = 30;
+const DEFAULT_NO_COLLISIONS_TIME = 200;
 
 var players = new Array();
 var canvas = null;
@@ -13,6 +14,7 @@ var context = null;
 var keyPressedLeft = 0;
 var keyPressedRight = 0;
 var gameRunning = true;
+var no_collisions_timer = 0;
 
 function Player(name, color, x, y) {
     this.name = name;
@@ -26,6 +28,9 @@ function Player(name, color, x, y) {
 
 function updateCanvas() {
     var collisionsCheck = false;
+    if(no_collisions_timer < DEFAULT_NO_COLLISIONS_TIME) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    }
     for (var i = 0; i < players.length; i++) {
         var p = players[i];
         var dX = Math.cos(p.direction) * DEFAULT_SNAKE_SPEED;
@@ -38,7 +43,11 @@ function updateCanvas() {
         tempX += Math.cos(p.direction) * DEFAULT_SNAKE_SIZE;
         tempY += Math.sin(p.direction) * DEFAULT_SNAKE_SIZE;
         context.fillStyle = p.color;
-        collisionsCheck = checkCollisions(p, tempX, tempY);
+        if (no_collisions_timer < DEFAULT_NO_COLLISIONS_TIME) {
+            no_collisions_timer++;
+        } else {
+            collisionsCheck = checkCollisions(p, tempX, tempY);
+        }
         context.beginPath();
         context.arc(p.x, p.y, DEFAULT_SNAKE_SIZE, 0, 2 * Math.PI);
         context.fill();
@@ -111,6 +120,7 @@ function retry() {
     players[0].y = randomY;
     players[0].direction = 1;
     gameRunning = true;
+    no_collisions_timer = 0
     refresh();
 }
 
