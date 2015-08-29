@@ -123,12 +123,3 @@ $(document).ready(function () {
     });
     init();
 });
-
-function checkKey(p) {
-    if (p.keyPressedLeft) {
-        p.direction -= p.curve * (Math.PI / 180);
-    }
-    else if (p.keyPressedRight) {
-        p.direction += p.curve * (Math.PI / 180);
-    }
-}

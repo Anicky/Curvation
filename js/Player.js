@@ -46,7 +46,7 @@ Player.prototype.update = function (delta) {
     }
     this.lastX = this.x;
     this.lastY = this.y;
-    if(this.currentHole) {
+    if (this.currentHole) {
         this.history.pop();
     }
     this.history.push(new Point(this.x, this.y, this.size));
@@ -54,7 +54,7 @@ Player.prototype.update = function (delta) {
     this.y += Math.sin(this.direction) * (this.speed * delta);
     var tempX = this.x;
     var tempY = this.y;
-    checkKey(this);
+    this.changeDirection();
     tempX += Math.cos(this.direction) * this.size;
     tempY += Math.sin(this.direction) * this.size;
     if (noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME) {
@@ -77,4 +77,13 @@ Player.prototype.checkCollisions = function (tempX, tempY) {
         return true;
     }
     return false;
+}
+
+Player.prototype.changeDirection = function () {
+    if (this.keyPressedLeft) {
+        this.direction -= this.curve * (Math.PI / 180);
+    }
+    else if (this.keyPressedRight) {
+        this.direction += this.curve * (Math.PI / 180);
+    }
 }
