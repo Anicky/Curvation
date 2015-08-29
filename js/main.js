@@ -145,5 +145,10 @@ $(document).ready(function () {
             players[i].checkKey(e.keyCode, KEY_CODES[i], 0);
         }
     });
-    init();
+
+    // Start the party
+    $(".startButton").click(function() {
+        init();
+        $(".startButton").slideToggle();
+    });
 });
