@@ -17,7 +17,7 @@ const DEFAULT_SNAKE_HOLE_SIZE_MAX = 16;
 const DEFAULT_SNAKE_HOLE_MINIMUM_TIME = 20;
 const DEFAULT_SNAKE_HOLE_PROBABILITY = 0.5;
 
-var players = new Array();
+var players = [];
 var playersOrdered = null;
 var canvas = null;
 var context = null;
@@ -65,7 +65,7 @@ function update(delta) {
         }
         if (!gameRunning) {
             var winner = null;
-            for (var i = 0; i < players.length; i++) {
+            for (i = 0; i < players.length; i++) {
                 if (!players[i].collisionsCheck) {
                     winner = players[i];
                     break;

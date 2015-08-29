@@ -19,8 +19,8 @@ Player.prototype.init = function () {
     this.holeTimer = 0;
     this.currentHole = false;
     this.collisionsCheck = false;
-    this.history = new Array();
-}
+    this.history = [];
+};
 
 Player.prototype.update = function (delta) {
     if (noCollisionsTimer >= DEFAULT_NO_COLLISIONS_TIME) {
@@ -74,7 +74,7 @@ Player.prototype.checkCollisions = function (tempX, tempY) {
         return true;
     }
     return false;
-}
+};
 
 Player.prototype.changeDirection = function () {
     if (this.keyPressedLeft) {
@@ -83,7 +83,7 @@ Player.prototype.changeDirection = function () {
     else if (this.keyPressedRight) {
         this.direction += this.curve * (Math.PI / 180);
     }
-}
+};
 
 Player.prototype.checkKey = function (actualKeyCode, availableKeyCodes, keyPressed) {
     if (actualKeyCode == availableKeyCodes[0]) {
@@ -92,4 +92,4 @@ Player.prototype.checkKey = function (actualKeyCode, availableKeyCodes, keyPress
     if (actualKeyCode == availableKeyCodes[1]) {
         this.keyPressedRight = keyPressed;
     }
-}
+};
