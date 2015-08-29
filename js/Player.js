@@ -9,8 +9,6 @@ Player.prototype.init = function () {
     this.keyPressedRight = 0;
     this.x = setRandomX();
     this.y = setRandomY();
-    this.lastX = this.x;
-    this.lastY = this.y;
     this.direction = setRandomAngle();
     this.speed = DEFAULT_SNAKE_SPEED;
     this.size = DEFAULT_SNAKE_SIZE;
@@ -44,8 +42,6 @@ Player.prototype.update = function (delta) {
             this.holeTimer++;
         }
     }
-    this.lastX = this.x;
-    this.lastY = this.y;
     if (this.currentHole || (noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME)) {
         this.history.pop();
     }
