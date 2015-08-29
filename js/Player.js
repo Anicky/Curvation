@@ -46,7 +46,7 @@ Player.prototype.update = function (delta) {
     }
     this.lastX = this.x;
     this.lastY = this.y;
-    if (this.currentHole) {
+    if (this.currentHole || (noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME)) {
         this.history.pop();
     }
     this.history.push(new Point(this.x, this.y, this.size));

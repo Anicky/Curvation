@@ -41,9 +41,6 @@ function setRandomHoleSize() {
 
 function update(delta) {
     if (gameRunning) {
-        if (noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-        }
         for (var i = 0; i < players.length; i++) {
             var p = players[i];
             p.update(delta);
