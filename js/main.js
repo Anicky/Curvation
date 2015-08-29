@@ -65,13 +65,13 @@ function update(delta) {
         }
         if (!gameRunning) {
             var winner = null;
-            for(var i = 0; i < players.length; i++) {
-                if(!players[i].collisionsCheck) {
+            for (var i = 0; i < players.length; i++) {
+                if (!players[i].collisionsCheck) {
                     winner = players[i];
                     break;
                 }
             }
-            $('#gameover .modal-body').html('<p><span class="modal-playername" style="color:' + winner.color + '">' + winner.name + '</span> wins !</p>');
+            $('#gameover .modal-body').html('<p style="color:' + winner.color + '"><span class="modal-playername">' + winner.name + '</span> wins !</p>');
             $('#gameover').modal('show');
             setTimeout(function () {
                 $('#gameover').modal('hide');
@@ -112,7 +112,7 @@ function updateScoresTable() {
     });
     $('#scores').html('');
     for (var i = 0; i < playersOrdered.length; i++) {
-        $('#scores').append('<div class="row scores-line" id="player-' + i + '"><div class="col-xs-2 scores-color"><span style="background-color: ' + playersOrdered[i].color + ';"></span></div><div class="col-xs-7 scores-name">' + playersOrdered[i].name + '</div><div class="col-xs-3 scores-points">' + playersOrdered[i].score + '</div></div>');
+        $('#scores').append('<div class="row scores-line" id="player-' + i + '" style="color: ' + playersOrdered[i].color + '"><div class="col-xs-2 scores-color"><span style="background-color: ' + playersOrdered[i].color + ';"></span></div><div class="col-xs-7 scores-name">' + playersOrdered[i].name + '</div><div class="col-xs-3 scores-points">' + playersOrdered[i].score + '</div></div>');
     }
 }
 

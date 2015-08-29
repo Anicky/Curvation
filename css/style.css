@@ -8,6 +8,7 @@
 
 .scores-line {
     height: 30px;
+    font-weight: bold;
 }
 
 .scores-color span {
