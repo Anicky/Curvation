@@ -117,15 +117,22 @@ function updateScoresTable() {
 }
 
 $(document).ready(function () {
+    // Init canvas
     canvas = document.getElementById('game');
     canvas.width = $('.panel-body').width();
     canvas.height = $('.panel-body').height();
     context = canvas.getContext("2d");
+
+    // Init all player
     players.push(new Player("Player 1", '#D62525'));
     players.push(new Player("Player 2", '#2D70EA'));
     players.push(new Player("Player 3", '#396F19'));
     players.push(new Player("Player 4", '#F1BC42'));
+
+    // Update players score
     updateScoresTable();
+
+    // Bind all events for the movement
     $(this).keydown(function (e) {
         e.preventDefault();
         for (var i = 0; i < players.length; i++) {
