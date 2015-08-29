@@ -68,7 +68,32 @@ Player.prototype.draw = function (interpolationPercentage) {
     }
 };
 
+function circleIntersection(x1, y1, x2, y2, r1, r2) {
+    var dx = x1 - x2,
+        dy = y1 - y2,
+        distance = Math.sqrt(dx * dx + dy * dy);
+    return (distance <= (r1 + r2));
+};
+
 Player.prototype.checkCollisions = function (tempX, tempY) {
+
+    if (speedup_appeared && (circleIntersection(tempX, tempY, speedup_x, speedup_y, this.size, 21))) {
+        this.speed += 0.1;
+        speedup_appeared = false;
+        return false;
+    }
+
+    if (sizeup_appeared && (circleIntersection(tempX, tempY, sizeup_x, sizeup_y, this.size, 21))) {
+        for (var i = 0; i < players.length; i++) {
+            if (players[i] != this) {
+                players[i].size += 3;
+            }
+        }
+
+        sizeup_appeared = false;
+        return false;
+    }
+
     var pixelData = context.getImageData(tempX, tempY, 1, 1);
     if (this.x <= 0 || this.x >= canvas.width || this.y <= 0 || this.y >= canvas.height || (pixelData.data[3] > 0)) {
         return true;

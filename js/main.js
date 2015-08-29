@@ -24,6 +24,16 @@ var context = null;
 var gameRunning = true;
 var noCollisionsTimer = 0;
 
+var img_speedup = null;
+var speedup_appeared = false;
+var speedup_x = 0;
+var speedup_y = 0;
+
+var img_sizeup = null;
+var sizeup_appeared = false;
+var sizeup_x = 0;
+var sizeup_y = 0;
+
 function setRandomX() {
     return Math.floor(Math.random() * (canvas.width - DEFAULT_BEGIN_PADDING * 2 + 1)) + DEFAULT_BEGIN_PADDING;
 }
@@ -83,6 +93,26 @@ function update(delta) {
 
 function draw(interpolationPercentage) {
     context.clearRect(0, 0, canvas.width, canvas.height);
+    if (speedup_appeared) {
+        context.drawImage(img_speedup, speedup_x, speedup_y);
+    } else {
+        var probability = Math.random() * 100;
+        if (probability < 0.5) {
+            speedup_x = setRandomX();
+            speedup_y = setRandomY();
+            speedup_appeared = true;
+        }
+    }
+    if (sizeup_appeared) {
+        context.drawImage(img_sizeup, sizeup_x, sizeup_y);
+    } else {
+        var probability = Math.random() * 100;
+        if (probability < 0.5) {
+            sizeup_x = setRandomX();
+            sizeup_y = setRandomY();
+            sizeup_appeared = true;
+        }
+    }
     for (var i = 0; i < players.length; i++) {
         players[i].draw(interpolationPercentage);
     }
@@ -97,6 +127,8 @@ function end(fps, panic) {
 
 function init() {
     context.clearRect(0, 0, canvas.width, canvas.height);
+    speedup_appeared = false;
+    sizeup_appeared = false;
     for (var i = 0; i < players.length; i++) {
         players[i].init();
     }
@@ -121,6 +153,10 @@ $(document).ready(function () {
     canvas.width = $('.panel-body').width();
     canvas.height = $('.panel-body').height();
     context = canvas.getContext("2d");
+    img_speedup = new Image();
+    img_speedup.src = 'img/items/speedup.png';
+    img_sizeup = new Image();
+    img_sizeup.src = 'img/items/sizeup.png';
     players.push(new Player("Player 1", '#D62525'));
     players.push(new Player("Player 2", '#2D70EA'));
     players.push(new Player("Player 3", '#396F19'));
