@@ -20,6 +20,7 @@ Player.prototype.init = function () {
     this.holeTimer = 0;
     this.currentHole = false;
     this.collisionsCheck = false;
+    this.history = new Array();
 }
 
 Player.prototype.update = function (delta) {
@@ -45,6 +46,10 @@ Player.prototype.update = function (delta) {
     }
     this.lastX = this.x;
     this.lastY = this.y;
+    if(this.currentHole) {
+        this.history.pop();
+    }
+    this.history.push(new Point(this.x, this.y, this.size));
     this.x += Math.cos(this.direction) * (this.speed * delta);
     this.y += Math.sin(this.direction) * (this.speed * delta);
     var tempX = this.x;
@@ -60,13 +65,9 @@ Player.prototype.update = function (delta) {
 };
 
 Player.prototype.draw = function (interpolationPercentage) {
-    if (!this.currentHole) {
-        var x = this.lastX + (this.x - this.lastX) * interpolationPercentage;
-        var y = this.lastY + (this.y - this.lastY) * interpolationPercentage;
-        context.fillStyle = this.color;
-        context.beginPath();
-        context.arc(x, y, this.size, 0, 2 * Math.PI);
-        context.fill();
+    context.fillStyle = this.color;
+    for (var i = 0; i < this.history.length; i++) {
+        this.history[i].draw();
     }
 };
 

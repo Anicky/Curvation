@@ -57,6 +57,7 @@ function update(delta) {
 }
 
 function draw(interpolationPercentage) {
+    context.clearRect(0, 0, canvas.width, canvas.height);
     for (var i = 0; i < players.length; i++) {
         players[i].draw(interpolationPercentage);
     }
