@@ -87,3 +87,12 @@ Player.prototype.changeDirection = function () {
         this.direction += this.curve * (Math.PI / 180);
     }
 }
+
+Player.prototype.checkKey = function (actualKeyCode, availableKeyCodes, keyPressed) {
+    if (actualKeyCode == availableKeyCodes[0]) {
+        this.keyPressedLeft = keyPressed;
+    }
+    if (actualKeyCode == availableKeyCodes[1]) {
+        this.keyPressedRight = keyPressed;
+    }
+}

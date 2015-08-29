@@ -1,7 +1,9 @@
-const KEY_PLAYER1_LEFT = 37;
-const KEY_PLAYER1_RIGHT = 39;
-const KEY_PLAYER2_LEFT = 83;
-const KEY_PLAYER2_RIGHT = 68;
+/**
+ * La première dimension du tableau correspond aux numéros des joueurs.
+ * La deuxième dimension correspond aux touches assignés pour la gauche (index 0) et pour la droite (index 1)
+ * KeyCodes : 37 = LEFT, 39 = RIGHT, 83 = S, 68 = D
+ */
+const KEY_CODES = [[37, 39], [83, 68]];
 
 const DEFAULT_SNAKE_SIZE = 3;
 const DEFAULT_SNAKE_SPEED = 0.1;
@@ -89,32 +91,14 @@ $(document).ready(function () {
     players.push(new Player("Player 2", 'blue'));
     $(this).keydown(function (e) {
         e.preventDefault();
-        if (e.keyCode == KEY_PLAYER1_LEFT) {
-            players[0].keyPressedLeft = 1;
-        }
-        if (e.keyCode == KEY_PLAYER1_RIGHT) {
-            players[0].keyPressedRight = 1;
-        }
-        if (e.keyCode == KEY_PLAYER2_LEFT) {
-            players[1].keyPressedLeft = 1;
-        }
-        if (e.keyCode == KEY_PLAYER2_RIGHT) {
-            players[1].keyPressedRight = 1;
+        for (var i = 0; i < players.length; i++) {
+            players[i].checkKey(e.keyCode, KEY_CODES[i], 1);
         }
     });
     $(this).keyup(function (e) {
         e.preventDefault();
-        if (e.keyCode == KEY_PLAYER1_LEFT) {
-            players[0].keyPressedLeft = 0;
-        }
-        if (e.keyCode == KEY_PLAYER1_RIGHT) {
-            players[0].keyPressedRight = 0;
-        }
-        if (e.keyCode == KEY_PLAYER2_LEFT) {
-            players[1].keyPressedLeft = 0;
-        }
-        if (e.keyCode == KEY_PLAYER2_RIGHT) {
-            players[1].keyPressedRight = 0;
+        for (var i = 0; i < players.length; i++) {
+            players[i].checkKey(e.keyCode, KEY_CODES[i], 0);
         }
     });
     $('#retry').click(function () {
