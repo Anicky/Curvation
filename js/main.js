@@ -64,7 +64,14 @@ function update(delta) {
             }
         }
         if (!gameRunning) {
-            $('#gameover .modal-body').html('<p><span class="modal-playername" style="color:' + playersOrdered[0].color + '">' + playersOrdered[0].name + '</span> wins !</p>');
+            var winner = null;
+            for(var i = 0; i < players.length; i++) {
+                if(!players[i].collisionsCheck) {
+                    winner = players[i];
+                    break;
+                }
+            }
+            $('#gameover .modal-body').html('<p><span class="modal-playername" style="color:' + winner.color + '">' + winner.name + '</span> wins !</p>');
             $('#gameover').modal('show');
             setTimeout(function () {
                 $('#gameover').modal('hide');
