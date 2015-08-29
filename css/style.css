@@ -1,3 +1,30 @@
 .nopadding {
     padding: 0;
 }
+
+#scores {
+    font-size: 1.2em;
+}
+
+.scores-line {
+    height: 30px;
+}
+
+.scores-color span {
+    display: block;
+    height: 20px;
+    margin-top: 3px;
+}
+
+.scores-points {
+    text-align: right;
+}
+
+#gameover .modal-body {
+    text-align: center;
+    font-size: 2em;
+}
+
+.modal-playername {
+    font-weight: bold;
+}

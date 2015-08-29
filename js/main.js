@@ -1,9 +1,9 @@
 /**
  * La première dimension du tableau correspond aux numéros des joueurs.
  * La deuxième dimension correspond aux touches assignés pour la gauche (index 0) et pour la droite (index 1)
- * KeyCodes : 37 = LEFT, 39 = RIGHT, 83 = S, 68 = D
+ * KeyCodes : 37 = LEFT, 39 = RIGHT, 83 = S, 68 = D, G = 71, H = 72, L = 76, M = 77
  */
-const KEY_CODES = [[37, 39], [83, 68]];
+const KEY_CODES = [[37, 39], [83, 68], [71, 72], [76, 77]];
 
 const DEFAULT_SNAKE_SIZE = 3;
 const DEFAULT_SNAKE_SPEED = 0.1;
@@ -18,6 +18,7 @@ const DEFAULT_SNAKE_HOLE_MINIMUM_TIME = 20;
 const DEFAULT_SNAKE_HOLE_PROBABILITY = 0.5;
 
 var players = new Array();
+var playersOrdered = null;
 var canvas = null;
 var context = null;
 var gameRunning = true;
@@ -43,14 +44,32 @@ function update(delta) {
     if (gameRunning) {
         for (var i = 0; i < players.length; i++) {
             var p = players[i];
-            p.update(delta);
-            if (p.collisionsCheck) {
-                gameRunning = false;
-                break;
+            if (!p.collisionsCheck) {
+                p.update(delta);
+                if (p.collisionsCheck) {
+                    var playersLost = 0;
+                    for (var j = 0; j < players.length; j++) {
+                        if (!players[j].collisionsCheck) {
+                            players[j].score++;
+                        } else {
+                            playersLost++;
+                        }
+                    }
+                    updateScoresTable();
+                    if (playersLost === players.length - 1) {
+                        gameRunning = false;
+                        break;
+                    }
+                }
             }
         }
         if (!gameRunning) {
+            $('#gameover .modal-body').html('<p><span class="modal-playername" style="color:' + playersOrdered[0].color + '">' + playersOrdered[0].name + '</span> wins !</p>');
             $('#gameover').modal('show');
+            setTimeout(function () {
+                $('#gameover').modal('hide');
+                init();
+            }, 2000);
         }
     }
 }
@@ -79,13 +98,27 @@ function init() {
     MainLoop.setUpdate(update).setDraw(draw).setEnd(end).start();
 }
 
+function updateScoresTable() {
+    playersOrdered = players.slice(0);
+    playersOrdered.sort(function (a, b) {
+        return b.score - a.score;
+    });
+    $('#scores').html('');
+    for (var i = 0; i < playersOrdered.length; i++) {
+        $('#scores').append('<div class="row scores-line" id="player-' + i + '"><div class="col-xs-2 scores-color"><span style="background-color: ' + playersOrdered[i].color + ';"></span></div><div class="col-xs-7 scores-name">' + playersOrdered[i].name + '</div><div class="col-xs-3 scores-points">' + playersOrdered[i].score + '</div></div>');
+    }
+}
+
 $(document).ready(function () {
     canvas = document.getElementById('game');
     canvas.width = $('.panel-body').width();
     canvas.height = $('.panel-body').height();
     context = canvas.getContext("2d");
-    players.push(new Player("Player 1", 'red'));
-    players.push(new Player("Player 2", 'blue'));
+    players.push(new Player("Player 1", '#D62525'));
+    players.push(new Player("Player 2", '#2D70EA'));
+    players.push(new Player("Player 3", '#396F19'));
+    players.push(new Player("Player 4", '#F1BC42'));
+    updateScoresTable();
     $(this).keydown(function (e) {
         e.preventDefault();
         for (var i = 0; i < players.length; i++) {
@@ -97,10 +130,6 @@ $(document).ready(function () {
         for (var i = 0; i < players.length; i++) {
             players[i].checkKey(e.keyCode, KEY_CODES[i], 0);
         }
-    });
-    $('#retry').click(function () {
-        $('#gameover').modal('hide');
-        init();
     });
     init();
 });

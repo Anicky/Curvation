@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <link rel="stylesheet" href="libs/bootstrap/bootstrap.min.css"/>
-    <link rel="stylesheet" href="libs/bootstrap/bootstrap-theme.min.css"/>
     <script src="libs/jquery/jquery.min.js"></script>
     <script src="libs/bootstrap/bootstrap.min.js"></script>
     <script src="libs/mainloop/mainloop.min.js"></script>
@@ -20,16 +19,28 @@
 <body>
 
 <div class="container">
-    <div class="col-md-12">
-        <div class="row">
-            <h1 class="text-center">
-                Curvation
-            </h1>
+    <h1 class="text-center">
+        Curvation
+    </h1>
+    <div class="row">
+        <div class="col-md-9">
             <div class="panel panel-default">
                 <div class="panel-body nopadding">
                     <canvas id="game" height="480">
                         You need HTML 5.
                     </canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Scores</h3>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="scores"></div>
                 </div>
             </div>
         </div>
@@ -41,19 +52,11 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">
                     Curvation
                 </h4>
             </div>
-            <div class="modal-body">
-                GAME OVER
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <button type="button" id="retry" class="btn btn-primary">Recommencer</button>
-            </div>
+            <div class="modal-body"></div>
         </div>
     </div>
 </div>
