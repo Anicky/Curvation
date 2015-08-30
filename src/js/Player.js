@@ -84,6 +84,26 @@ Player.prototype.checkCollisions = function (tempX, tempY) {
     if (this.x <= 0 || this.x >= canvas.width || this.y <= 0 || this.y >= canvas.height || (pixelData.data[3] > 0)) {
         return true;
     }
+
+    var frontRadiusX = Math.cos(this.direction) * this.size * 10;
+    var frontRadiusY = Math.sin(this.direction) * this.size * 10;
+    var leftRadiusX = Math.cos(this.direction - Math.PI / 2) * this.size * 10;
+    var leftRadiusY = Math.sin(this.direction - Math.PI / 2) * this.size * 10;
+    var rightRadiusX = Math.cos(this.direction + Math.PI / 2) * this.size * 10;
+    var rightRadiusY = Math.sin(this.direction + Math.PI / 2) * this.size * 10;
+    pixelData = context.getImageData(tempX + frontRadiusX, tempY + frontRadiusY, 1, 1);
+    if (this.x + frontRadiusX <= 0 || this.x + frontRadiusX >= canvas.width || this.y + frontRadiusY <= 0 || this.y + frontRadiusY >= canvas.height || (pixelData.data[3] > 0)) {
+        console.log('front');
+    }
+    pixelData = context.getImageData(tempX + leftRadiusX, tempY + leftRadiusY, 1, 1);
+    if (this.x + leftRadiusX <= 0 || this.x + leftRadiusX >= canvas.width || this.y + leftRadiusY <= 0 || this.y + leftRadiusY >= canvas.height || (pixelData.data[3] > 0)) {
+        console.log('left');
+    }
+    pixelData = context.getImageData(tempX + rightRadiusX, tempY + rightRadiusY, 1, 1);
+    if (this.x + rightRadiusX <= 0 || this.x + rightRadiusX >= canvas.width || this.y + rightRadiusY <= 0 || this.y + rightRadiusY >= canvas.height || (pixelData.data[3] > 0)) {
+        console.log('right');
+    }
+
     return false;
 };
 
