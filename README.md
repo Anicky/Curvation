@@ -45,14 +45,16 @@ We have preconfigured `npm` to automatically run `grunt` to init the project, so
 npm install -g grunt-cli
 ```
 to install the `grunt-cli`dependencie,
-then:
+then do:
 ```
 npm install
 ```
-Behind the scenes this will also call `grunt init`.  You should find that you have one new
-folder in your project :
 
-* `node_modules` - contains the npm packages for the tools we need
+Behind the scenes this will also call `grunt init`.  You should find that you have two new
+folders in your project :
+
+* `node_modules/` - contains the npm packages for the tools we need
+* `build/` - ...
 
 ## Run the Game
 
@@ -72,13 +74,13 @@ This will generate some needed files into the `build/` folder.
 grunt watch
 ```
 
-This will run `init` task automatically whenever watched sources (within the `src/` folder)  files change.
+This will run `init` task automatically whenever watched sources files (within the `src/` folder) change.
 
 ```
 grunt dev
 ```
 
-This will run `init` task then `watch` task
+This will run the `init` task then the `watch` automatic task.
 
 
 ## Updating the dependencies
@@ -91,7 +93,7 @@ npm update
 
 This will find the latest versions that match the version ranges specified in the `package.json` file.
 
-## Directory Layout (à compléter)
+## Directory Layout
 
 ```
 build/                    --> description...
