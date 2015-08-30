@@ -11,7 +11,7 @@ To get you started you can simply clone the Curvation repository and install the
 
 ### Prerequisites
 
-You need git to clone the Curvation repostory. You can get git from
+You need git to clone the Curvation repository. You can get git from
 [http://git-scm.com/](http://git-scm.com/).
 
 We also use a number of node.js tools to initialize Curvation. You must have node.js and
