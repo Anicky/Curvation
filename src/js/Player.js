@@ -55,11 +55,10 @@ Player.prototype.update = function (delta) {
         this.changeDirection();
         tempX += Math.cos(this.direction) * this.size;
         tempY += Math.sin(this.direction) * this.size;
-        if (!this.currentHole) {
+        if (!this.currentHole && (timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME)) {
             this.collisionsCheck = this.checkCollisions(tempX, tempY);
         }
     }
-    timer++;
 };
 
 Player.prototype.draw = function (interpolationPercentage) {

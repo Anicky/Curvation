@@ -11,8 +11,8 @@ const DEFAULT_SNAKE_SPEED = 0.1;
 const DEFAULT_SNAKE_CURVE = 3;
 
 const DEFAULT_BEGIN_PADDING = 30;
-const DEFAULT_WAITING_TIME = 150;
-const DEFAULT_NO_COLLISIONS_TIME = 200;
+const DEFAULT_WAITING_TIME = 100;
+const DEFAULT_NO_COLLISIONS_TIME = 100;
 
 const DEFAULT_SNAKE_HOLE_SIZE_MIN = 8;
 const DEFAULT_SNAKE_HOLE_SIZE_MAX = 16;
@@ -84,6 +84,7 @@ function update(delta) {
                 init();
             }, 2000);
         }
+        timer++;
     }
 }
 
