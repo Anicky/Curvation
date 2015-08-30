@@ -62,7 +62,7 @@ function update(delta) {
                         }
                     }
                     updateScoresTable();
-                    if (playersLost === players.length - 1) {
+                    if ((players.length === 1) || (playersLost === players.length - 1)) {
                         gameRunning = false;
                         break;
                     }
@@ -70,14 +70,18 @@ function update(delta) {
             }
         }
         if (!gameRunning) {
-            var winner = null;
-            for (i = 0; i < players.length; i++) {
-                if (!players[i].collisionsCheck) {
-                    winner = players[i];
-                    break;
+            if (players.length === 1) {
+                $('#gameover .modal-body').html('<p style="color:' + players[0].color + '">Game over</p>');
+            } else {
+                var winner = null;
+                for (i = 0; i < players.length; i++) {
+                    if (!players[i].collisionsCheck) {
+                        winner = players[i];
+                        break;
+                    }
                 }
+                $('#gameover .modal-body').html('<p style="color:' + winner.color + '"><span class="modal-playername">' + winner.name + '</span> wins !</p>');
             }
-            $('#gameover .modal-body').html('<p style="color:' + winner.color + '"><span class="modal-playername">' + winner.name + '</span> wins !</p>');
             $('#gameover').modal('show');
             setTimeout(function () {
                 $('#gameover').modal('hide');
