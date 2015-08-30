@@ -21,7 +21,7 @@ module.exports = function (grunt) {
         // JSHint task
         jshint: {
             options: {
-                esnext: true,
+                esnext: true
             },
             gruntfile: {
                 src: 'Gruntfile.js'
@@ -67,9 +67,12 @@ module.exports = function (grunt) {
         clean: {
             js: '<%= build_js_folder %><%= pkg.name %>.js',
             css: '<%= build_css_folder %><%= pkg.name %>.css',
-            all: [
+            src: [
                 '<%= build_js_folder %><%= pkg.name %>.js',
-                '<%= build_css_folder %><%= pkg.name %>.css',
+                '<%= build_css_folder %><%= pkg.name %>.css'
+            ],
+            all: [
+                'build/**'
             ]
         },
 
@@ -107,7 +110,8 @@ module.exports = function (grunt) {
 
     // Tasks definition
     grunt.registerTask('default', 'init');
-    grunt.registerTask('init', ['jshint', 'concat', 'uglify', 'cssmin', 'clean:all']);
+    grunt.registerTask('init', ['jshint', 'concat', 'uglify', 'cssmin', 'clean:src']);
     grunt.registerTask('dev', ['init', 'watch']);
+    grunt.registerTask('clean-src', 'clean:src');
     grunt.registerTask('clean-all', 'clean:all');
 };
