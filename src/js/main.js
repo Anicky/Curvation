@@ -4,6 +4,7 @@
  * KeyCodes : 37 = LEFT, 39 = RIGHT, 83 = S, 68 = D, G = 71, H = 72, L = 76, M = 77
  */
 const KEY_CODES = [[37, 39], [83, 68], [71, 72], [76, 77]];
+const PLAYER_COLORS = ['#D62525', '#2D70EA', '#396F19', '#F1BC42'];
 
 const DEFAULT_SNAKE_SIZE = 3;
 const DEFAULT_SNAKE_SPEED = 0.1;
@@ -123,15 +124,6 @@ $(document).ready(function () {
     canvas.height = $('.panel-body').height();
     context = canvas.getContext("2d");
 
-    // Init all player
-    players.push(new Player("Player 1", '#D62525'));
-    players.push(new Player("Player 2", '#2D70EA'));
-    players.push(new Player("Player 3", '#396F19'));
-    players.push(new Player("Player 4", '#F1BC42'));
-
-    // Update players score
-    updateScoresTable();
-
     // Bind all events for the movement
     $(this).keydown(function (e) {
         e.preventDefault();
@@ -146,9 +138,43 @@ $(document).ready(function () {
         }
     });
 
+    // Add player
+    $(".addPlayerButton").click(function () {
+        var playerId = players.length;
+        players.push(new Player("Player " + (playerId + 1), PLAYER_COLORS[playerId]));
+
+        // Update players score
+        updateScoresTable();
+
+        // Display remove button
+        $(".removePlayerButton").removeClass("hide");
+
+        // Hide button if the max amount of player is reached
+        if (players.length === KEY_CODES.length || players.length === PLAYER_COLORS.length) {
+            $(this).addClass("hide");
+        }
+    });
+
+    // remove last player
+    $(".removePlayerButton").click(function () {
+        var playerId = players.length - 1;
+        players.splice(playerId, 1);
+
+        // Update players score
+        updateScoresTable();
+
+        // Display add button
+        $(".addPlayerButton").removeClass("hide");
+
+        // Hide button if there is no more player in the game
+        if (players.length === 0) {
+            $(this).addClass("hide");
+        }
+    });
+
     // Start the party
-    $(".startButton").click(function() {
+    $(".startButton").click(function () {
         init();
-        $(".startButton").slideToggle();
+        $(".panel-buttons").slideToggle();
     });
 });
