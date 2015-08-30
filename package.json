@@ -33,9 +33,9 @@
     "url": "https://github.com/Anicky/Curvation/issues"
   },
   "homepage": "https://github.com/Anicky/Curvation#readme",
-  "main": "js/main.js",
+  "main": "build/js/curvation.min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install": "grunt init"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

@@ -106,6 +106,8 @@ module.exports = function (grunt) {
     });
 
     // Tasks definition
-    grunt.registerTask('default', 'dev');
-    grunt.registerTask('dev', ['jshint', 'concat', 'uglify', 'cssmin', 'clean:all', 'watch']);
+    grunt.registerTask('default', 'init');
+    grunt.registerTask('init', ['jshint', 'concat', 'uglify', 'cssmin', 'clean:all']);
+    grunt.registerTask('dev', ['init', 'watch']);
+    grunt.registerTask('clean-all', 'clean:all');
 };
