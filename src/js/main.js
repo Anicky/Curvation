@@ -62,7 +62,7 @@ function update(delta) {
                         }
                     }
                     updateScoresTable();
-                    if ((players.length === 1) || (playersLost === players.length - 1)) {
+                    if ((players.length === 1) || playersLost === players.length - 1) {
                         gameRunning = false;
                         break;
                     }
@@ -71,7 +71,7 @@ function update(delta) {
         }
         if (!gameRunning) {
             if (players.length === 1) {
-                $('#gameover .modal-body').html('<p style="color:' + players[0].color + '">Game over</p>');
+                $('#gameover .modal-body').html('<p style="color:' + players[0].color + '">Game over !</p>');
             } else {
                 var winner = null;
                 for (i = 0; i < players.length; i++) {
