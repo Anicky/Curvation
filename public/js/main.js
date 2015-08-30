@@ -5,18 +5,6 @@
  */
 const KEY_CODES = [[37, 39], [83, 68], [71, 72], [76, 77]];
 
-const DEFAULT_SNAKE_SIZE = 3;
-const DEFAULT_SNAKE_SPEED = 0.1;
-const DEFAULT_SNAKE_CURVE = 3;
-
-const DEFAULT_BEGIN_PADDING = 30;
-const DEFAULT_NO_COLLISIONS_TIME = 200;
-
-const DEFAULT_SNAKE_HOLE_SIZE_MIN = 8;
-const DEFAULT_SNAKE_HOLE_SIZE_MAX = 16;
-const DEFAULT_SNAKE_HOLE_MINIMUM_TIME = 20;
-const DEFAULT_SNAKE_HOLE_PROBABILITY = 0.5;
-
 var players = new Array();
 var playersOrdered = null;
 var canvas = null;
@@ -24,21 +12,7 @@ var context = null;
 var gameRunning = true;
 var noCollisionsTimer = 0;
 
-function setRandomX() {
-    return Math.floor(Math.random() * (canvas.width - DEFAULT_BEGIN_PADDING * 2 + 1)) + DEFAULT_BEGIN_PADDING;
-}
-
-function setRandomY() {
-    return Math.floor(Math.random() * (canvas.height - DEFAULT_BEGIN_PADDING * 2 + 1)) + DEFAULT_BEGIN_PADDING;
-}
-
-function setRandomAngle() {
-    return Math.random() * (2 * Math.PI);
-}
-
-function setRandomHoleSize() {
-    return Math.floor(Math.random() * (DEFAULT_SNAKE_HOLE_SIZE_MAX - DEFAULT_SNAKE_HOLE_SIZE_MIN + 1)) + DEFAULT_SNAKE_HOLE_SIZE_MIN;
-}
+var socket;
 
 function update(delta) {
     if (gameRunning) {
@@ -76,6 +50,7 @@ function update(delta) {
             setTimeout(function () {
                 $('#gameover').modal('hide');
                 init();
+                runGame();
             }, 2000);
         }
     }
@@ -95,14 +70,17 @@ function end(fps, panic) {
     }
 }
 
-function init() {
+function runGame() {
     context.clearRect(0, 0, canvas.width, canvas.height);
-    for (var i = 0; i < players.length; i++) {
-        players[i].init();
-    }
     gameRunning = true;
     noCollisionsTimer = 0;
     MainLoop.setUpdate(update).setDraw(draw).setEnd(end).start();
+}
+
+function init() {
+    for (var i = 0; i < players.length; i++) {
+        players[i].init();
+    }
 }
 
 function updateScoresTable() {
@@ -116,22 +94,82 @@ function updateScoresTable() {
     }
 }
 
+var setEventHandlers = function () {
+    socket.on("connect", onSocketConnected);
+    socket.on("disconnect", onSocketDisconnect);
+    socket.on("newPlayer", onNewPlayer);
+    socket.on("movePlayer", onMovePlayer);
+    socket.on("removePlayer", onRemovePlayer);
+};
+
+
+// Socket connected
+function onSocketConnected() {
+    console.log("Connected to socket server");
+    var pseudo = prompt("Quel est votre pseudo ?");
+    socket.emit("newPlayer", {name: pseudo});
+};
+
+// Socket disconnected
+function onSocketDisconnect() {
+    console.log("Disconnected from socket server");
+};
+
+// New player
+function onNewPlayer(data) {
+    console.log("New player connected: " + data.id);
+    // Initialise the new player
+    var newPlayer = new Player(data.name, data.color, data.x, data.y);
+    newPlayer.id = data.id;
+
+    // Add new player to the remote players array
+    players.push(newPlayer);
+    updateScoresTable();
+};
+
+// Move player
+function onMovePlayer(data) {
+    // @TODO
+};
+
+// Remove player
+function onRemovePlayer(data) {
+    var removePlayer = playerById(data.id);
+    if (!removePlayer) {
+        console.log("Player not found: " + data.id);
+        return;
+    }
+    players.splice(players.indexOf(removePlayer), 1);
+    updateScoresTable();
+};
+
+function playerById(id) {
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].id == id) {
+            return players[i];
+        }
+    }
+    return false;
+};
+
 $(document).ready(function () {
     // Init canvas
     canvas = document.getElementById('game');
-    canvas.width = $('.panel-body').width();
-    canvas.height = $('.panel-body').height();
     context = canvas.getContext("2d");
+    if (typeof io != 'undefined') {
+        socket = io.connect("http://localhost:8080");
+        setEventHandlers();
+    } else {
+        // Init all player
+        players.push(new Player("Player 1", '#D62525'));
+        players.push(new Player("Player 2", '#2D70EA'));
+        players.push(new Player("Player 3", '#396F19'));
+        players.push(new Player("Player 4", '#F1BC42'));
 
-    // Init all player
-    players.push(new Player("Player 1", '#D62525'));
-    players.push(new Player("Player 2", '#2D70EA'));
-    players.push(new Player("Player 3", '#396F19'));
-    players.push(new Player("Player 4", '#F1BC42'));
-
-    // Update players score
-    updateScoresTable();
-
+        // Update players score
+        init();
+        updateScoresTable();
+    }
     // Bind all events for the movement
     $(this).keydown(function (e) {
         e.preventDefault();
@@ -147,8 +185,8 @@ $(document).ready(function () {
     });
 
     // Start the party
-    $(".startButton").click(function() {
-        init();
+    $(".startButton").click(function () {
+        runGame();
         $(".startButton").slideToggle();
     });
 });
