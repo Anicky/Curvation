@@ -11,7 +11,7 @@ To get you started you can simply clone the Curvation repository and install the
 
 ### Prerequisites
 
-You need git to clone the Curvation repository. You can get git from
+You need git to clone the Curvation repostory. You can get git from
 [http://git-scm.com/](http://git-scm.com/).
 
 We also use a number of node.js tools to initialize Curvation. You must have node.js and
@@ -42,9 +42,13 @@ Grunt.js help us manage application.
 We have preconfigured `npm` to automatically run `grunt` to init the project, so we can simply do:
 
 ```
+npm install -g grunt-cli
+```
+to install the `grunt-cli`dependencie,
+then:
+```
 npm install
 ```
-
 Behind the scenes this will also call `grunt init`.  You should find that you have one new
 folder in your project :
 
