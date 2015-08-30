@@ -11,6 +11,7 @@ const DEFAULT_SNAKE_SPEED = 0.1;
 const DEFAULT_SNAKE_CURVE = 3;
 
 const DEFAULT_BEGIN_PADDING = 30;
+const DEFAULT_WAITING_TIME = 100;
 const DEFAULT_NO_COLLISIONS_TIME = 200;
 
 const DEFAULT_SNAKE_HOLE_SIZE_MIN = 8;
@@ -23,7 +24,7 @@ var playersOrdered = null;
 var canvas = null;
 var context = null;
 var gameRunning = true;
-var noCollisionsTimer = 0;
+var timer = 0;
 
 function setRandomX() {
     return Math.floor(Math.random() * (canvas.width - DEFAULT_BEGIN_PADDING * 2 + 1)) + DEFAULT_BEGIN_PADDING;
@@ -102,7 +103,8 @@ function init() {
         players[i].init();
     }
     gameRunning = true;
-    noCollisionsTimer = 0;
+    timer = 0;
+
     MainLoop.setUpdate(update).setDraw(draw).setEnd(end).start();
 }
 

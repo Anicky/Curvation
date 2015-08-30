@@ -23,7 +23,7 @@ Player.prototype.init = function () {
 };
 
 Player.prototype.update = function (delta) {
-    if (noCollisionsTimer >= DEFAULT_NO_COLLISIONS_TIME) {
+    if (timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME) {
         if (this.currentHole) {
             this.holeTimer++;
             if (this.holeTimer > this.holeSize) {
@@ -43,22 +43,23 @@ Player.prototype.update = function (delta) {
             this.holeTimer++;
         }
     }
-    if (this.currentHole || (noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME)) {
+    if (this.currentHole || (timer < DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME)) {
         this.history.pop();
     }
     this.history.push(new Point(this.x, this.y, this.size));
-    this.x += Math.cos(this.direction) * (this.speed * delta);
-    this.y += Math.sin(this.direction) * (this.speed * delta);
-    var tempX = this.x;
-    var tempY = this.y;
-    this.changeDirection();
-    tempX += Math.cos(this.direction) * this.size;
-    tempY += Math.sin(this.direction) * this.size;
-    if (noCollisionsTimer < DEFAULT_NO_COLLISIONS_TIME) {
-        noCollisionsTimer++;
-    } else if (!this.currentHole) {
-        this.collisionsCheck = this.checkCollisions(tempX, tempY);
+    if (timer >= DEFAULT_WAITING_TIME) {
+        this.x += Math.cos(this.direction) * (this.speed * delta);
+        this.y += Math.sin(this.direction) * (this.speed * delta);
+        var tempX = this.x;
+        var tempY = this.y;
+        this.changeDirection();
+        tempX += Math.cos(this.direction) * this.size;
+        tempY += Math.sin(this.direction) * this.size;
+        if (!this.currentHole) {
+            this.collisionsCheck = this.checkCollisions(tempX, tempY);
+        }
     }
+    timer++;
 };
 
 Player.prototype.draw = function (interpolationPercentage) {
