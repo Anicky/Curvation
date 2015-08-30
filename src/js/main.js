@@ -11,13 +11,17 @@ const DEFAULT_SNAKE_SPEED = 0.1;
 const DEFAULT_SNAKE_CURVE = 3;
 
 const DEFAULT_BEGIN_PADDING = 30;
-const DEFAULT_WAITING_TIME = 100;
+const DEFAULT_WAITING_TIME = 150;
 const DEFAULT_NO_COLLISIONS_TIME = 200;
 
 const DEFAULT_SNAKE_HOLE_SIZE_MIN = 8;
 const DEFAULT_SNAKE_HOLE_SIZE_MAX = 16;
 const DEFAULT_SNAKE_HOLE_MINIMUM_TIME = 20;
-const DEFAULT_SNAKE_HOLE_PROBABILITY = 0.5;
+const DEFAULT_SNAKE_HOLE_PROBABILITY = 1;
+
+const DEFAULT_SNAKE_ARROW_SPACE = 10;
+const DEFAULT_SNAKE_ARROW_SIZE = 50;
+const DEFAULT_SNAKE_ARROW_HEADSIZE = 15;
 
 var players = [];
 var playersOrdered = null;
@@ -119,6 +123,21 @@ function updateScoresTable() {
     }
 }
 
+function drawArrow(context, fromX, fromY, toX, toY, arrowHeadSize, color) {
+    var dX = toX - fromX;
+    var dY = toY - fromY;
+    var angle = Math.atan2(dY, dX);
+
+    context.strokeStyle = color;
+    context.beginPath();
+    context.moveTo(fromX, fromY);
+    context.lineTo(toX, toY);
+    context.lineTo(toX - arrowHeadSize * Math.cos(angle - Math.PI / 6), toY - arrowHeadSize * Math.sin(angle - Math.PI / 6));
+    context.moveTo(toX, toY);
+    context.lineTo(toX - arrowHeadSize * Math.cos(angle + Math.PI / 6), toY - arrowHeadSize * Math.sin(angle + Math.PI / 6));
+    context.stroke();
+}
+
 $(document).ready(function () {
     // Init canvas
     canvas = document.getElementById('game');
@@ -159,8 +178,7 @@ $(document).ready(function () {
 
     // remove last player
     $(".removePlayerButton").click(function () {
-        var playerId = players.length - 1;
-        players.splice(playerId, 1);
+        players.pop();
 
         // Update players score
         updateScoresTable();

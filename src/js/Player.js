@@ -67,6 +67,17 @@ Player.prototype.draw = function (interpolationPercentage) {
     for (var i = 0; i < this.history.length; i++) {
         this.history[i].draw();
     }
+    if (timer < DEFAULT_WAITING_TIME) {
+        drawArrow(
+            context,
+            this.x + Math.cos(this.direction) * DEFAULT_SNAKE_ARROW_SPACE,
+            this.y + Math.sin(this.direction) * DEFAULT_SNAKE_ARROW_SPACE,
+            this.x + Math.cos(this.direction) * (DEFAULT_SNAKE_ARROW_SPACE + DEFAULT_SNAKE_ARROW_SIZE),
+            this.y + Math.sin(this.direction) * (DEFAULT_SNAKE_ARROW_SPACE + DEFAULT_SNAKE_ARROW_SIZE),
+            DEFAULT_SNAKE_ARROW_HEADSIZE,
+            this.color
+        );
+    }
 };
 
 Player.prototype.checkCollisions = function (tempX, tempY) {
