@@ -174,6 +174,7 @@ $(document).ready(function () {
 
         // Display remove button
         $(".removePlayerButton").removeClass("hide");
+        $(".startButton").prop("disabled", false);
 
         // Hide button if the max amount of player is reached
         if (players.length === KEY_CODES.length || players.length === PLAYER_COLORS.length) {
@@ -194,6 +195,7 @@ $(document).ready(function () {
         // Hide button if there is no more player in the game
         if (players.length === 0) {
             $(this).addClass("hide");
+            $(".startButton").prop("disabled", true);
         }
     });
 
