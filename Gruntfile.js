@@ -12,10 +12,10 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         src_js_folder: 'src/js/',
-        build_js_folder: 'build/js/',
+        build_js_folder: 'public/js/',
         pattern_js: '**/*.js',
         src_css_folder: 'src/css/',
-        build_css_folder: 'build/css/',
+        build_css_folder: 'public/css/',
         pattern_css: '**/*.css',
 
         // JSHint task
