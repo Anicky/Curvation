@@ -145,6 +145,7 @@ function drawArrow(context, fromX, fromY, toX, toY, arrowHeadSize, color) {
 
 $(document).ready(function () {
     // Init canvas
+    $(".startButton").prop("disabled", true);
     canvas = document.getElementById('game');
     canvas.width = $('.panel-body').width();
     canvas.height = $('.panel-body').height();
