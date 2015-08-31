@@ -29,6 +29,8 @@ var canvas = null;
 var context = null;
 var gameRunning = true;
 var timer = 0;
+var gameLaunched = false;
+var gamePaused = false;
 
 function setRandomX() {
     return Math.floor(Math.random() * (canvas.width - DEFAULT_BEGIN_PADDING * 2 + 1)) + DEFAULT_BEGIN_PADDING;
@@ -47,7 +49,7 @@ function setRandomHoleSize() {
 }
 
 function update(delta) {
-    if (gameRunning) {
+    if ((gameRunning) && (!gamePaused)) {
         for (var i = 0; i < players.length; i++) {
             var p = players[i];
             if (!p.collisionsCheck) {
@@ -143,6 +145,14 @@ function drawArrow(context, fromX, fromY, toX, toY, arrowHeadSize, color) {
     context.stroke();
 }
 
+function checkPlayersKey(keyCode, isKeyPressed) {
+    if (gameRunning && !gamePaused) {
+        for (var i = 0; i < players.length; i++) {
+            players[i].checkKey(keyCode, KEY_CODES[i], isKeyPressed);
+        }
+    }
+}
+
 $(document).ready(function () {
     // Init canvas
     $(".startButton").prop("disabled", true);
@@ -154,15 +164,11 @@ $(document).ready(function () {
     // Bind all events for the movement
     $(this).keydown(function (e) {
         e.preventDefault();
-        for (var i = 0; i < players.length; i++) {
-            players[i].checkKey(e.keyCode, KEY_CODES[i], 1);
-        }
+        checkPlayersKey(e.keyCode, true);
     });
     $(this).keyup(function (e) {
         e.preventDefault();
-        for (var i = 0; i < players.length; i++) {
-            players[i].checkKey(e.keyCode, KEY_CODES[i], 0);
-        }
+        checkPlayersKey(e.keyCode, false);
     });
 
     // Add player
@@ -202,7 +208,21 @@ $(document).ready(function () {
 
     // Start the party
     $(".startButton").click(function () {
-        init();
-        $(".panel-buttons").slideToggle();
+        if (!gameLaunched) {
+            gameLaunched = true;
+            $('.playersButtons, .startButton, .pauseButton').slideToggle();
+            init();
+        }
+    });
+
+    // Pause/Play the game
+    $(".pauseButton").click(function () {
+        if (gamePaused) {
+            $(".pauseButton").html('Pause');
+            gamePaused = false;
+        } else {
+            $(".pauseButton").html('Play');
+            gamePaused = true;
+        }
     });
 });

@@ -6,8 +6,8 @@ function Player(name, color) {
 }
 
 Player.prototype.init = function () {
-    this.keyPressedLeft = 0;
-    this.keyPressedRight = 0;
+    this.keyPressedLeft = false;
+    this.keyPressedRight = false;
     this.x = setRandomX();
     this.y = setRandomY();
     this.direction = setRandomAngle();

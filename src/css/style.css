@@ -29,3 +29,7 @@
 .modal-playername {
     font-weight: bold;
 }
+
+.pauseButton {
+    display: none;
+}
