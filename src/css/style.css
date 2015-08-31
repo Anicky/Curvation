@@ -1,5 +1,7 @@
-.nopadding {
-    padding: 0;
+.panel-game {
+    text-align: center;
+    border: none;
+    box-shadow: none;
 }
 
 #scores {
@@ -28,6 +30,10 @@
 
 .modal-playername {
     font-weight: bold;
+}
+
+#game {
+    border: 1px solid #ddd;
 }
 
 .pauseButton {

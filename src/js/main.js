@@ -1,28 +1,3 @@
-/**
- * La première dimension du tableau correspond aux numéros des joueurs.
- * La deuxième dimension correspond aux touches assignés pour la gauche (index 0) et pour la droite (index 1)
- * KeyCodes : 37 = LEFT, 39 = RIGHT, 83 = S, 68 = D, G = 71, H = 72, L = 76, M = 77
- */
-const KEY_CODES = [[37, 39], [83, 68], [71, 72], [76, 77]];
-const PLAYER_COLORS = ['#D62525', '#2D70EA', '#396F19', '#F1BC42'];
-
-const DEFAULT_SNAKE_SIZE = 3;
-const DEFAULT_SNAKE_SPEED = 0.1;
-const DEFAULT_SNAKE_CURVE = 3;
-
-const DEFAULT_BEGIN_PADDING = 30;
-const DEFAULT_WAITING_TIME = 100;
-const DEFAULT_NO_COLLISIONS_TIME = 100;
-
-const DEFAULT_SNAKE_HOLE_SIZE_MIN = 8;
-const DEFAULT_SNAKE_HOLE_SIZE_MAX = 16;
-const DEFAULT_SNAKE_HOLE_MINIMUM_TIME = 20;
-const DEFAULT_SNAKE_HOLE_PROBABILITY = 1;
-
-const DEFAULT_SNAKE_ARROW_SPACE = 10;
-const DEFAULT_SNAKE_ARROW_SIZE = 50;
-const DEFAULT_SNAKE_ARROW_HEADSIZE = 15;
-
 var players = [];
 var playersOrdered = null;
 var canvas = null;
@@ -31,22 +6,7 @@ var gameRunning = true;
 var timer = 0;
 var gameLaunched = false;
 var gamePaused = false;
-
-function setRandomX() {
-    return Math.floor(Math.random() * (canvas.width - DEFAULT_BEGIN_PADDING * 2 + 1)) + DEFAULT_BEGIN_PADDING;
-}
-
-function setRandomY() {
-    return Math.floor(Math.random() * (canvas.height - DEFAULT_BEGIN_PADDING * 2 + 1)) + DEFAULT_BEGIN_PADDING;
-}
-
-function setRandomAngle() {
-    return Math.random() * (2 * Math.PI);
-}
-
-function setRandomHoleSize() {
-    return Math.floor(Math.random() * (DEFAULT_SNAKE_HOLE_SIZE_MAX - DEFAULT_SNAKE_HOLE_SIZE_MIN + 1)) + DEFAULT_SNAKE_HOLE_SIZE_MIN;
-}
+var socket;
 
 function update(delta) {
     if ((gameRunning) && (!gamePaused)) {
@@ -153,6 +113,63 @@ function checkPlayersKey(keyCode, isKeyPressed) {
     }
 }
 
+var setEventHandlers = function () {
+    socket.on("connect", onSocketConnected);
+    socket.on("disconnect", onSocketDisconnect);
+    socket.on("newPlayer", onNewPlayer);
+    socket.on("movePlayer", onMovePlayer);
+    socket.on("removePlayer", onRemovePlayer);
+};
+
+// Socket connected
+function onSocketConnected() {
+    console.log("Connected to socket server");
+    var pseudo = prompt("Quel est votre pseudo ?");
+    socket.emit("newPlayer", {name: pseudo});
+}
+
+// Socket disconnected
+function onSocketDisconnect() {
+    console.log("Disconnected from socket server");
+}
+
+// New player
+function onNewPlayer(data) {
+    console.log("New player connected: " + data.id);
+    // Initialise the new player
+    var newPlayer = new Player(data.name, data.color, data.x, data.y);
+    newPlayer.id = data.id;
+
+    // Add new player to the remote players array
+    players.push(newPlayer);
+    updateScoresTable();
+}
+
+// Move player
+function onMovePlayer(data) {
+    // @TODO
+}
+
+// Remove player
+function onRemovePlayer(data) {
+    var removePlayer = playerById(data.id);
+    if (!removePlayer) {
+        console.log("Player not found: " + data.id);
+        return;
+    }
+    players.splice(players.indexOf(removePlayer), 1);
+    updateScoresTable();
+}
+
+function playerById(id) {
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].id == id) {
+            return players[i];
+        }
+    }
+    return false;
+}
+
 $(document).ready(function () {
     // Init canvas
     $(".startButton").prop("disabled", true);
@@ -160,6 +177,12 @@ $(document).ready(function () {
     canvas.width = $('.panel-body').width();
     canvas.height = $('.panel-body').height();
     context = canvas.getContext("2d");
+
+    if (typeof io != 'undefined') {
+        socket = io.connect("http://localhost:8080");
+        setEventHandlers();
+        $('.playersButtons, .startButton').slideToggle();
+    }
 
     // Bind all events for the movement
     $(this).keydown(function (e) {
@@ -174,7 +197,9 @@ $(document).ready(function () {
     // Add player
     $(".addPlayerButton").click(function () {
         var playerId = players.length;
-        players.push(new Player("Player " + (playerId + 1), PLAYER_COLORS[playerId]));
+        var player = new Player("Player " + (playerId + 1), PLAYER_COLORS[playerId]);
+        player.init();
+        players.push(player);
 
         // Update players score
         updateScoresTable();
