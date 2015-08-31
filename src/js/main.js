@@ -173,6 +173,7 @@ function playerById(id) {
 $(document).ready(function () {
     // Init canvas
     $(".startButton").prop("disabled", true);
+    $(".addPlayerButton").prop("disabled", true);
     canvas = document.getElementById('game');
     canvas.width = $('.panel-body').width();
     canvas.height = $('.panel-body').height();
@@ -182,6 +183,8 @@ $(document).ready(function () {
         socket = io.connect("http://localhost:8080");
         setEventHandlers();
         $('.playersButtons, .startButton').slideToggle();
+    } else {
+        $(".addPlayerButton").prop("disabled", false);
     }
 
     // Bind all events for the movement
