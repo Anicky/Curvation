@@ -1,9 +1,15 @@
 # Curvation
 
 ## Introduction
-Curvation est un jeu développé par Jérémie Jalouzet / Julien De conti / Claire-Hélène Stenz / Guillaume Thirard.
 
-Le code étant open-source, vous pouvez vous amuser à faire vos propres fork et proposer vos pull request dans le but d'ajouter des fonctionnalités.
+Curvation is a game created by :
+* Julien DE CONTI
+* Jérémie JALOUZET
+* Alexis MAZAUDIER
+* Claire-Hélène STENTZ
+* Guillaume THIRARD
+
+This project is open-source, you can make forks and purpose pull request if you want to add features.
 
 ## Getting Started
 
