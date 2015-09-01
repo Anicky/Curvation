@@ -69,17 +69,15 @@ Simply use the index.html in the main folder.
 ## Using Grunt.js
 
 You can manually use Grunt.js to generate all the needed files into the `public/` folder by running :
-
 ```
 grunt init
 ```
 
 If you are a developper, you can use the dev mode wich doesn't minify the sources by running :
 ```
-grunt build
+grunt dev
 ```
-`grunt build` will run the dev tasks then `watch` automatic task. This task will rebuild all the public files whenever sources files (within the `src/` folder) changes.
-
+`grunt dev` will run the dev tasks then `watch` automatic task. This task will rebuild all the public files whenever sources files (within the `src/` folder) changes.
 
 ## Updating the dependencies
 

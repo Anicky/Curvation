@@ -136,12 +136,13 @@ module.exports = function (grunt) {
 
     // Tasks definition
     grunt.registerTask('default', 'init');
-    grunt.registerTask('init', ['jshint', 'concat', 'uglify:prod', 'cssmin', 'copy', 'clean-src']);
     grunt.registerTask('build', 'Build the files and watch changes', function (debug) {
         // 'grunt build:prod'
         if (debug === 'prod') {
-            // We can add specific tasks before running 'init here...
-            grunt.task.run('init');
+            // We can add specific tasks before...
+
+            // Launch the prod tools
+            grunt.task.run(['jshint', 'concat', 'uglify:prod', 'cssmin', 'copy', 'clean-src']);
         } else { // 'grunt build'
             // Update the CSS concat dest to be the same as cssmin
             var destCss = grunt.config('cssmin.files.dest');
@@ -149,10 +150,10 @@ module.exports = function (grunt) {
 
             // Launch the dev tools
             grunt.task.run(['jshint', 'concat', 'uglify:dev', 'copy', 'clean-src']);
-            // Launch the watch
-            grunt.task.run('watch');
         }
     });
+    grunt.registerTask('init', 'build:prod');
+    grunt.registerTask('dev', ['build', 'watch']);
     grunt.registerTask('clean-src', ['clean:js', 'clean:css']);
     grunt.registerTask('clean-all', 'clean:all');
 };
