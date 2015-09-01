@@ -6,17 +6,34 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        banner: '/*! <%= pkg.name %> - <%= pkg.version %> | <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n',
+        paths: {
+            src: {
+                folder: 'src/',
+                js: '<%= paths.src.folder %>js/**/*.js',
+                css: '<%= paths.src.folder %>css/**/*.css'
+            },
+            dest: {
+                folder: 'public/',
+                js: '<%= paths.dest.folder %>js/<%= pkg.name %>.js',
+                jsMin: '<%= paths.dest.folder %>js/<%= pkg.name %>.min.js',
+                css: '<%= paths.dest.folder %>css/<%= pkg.name %>.css',
+                cssMin: '<%= paths.dest.folder %>css/<%= pkg.name %>.min.css',
+            }
+        },
 
-        src_js_folder: 'src/js/',
-        build_js_folder: 'public/js/',
-        pattern_js: '**/*.js',
-        src_css_folder: 'src/css/',
-        build_css_folder: 'public/css/',
-        pattern_css: '**/*.css',
+        // Copy task
+        copy: {
+            index: {
+                src: '<%= paths.src.folder %>index.html',
+                dest: '<%= paths.dest.folder %>index.html',
+            }
+        },
 
         // JSHint task
         jshint: {
@@ -27,53 +44,63 @@ module.exports = function (grunt) {
                 src: 'Gruntfile.js'
             },
             js: {
-                src: '<%= src_js_folder %><%= pattern_js %>'
+                src: '<%= paths.src.js %>'
             }
         },
 
         // Concatenation task
         concat: {
+            options: {
+                separator: ''
+            },
             js: {
-                src: '<%= src_js_folder %><%= pattern_js %>',
-                dest: '<%= build_js_folder %><%= pkg.name %>.js'
+                src: '<%= paths.src.js %>',
+                dest: '<%= paths.dest.js %>'
             },
             css: {
-                src: '<%= src_css_folder %><%= pattern_css %>',
-                dest: '<%= build_css_folder %><%= pkg.name %>.css'
+                src: '<%= paths.src.css %>',
+                dest: '<%= paths.dest.css %>'
             }
         },
 
         // Minification tasks
         uglify: {
-            options: {
-                banner: '/*! <%= pkg.name %> <%= pkg.version %> | <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n'
+            prod: {
+                options: {
+                    banner: '<%= banner %> ',
+                    compress: true,
+                    mangle: true,
+                    drop_console: true
+                },
+                src: '<%= paths.src.js %>',
+                dest: '<%= paths.dest.jsMin %>'
             },
-            files: {
-                src: '<%= src_js_folder %><%= pattern_js %>',
-                dest: '<%= build_js_folder %><%= pkg.name %>.min.js'
+            dev: {
+                options: {
+                    banner: '<%= banner %> ',
+                    beautify: true,
+                    mangle: false,
+                    compress: false,
+                    drop_console: false,
+                    preserveComments: 'all'
+                },
+                src: '<%= paths.src.js %>',
+                dest: '<%= paths.dest.jsMin %>'
             }
         },
+
         cssmin: {
-            options: {
-                banner: '/*! <%= pkg.name %> <%= pkg.version %> | <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n'
-            },
             files: {
-                src: '<%= src_css_folder %><%= pattern_css %>',
-                dest: '<%= build_css_folder %><%= pkg.name %>.min.css'
+                src: '<%= paths.src.css %>',
+                dest: '<%= paths.dest.cssMin %>'
             }
         },
 
         // Clean task
         clean: {
-            js: '<%= build_js_folder %><%= pkg.name %>.js',
-            css: '<%= build_css_folder %><%= pkg.name %>.css',
-            src: [
-                '<%= build_js_folder %><%= pkg.name %>.js',
-                '<%= build_css_folder %><%= pkg.name %>.css'
-            ],
-            all: [
-                'build/**'
-            ]
+            js: '<%= paths.dest.js %>',
+            css: '<%= paths.dest.css %>',
+            all: ['build/**']
         },
 
         // Watch task
@@ -89,19 +116,18 @@ module.exports = function (grunt) {
                 tasks: ['jshint:gruntfile']
             },
             js: {
-                files: '<%= src_js_folder %><%= pattern_js %>',
+                files: '<%= paths.src.js %>',
                 tasks: [
                     'jshint:js',
                     'concat:js',
-                    'uglify',
+                    'uglify:dev',
                     'clean:js'
                 ]
             },
             css: {
-                files: '<%= src_css_folder %><%= pattern_css %>',
+                files: '<%= paths.src.css %>',
                 tasks: [
                     'concat:css',
-                    'cssmin',
                     'clean:css'
                 ]
             }
@@ -110,8 +136,23 @@ module.exports = function (grunt) {
 
     // Tasks definition
     grunt.registerTask('default', 'init');
-    grunt.registerTask('init', ['jshint', 'concat', 'uglify', 'cssmin', 'clean:src']);
-    grunt.registerTask('dev', ['init', 'watch']);
-    grunt.registerTask('clean-src', 'clean:src');
+    grunt.registerTask('init', ['jshint', 'concat', 'uglify:prod', 'cssmin', 'copy', 'clean-src']);
+    grunt.registerTask('build', 'Build the files and watch changes', function (debug) {
+        // 'grunt build:prod'
+        if (debug === 'prod') {
+            // We can add specific tasks before running 'init here...
+            grunt.task.run('init');
+        } else { // 'grunt build'
+            // Update the CSS concat dest to be the same as cssmin
+            var destCss = grunt.config('cssmin.files.dest');
+            grunt.config('concat.css.dest', destCss);
+
+            // Launch the dev tools
+            grunt.task.run(['jshint', 'concat', 'uglify:dev', 'copy', 'clean-src']);
+            // Launch the watch
+            grunt.task.run('watch');
+        }
+    });
+    grunt.registerTask('clean-src', ['clean:js', 'clean:css']);
     grunt.registerTask('clean-all', 'clean:all');
 };

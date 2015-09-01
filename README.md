@@ -45,12 +45,12 @@ Grunt.js help us manage application.
 
 * We get the tools we depend upon via `npm`, the [node package manager][npm].
 
-We have preconfigured `npm` to automatically run `grunt` to init the project, so we can simply do:
+We have preconfigured `npm` to automatically run `grunt` to init the project, so you can simply do:
 
 ```
 npm install -g grunt-cli
 ```
-to install the `grunt-cli`dependencie,
+to install the `grunt-cli` dependencie,
 then do:
 ```
 npm install
@@ -60,7 +60,7 @@ Behind the scenes this will also call `grunt init`.  You should find that you ha
 folders in your project :
 
 * `node_modules/` - contains the npm packages for the tools we need
-* `build/` - ...
+* `public/` - ...
 
 ## Run the Game
 
@@ -68,25 +68,17 @@ Simply use the index.html in the main folder.
 
 ## Using Grunt.js
 
-If you are a developper, you can manually use Grunt.js to manage and update the files by running :
+You can manually use Grunt.js to generate all the needed files into the `public/` folder by running :
 
 ```
 grunt init
 ```
 
-This will generate some needed files into the `build/` folder.
-
+If you are a developper, you can use the dev mode wich doesn't minify the sources by running :
 ```
-grunt watch
+grunt build
 ```
-
-This will run `init` task automatically whenever watched sources files (within the `src/` folder) change.
-
-```
-grunt dev
-```
-
-This will run the `init` task then the `watch` automatic task.
+`grunt build` will run the dev tasks then `watch` automatic task. This task will rebuild all the public files whenever sources files (within the `src/` folder) changes.
 
 
 ## Updating the dependencies
@@ -98,35 +90,6 @@ npm update
 ```
 
 This will find the latest versions that match the version ranges specified in the `package.json` file.
-
-## Directory Layout
-
-```
-build/                    --> description...
-  css/                    --> ...
-    curvation.min.css     --> ...
-  js/
-    curvation.min.js      --> ...
-libs/                     --> ...
-  bootstrap/              --> ...
-    bootstrap.min.css     --> ...
-    bootstrap.min.css     --> ...
-  jquery/                 --> ...
-    jquery.min.js         --> ...
-  mainloop/               --> ...
-    mainloop.min.js       --> ...
-src/                      --> ...
-  css/                    --> ...
-    style.css             --> ...
-  js/                     --> ...
-    main.js               --> ...
-    Player.js             --> ...
-    Point.js              --> ...
-Gruntfile.js              --> ...
-index.html                --> ...
-package.json              --> ...
-README.md                 --> ...
-```
 
 ## Contact
 
