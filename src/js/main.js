@@ -173,18 +173,14 @@ function playerById(id) {
 $(document).ready(function () {
     // Init canvas
     $(".startButton").prop("disabled", true);
-    $(".addPlayerButton").prop("disabled", true);
+    $(".onlineGameButton").prop("disabled", true);
     canvas = document.getElementById('game');
     canvas.width = $('.panel-body').width();
     canvas.height = $('.panel-body').height();
     context = canvas.getContext("2d");
 
     if (typeof io != 'undefined') {
-        socket = io.connect("http://localhost:8080");
-        setEventHandlers();
-        $('.playersButtons, .startButton').slideToggle();
-    } else {
-        $(".addPlayerButton").prop("disabled", false);
+        $(".onlineGameButton").prop("disabled", false);
     }
 
     // Bind all events for the movement
@@ -195,6 +191,16 @@ $(document).ready(function () {
     $(this).keyup(function (e) {
         e.preventDefault();
         checkPlayersKey(e.keyCode, false);
+    });
+
+    $(".onlineGameButton").click(function() {
+        socket = io.connect("http://localhost:8080");
+        $(".gameModeButtons").slideToggle();
+        setEventHandlers();
+    });
+
+    $(".localGameButton").click(function() {
+        $(".gameModeButtons, .playersButtons, .startButton").slideToggle();
     });
 
     // Add player
