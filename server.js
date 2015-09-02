@@ -3,6 +3,10 @@ var io = require("socket.io")
 var Player = require("./src/js/Player").Player;
 var Point = require("./src/js/Point").Point;
 var fs = require("fs");
+var http = require('http');
+var io = require('socket.io');
+var express = require('express');
+var vhost = require('vhost');
 
 function read(f) {
     return fs.readFileSync(f).toString();
@@ -16,12 +20,20 @@ include('./src/js/tools.js');
 var socket;
 var players;
 var colors;
+var app;
+var server;
+var host;
 
 function init() {
+    app = new express();
+    host = vhost("dev.curvation.fr", express.static('public'));
+    server = http.createServer(app);
     players = [];
     colors = ['#D62525', '#2D70EA', '#396F19', '#F1BC42'];
-    socket = io.listen(8080);
+    socket = io.listen(server);
     setEventHandlers();
+    app.use(host);
+    server.listen(80);
 };
 
 var setEventHandlers = function () {
