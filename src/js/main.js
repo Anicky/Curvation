@@ -1,86 +1,16 @@
-var players = [];
 var playersOrdered = null;
 var canvas = null;
 var context = null;
-var gameRunning = true;
 var timer = 0;
-var gameLaunched = false;
-var gamePaused = false;
 var socket;
+var onlineGame = false;
+var game;
 
-function update(delta) {
-    if ((gameRunning) && (!gamePaused)) {
-        for (var i = 0; i < players.length; i++) {
-            var p = players[i];
-            if (!p.collisionsCheck) {
-                p.update(delta);
-                if (p.collisionsCheck) {
-                    var playersLost = 0;
-                    for (var j = 0; j < players.length; j++) {
-                        if (!players[j].collisionsCheck) {
-                            players[j].score++;
-                        } else {
-                            playersLost++;
-                        }
-                    }
-                    updateScoresTable();
-                    if ((players.length === 1) || playersLost === players.length - 1) {
-                        gameRunning = false;
-                        break;
-                    }
-                }
-            }
-        }
-        if (!gameRunning) {
-            if (players.length === 1) {
-                $('#gameover .modal-body').html('<p style="color:' + players[0].color + '">Game over !</p>');
-            } else {
-                var winner = null;
-                for (i = 0; i < players.length; i++) {
-                    if (!players[i].collisionsCheck) {
-                        winner = players[i];
-                        break;
-                    }
-                }
-                $('#gameover .modal-body').html('<p style="color:' + winner.color + '"><span class="modal-playername">' + winner.name + '</span> wins !</p>');
-            }
-            $('#gameover').modal('show');
-            setTimeout(function () {
-                $('#gameover').modal('hide');
-                init();
-            }, 2000);
-        }
-        timer++;
-    }
-}
-
-function draw(interpolationPercentage) {
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    for (var i = 0; i < players.length; i++) {
-        players[i].draw(interpolationPercentage);
-    }
-}
-
-function end(fps, panic) {
-    if (panic) {
-        var discardedTime = Math.round(MainLoop.resetFrameDelta());
-        console.warn('Main loop panicked, probably because the browser tab was put in the background. Discarding ' + discardedTime + 'ms');
-    }
-}
-
-function init() {
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    for (var i = 0; i < players.length; i++) {
-        players[i].init();
-    }
-    gameRunning = true;
-    timer = 0;
-
-    MainLoop.setUpdate(update).setDraw(draw).setEnd(end).start();
-}
+var key_left_pressed = false;
+var key_right_pressed = false;
 
 function updateScoresTable() {
-    playersOrdered = players.slice(0);
+    playersOrdered = game.players.slice(0);
     playersOrdered.sort(function (a, b) {
         return b.score - a.score;
     });
@@ -106,9 +36,27 @@ function drawArrow(context, fromX, fromY, toX, toY, arrowHeadSize, color) {
 }
 
 function checkPlayersKey(keyCode, isKeyPressed) {
-    if (gameRunning && !gamePaused) {
-        for (var i = 0; i < players.length; i++) {
-            players[i].checkKey(keyCode, KEY_CODES[i], isKeyPressed);
+    if (game.gameRunning && !game.gamePaused) {
+        if (onlineGame) {
+            if (isKeyPressed) {
+                if ((keyCode === KEY_CODES[0][0]) && (!key_left_pressed)) {
+                    key_left_pressed = true;
+                    socket.emit("movePlayer", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+                } else if ((keyCode === KEY_CODES[0][1]) && (!key_right_pressed)) {
+                    key_right_pressed = true;
+                    socket.emit("movePlayer", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+                }
+            } else if (keyCode === KEY_CODES[0][0]) {
+                key_left_pressed = false;
+                socket.emit("movePlayer", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+            } else if (keyCode === KEY_CODES[0][1]) {
+                key_right_pressed = false;
+                socket.emit("movePlayer", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+            }
+        } else {
+            for (var i = 0; i < game.players.length; i++) {
+                game.players[i].checkKey(keyCode, KEY_CODES[i], isKeyPressed);
+            }
         }
     }
 }
@@ -119,7 +67,28 @@ var setEventHandlers = function () {
     socket.on("newPlayer", onNewPlayer);
     socket.on("movePlayer", onMovePlayer);
     socket.on("removePlayer", onRemovePlayer);
+    socket.on("serverMessage", onServerMessage);
+    socket.on("draw", onDraw);
 };
+
+function onDraw(data) {
+    game.players = data.players;
+    console.log(game);
+    game.draw(data.interpolationPercentage);
+}
+
+function onServerMessage(data) {
+    if (data.message === 'init') {
+        $(".startButton").slideToggle();
+    } else if (data.message === 'wait') {
+        $(".waitButton").slideToggle();
+    } else if (data.message == 'ready') {
+        $(".startButton").prop("disabled", false);
+    } else if (data.message == 'start') {
+        game.gameLaunched = true;
+        $(".runButtons").slideToggle();
+    }
+}
 
 // Socket connected
 function onSocketConnected() {
@@ -141,7 +110,7 @@ function onNewPlayer(data) {
     newPlayer.id = data.id;
 
     // Add new player to the remote players array
-    players.push(newPlayer);
+    game.addPlayer(newPlayer);
     updateScoresTable();
 }
 
@@ -157,27 +126,39 @@ function onRemovePlayer(data) {
         console.log("Player not found: " + data.id);
         return;
     }
-    players.splice(players.indexOf(removePlayer), 1);
+    game.players.splice(game.players.indexOf(removePlayer), 1);
     updateScoresTable();
 }
 
 function playerById(id) {
-    for (var i = 0; i < players.length; i++) {
-        if (players[i].id == id) {
-            return players[i];
+    for (var i = 0; i < game.players.length; i++) {
+        if (game.players[i].id == id) {
+            return game.players[i];
         }
     }
     return false;
 }
 
+function update(delta) {
+    game.update(delta);
+}
+
+function draw(interpolationPercentage) {
+    game.draw(interpolationPercentage);
+}
+
+function end(fps, panic) {
+    game.end(fps, panic);
+}
+
 $(document).ready(function () {
     // Init canvas
-    $(".startButton").prop("disabled", true);
-    $(".onlineGameButton").prop("disabled", true);
+    $(".startButton, .onlineGameButton, .waitButton").prop("disabled", true);
     canvas = document.getElementById('game');
     canvas.width = $('.panel-body').width();
     canvas.height = $('.panel-body').height();
     context = canvas.getContext("2d");
+    game = new Game();
 
     if (typeof io != 'undefined') {
         $(".onlineGameButton").prop("disabled", false);
@@ -193,22 +174,23 @@ $(document).ready(function () {
         checkPlayersKey(e.keyCode, false);
     });
 
-    $(".onlineGameButton").click(function() {
+    $(".onlineGameButton").click(function () {
         socket = io();
         $(".gameModeButtons").slideToggle();
+        onlineGame = true;
         setEventHandlers();
     });
 
-    $(".localGameButton").click(function() {
+    $(".localGameButton").click(function () {
         $(".gameModeButtons, .playersButtons, .startButton").slideToggle();
     });
 
     // Add player
     $(".addPlayerButton").click(function () {
-        var playerId = players.length;
+        var playerId = game.players.length;
         var player = new Player("Player " + (playerId + 1), PLAYER_COLORS[playerId]);
         player.init();
-        players.push(player);
+        game.addPlayer(player);
 
         // Update players score
         updateScoresTable();
@@ -218,14 +200,14 @@ $(document).ready(function () {
         $(".startButton").prop("disabled", false);
 
         // Hide button if the max amount of player is reached
-        if (players.length === KEY_CODES.length || players.length === PLAYER_COLORS.length) {
+        if (game.players.length === KEY_CODES.length || game.players.length === PLAYER_COLORS.length) {
             $(this).addClass("hide");
         }
     });
 
     // remove last player
     $(".removePlayerButton").click(function () {
-        players.pop();
+        game.players.pop();
 
         // Update players score
         updateScoresTable();
@@ -234,7 +216,7 @@ $(document).ready(function () {
         $(".addPlayerButton").removeClass("hide");
 
         // Hide button if there is no more player in the game
-        if (players.length === 0) {
+        if (game.players.length === 0) {
             $(this).addClass("hide");
             $(".startButton").prop("disabled", true);
         }
@@ -242,26 +224,30 @@ $(document).ready(function () {
 
     // Start the party
     $(".startButton").click(function () {
-        if (!gameLaunched) {
-            gameLaunched = true;
+        if (!game.gameLaunched && !onlineGame) {
             $('.playersButtons, .startButton, .gameRunningButtons').slideToggle();
-            init();
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            game.gameLaunched = true;
+            game.init();
+            MainLoop.setUpdate(update).setDraw(draw).setEnd(end).start();
+        } else if (!game.gameLaunched && onlineGame) {
+            socket.emit("message", {start: true});
         }
     });
 
     // Pause/Play the game
     $(".pauseButton").click(function () {
-        if (!gamePaused) {
+        if (!game.gamePaused) {
             $(".playButton").show();
             $(".pauseButton").hide();
-            gamePaused = true;
+            game.gamePaused = true;
         }
     });
     $(".playButton").click(function () {
-        if (gamePaused) {
+        if (game.gamePaused) {
             $(".playButton").hide();
             $(".pauseButton").show();
-            gamePaused = false;
+            game.gamePaused = false;
         }
     });
 });

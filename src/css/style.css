@@ -36,7 +36,7 @@
     border: 1px solid #ddd;
 }
 
-.gameRunningButtons, .startButton, .playersButtons, .playButton {
+.gameRunningButtons, .startButton, .playersButtons, .playButton, .waitButton {
     display: none;
 }
 
