@@ -59,7 +59,7 @@ module.exports = function (grunt) {
             },
             css: {
                 src: '<%= paths.src.css %>',
-                dest: '<%= paths.dest.css %>'
+                dest: '<%= paths.dest.cssMin %>'
             }
         },
 
@@ -139,15 +139,12 @@ module.exports = function (grunt) {
     grunt.registerTask('build', 'Build the files and watch changes', function (debug) {
         // 'grunt build:prod'
         if (debug === 'prod') {
-            // We can add specific tasks before...
+            var destCss = grunt.config('paths.dest.css');
+            grunt.config('concat.css.dest', destCss);
 
             // Launch the prod tools
             grunt.task.run(['jshint', 'concat', 'uglify:prod', 'cssmin', 'copy', 'clean-src']);
         } else { // 'grunt build'
-            // Update the CSS concat dest to be the same as cssmin
-            var destCss = grunt.config('cssmin.files.dest');
-            grunt.config('concat.css.dest', destCss);
-
             // Launch the dev tools
             grunt.task.run(['jshint', 'concat', 'uglify:dev', 'copy', 'clean-src']);
         }
