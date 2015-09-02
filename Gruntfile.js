@@ -143,7 +143,7 @@ module.exports = function (grunt) {
         clean: {
             js: '<%= paths.dest.js %>',
             css: '<%= paths.dest.css %>',
-            all: ['build/**']
+            all: '<%= paths.dest.folder %>**'
         },
 
         // Watch task
