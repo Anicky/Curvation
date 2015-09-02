@@ -31,7 +31,7 @@ module.exports = function (grunt) {
         copy: {
             index: {
                 src: '<%= paths.src.folder %>index.html',
-                dest: '<%= paths.dest.folder %>index.html',
+                dest: '<%= paths.dest.folder %>index.html'
             }
         },
 
@@ -130,6 +130,10 @@ module.exports = function (grunt) {
                     'concat:css',
                     'clean:css'
                 ]
+            },
+            index: {
+                files: '<%= paths.src.folder %>index.html',
+                tasks: ['copy']
             }
         }
     });
