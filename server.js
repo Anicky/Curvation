@@ -6,6 +6,7 @@ var fs = require("fs");
 var http = require('http');
 var io = require('socket.io');
 var express = require('express');
+var vhost = require('vhost');
 
 function read(f) {
     return fs.readFileSync(f).toString();
@@ -21,15 +22,17 @@ var players;
 var colors;
 var app;
 var server;
+var host;
 
 function init() {
     app = new express();
+    host = vhost("dev.curvation.fr", express.static('public'));
     server = http.createServer(app);
     players = [];
     colors = ['#D62525', '#2D70EA', '#396F19', '#F1BC42'];
     socket = io.listen(server);
     setEventHandlers();
-    app.use(express.static('public'));
+    app.use(host);
     server.listen(80);
 };
 
