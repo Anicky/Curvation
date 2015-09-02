@@ -244,19 +244,24 @@ $(document).ready(function () {
     $(".startButton").click(function () {
         if (!gameLaunched) {
             gameLaunched = true;
-            $('.playersButtons, .startButton, .pauseButton').slideToggle();
+            $('.playersButtons, .startButton, .gameRunningButtons').slideToggle();
             init();
         }
     });
 
     // Pause/Play the game
     $(".pauseButton").click(function () {
-        if (gamePaused) {
-            $(".pauseButton").html('Pause');
-            gamePaused = false;
-        } else {
-            $(".pauseButton").html('Play');
+        if (!gamePaused) {
+            $(".playButton").show();
+            $(".pauseButton").hide();
             gamePaused = true;
+        }
+    });
+    $(".playButton").click(function () {
+        if (gamePaused) {
+            $(".playButton").hide();
+            $(".pauseButton").show();
+            gamePaused = false;
         }
     });
 });

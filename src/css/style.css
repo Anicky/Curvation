@@ -36,6 +36,10 @@
     border: 1px solid #ddd;
 }
 
-.pauseButton, .startButton, .playersButtons {
+.gameRunningButtons, .startButton, .playersButtons, .playButton {
     display: none;
+}
+
+.panel-buttons button {
+    margin-bottom: 10px;
 }
