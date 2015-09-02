@@ -40,18 +40,20 @@ git clone --depth=1 https://github.com/Anicky/Curvation.git <your-project-name>
 
 ### Install Dependencies
 
-We have some dependencies in this project: `grunt` and angular framework code (soon...).
+We have some dependencies in this project: `bower`, `grunt` and angular framework code (soon...).
 Grunt.js help us manage application.
 
 * We get the tools we depend upon via `npm`, the [node package manager][npm].
 
-We have preconfigured `npm` to automatically run `grunt` to init the project, so you can simply do:
-
+We need to install the dependencies `bower` and `grunt-cli` :
+```
+npm install -g bower
+```
 ```
 npm install -g grunt-cli
 ```
-to install the `grunt-cli` dependencie,
-then do:
+
+We have preconfigured `npm` to automatically run `grunt` to init the project, so you can simply do:
 ```
 npm install
 ```

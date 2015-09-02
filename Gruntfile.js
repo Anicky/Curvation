@@ -16,7 +16,16 @@ module.exports = function (grunt) {
             src: {
                 folder: 'src/',
                 js: '<%= paths.src.folder %>js/**/*.js',
-                css: '<%= paths.src.folder %>css/**/*.css'
+                css: '<%= paths.src.folder %>css/**/*.css',
+                index: 'index.html'
+            },
+            bower: {
+                src: 'bower_components/',
+                dest: 'public/libs/',
+                bootstrap: 'bootstrap/dist/',
+                jquery: 'jquery/dist/',
+                mainloop: 'MainLoop.js/build/',
+                fontawesome: 'font-awesome/'
             },
             dest: {
                 folder: 'public/',
@@ -30,8 +39,42 @@ module.exports = function (grunt) {
         // Copy task
         copy: {
             index: {
-                src: '<%= paths.src.folder %>index.html',
-                dest: '<%= paths.dest.folder %>index.html'
+                src: '<%= paths.src.folder %><%= paths.src.index %>',
+                dest: '<%= paths.dest.folder %><%= paths.src.index %>'
+            },
+            bootstrap: {
+                files: [
+                    {
+                        src: '<%= paths.bower.src %><%= paths.bower.bootstrap %>js/bootstrap.min.js',
+                        dest: '<%= paths.bower.dest %>bootstrap.min.js'
+                    },
+                    {
+                        src: '<%= paths.bower.src %><%= paths.bower.bootstrap %>css/bootstrap.min.css',
+                        dest: '<%= paths.bower.dest %>bootstrap.min.css'
+                    }
+                ]
+            },
+            jquery: {
+                src: '<%= paths.bower.src %><%= paths.bower.jquery %>jquery.min.js',
+                dest: '<%= paths.bower.dest %>jquery.min.js'
+            },
+            mainloop: {
+                src: '<%= paths.bower.src %><%= paths.bower.mainloop %>mainloop.min.js',
+                dest: '<%= paths.bower.dest %>mainloop.min.js'
+            },
+            fontawesome: {
+                files: [
+                    {
+                        src: '<%= paths.bower.src %><%= paths.bower.fontawesome %>css/font-awesome.min.css',
+                        dest: '<%= paths.bower.dest %><%= paths.bower.fontawesome %>/css/font-awesome.min.css'
+                    },
+                    {
+                        cwd: '<%= paths.bower.src %><%= paths.bower.fontawesome %>fonts',
+                        src: '**.*',
+                        dest: '<%= paths.bower.dest %><%= paths.bower.fontawesome %>fonts/',
+                        expand: true
+                    }
+                ]
             }
         },
 
@@ -132,8 +175,12 @@ module.exports = function (grunt) {
                 ]
             },
             index: {
-                files: '<%= paths.src.folder %>index.html',
-                tasks: ['copy']
+                files: '<%= paths.src.folder %><%= paths.src.index %>',
+                tasks: ['copy:index']
+            },
+            bower: {
+                files: '<%= paths.bower.src %>**/*',
+                tasks: ['copy:bootstrap', 'copy:jquery', 'copy:mainloop', 'copy:fontawesome']
             }
         }
     });

@@ -1,6 +1,5 @@
 /.idea
 *~
+/public
 /node_modules
-/build
-*.min.css
-*.min.js
+/bower_components
