@@ -62,7 +62,17 @@ folders in your project :
 * `node_modules/` - contains the npm packages for the tools we need
 * `public/` - ...
 
-## Run the Game
+## Run the Server
+
+Do:
+
+```
+npm start
+```
+
+Then, you can access your local server in "localhost" or "127.0.0.1".
+
+## Run the Game in local mode
 
 Simply use the index.html in the main folder.
 

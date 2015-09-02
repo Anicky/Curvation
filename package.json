@@ -35,7 +35,8 @@
   "homepage": "https://github.com/Anicky/Curvation#readme",
   "main": "public/js/curvation.min.js",
   "scripts": {
-    "install": "grunt init"
+    "install": "grunt init",
+    "start": "node app.js"
   },
   "devDependencies": {
     "express": "^4.13.3",
