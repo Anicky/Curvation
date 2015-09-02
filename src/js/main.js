@@ -194,7 +194,7 @@ $(document).ready(function () {
     });
 
     $(".onlineGameButton").click(function() {
-        socket = io.connect("http://localhost:8080");
+        socket = io();
         $(".gameModeButtons").slideToggle();
         setEventHandlers();
     });
