@@ -7,6 +7,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-sass');
 
     // Project configuration.
     grunt.initConfig({
@@ -32,7 +33,7 @@ module.exports = function (grunt) {
                 js: '<%= paths.dest.folder %>js/<%= pkg.name %>.js',
                 jsMin: '<%= paths.dest.folder %>js/<%= pkg.name %>.min.js',
                 css: '<%= paths.dest.folder %>css/<%= pkg.name %>.css',
-                cssMin: '<%= paths.dest.folder %>css/<%= pkg.name %>.min.css',
+                cssMin: '<%= paths.dest.folder %>css/<%= pkg.name %>.min.css'
             }
         },
 
@@ -182,6 +183,18 @@ module.exports = function (grunt) {
                 files: '<%= paths.bower.src %>**/*',
                 tasks: ['copy:bootstrap', 'copy:jquery', 'copy:mainloop', 'copy:fontawesome']
             }
+        },
+
+        // Compile SASS files
+        sass: {
+            dist: {                          // Target
+                options: {                       // Target options
+                    style: 'expanded'
+                },
+                files: {
+                    'public/css/curvation.min.css': 'src/sass/curvation.scss'
+                }
+            }
         }
     });
 
@@ -197,7 +210,7 @@ module.exports = function (grunt) {
             grunt.task.run(['jshint', 'concat', 'uglify:prod', 'cssmin', 'copy', 'clean-src']);
         } else { // 'grunt build'
             // Launch the dev tools
-            grunt.task.run(['jshint', 'concat', 'uglify:dev', 'copy', 'clean-src']);
+            grunt.task.run(['jshint', 'concat', 'sass', 'uglify:dev', 'copy', 'clean-src']);
         }
     });
     grunt.registerTask('init', 'build:prod');
