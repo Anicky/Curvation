@@ -1,6 +1,4 @@
 var playersOrdered = null;
-var canvas = null;
-var context = null;
 var timer = 0;
 var socket;
 var onlineGame = false;
@@ -18,21 +16,6 @@ function updateScoresTable() {
     for (var i = 0; i < playersOrdered.length; i++) {
         $('#scores').append('<div class="row scores-line" id="player-' + i + '" style="color: ' + playersOrdered[i].color + '"><div class="col-xs-2 scores-color"><span style="background-color: ' + playersOrdered[i].color + ';"></span></div><div class="col-xs-7 scores-name">' + playersOrdered[i].name + '</div><div class="col-xs-3 scores-points">' + playersOrdered[i].score + '</div></div>');
     }
-}
-
-function drawArrow(context, fromX, fromY, toX, toY, arrowHeadSize, color) {
-    var dX = toX - fromX;
-    var dY = toY - fromY;
-    var angle = Math.atan2(dY, dX);
-
-    context.strokeStyle = color;
-    context.beginPath();
-    context.moveTo(fromX, fromY);
-    context.lineTo(toX, toY);
-    context.lineTo(toX - arrowHeadSize * Math.cos(angle - Math.PI / 6), toY - arrowHeadSize * Math.sin(angle - Math.PI / 6));
-    context.moveTo(toX, toY);
-    context.lineTo(toX - arrowHeadSize * Math.cos(angle + Math.PI / 6), toY - arrowHeadSize * Math.sin(angle + Math.PI / 6));
-    context.stroke();
 }
 
 function checkPlayersKey(keyCode, isKeyPressed) {
@@ -72,9 +55,14 @@ var setEventHandlers = function () {
 };
 
 function onDraw(data) {
-    game.players = data.players;
-    console.log(game);
-    game.draw(data.interpolationPercentage);
+    var points = data.points;
+    for(var i =0; i < points.length; i++) {
+        for(var j=0; j < points[i].length; j++) {
+            var p = points[i][j];
+            p = new Point(points[i][j].x, points[i][j].y, points[i][j].size);
+            p.draw(game.context);
+        }
+    }
 }
 
 function onServerMessage(data) {
@@ -92,19 +80,16 @@ function onServerMessage(data) {
 
 // Socket connected
 function onSocketConnected() {
-    console.log("Connected to socket server");
     var pseudo = prompt("Quel est votre pseudo ?");
     socket.emit("newPlayer", {name: pseudo});
 }
 
 // Socket disconnected
 function onSocketDisconnect() {
-    console.log("Disconnected from socket server");
 }
 
 // New player
 function onNewPlayer(data) {
-    console.log("New player connected: " + data.id);
     // Initialise the new player
     var newPlayer = new Player(data.name, data.color, data.x, data.y);
     newPlayer.id = data.id;
@@ -123,7 +108,6 @@ function onMovePlayer(data) {
 function onRemovePlayer(data) {
     var removePlayer = playerById(data.id);
     if (!removePlayer) {
-        console.log("Player not found: " + data.id);
         return;
     }
     game.players.splice(game.players.indexOf(removePlayer), 1);
@@ -154,11 +138,11 @@ function end(fps, panic) {
 $(document).ready(function () {
     // Init canvas
     $(".startButton, .onlineGameButton, .waitButton").prop("disabled", true);
-    canvas = document.getElementById('game');
-    canvas.width = $('.panel-body').width();
-    canvas.height = $('.panel-body').height();
-    context = canvas.getContext("2d");
     game = new Game();
+    game.canvas = document.getElementById('game');
+    game.canvas.width = $('.panel-body').width();
+    game.canvas.height = $('.panel-body').height();
+    game.context = game.canvas.getContext("2d");
 
     if (typeof io != 'undefined') {
         $(".onlineGameButton").prop("disabled", false);
@@ -189,7 +173,7 @@ $(document).ready(function () {
     $(".addPlayerButton").click(function () {
         var playerId = game.players.length;
         var player = new Player("Player " + (playerId + 1), PLAYER_COLORS[playerId]);
-        player.init();
+        player.init(null, null, game);
         game.addPlayer(player);
 
         // Update players score
@@ -226,7 +210,7 @@ $(document).ready(function () {
     $(".startButton").click(function () {
         if (!game.gameLaunched && !onlineGame) {
             $('.playersButtons, .startButton, .gameRunningButtons').slideToggle();
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
             game.gameLaunched = true;
             game.init();
             MainLoop.setUpdate(update).setDraw(draw).setEnd(end).start();

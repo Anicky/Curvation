@@ -8,6 +8,7 @@ var http = require('http');
 var io = require('socket.io');
 var express = require('express');
 var vhost = require('vhost');
+var Canvas = require('canvas');
 
 function read(f) {
     return fs.readFileSync(f).toString();
@@ -34,8 +35,10 @@ function init() {
     socket = io.listen(server);
     setEventHandlers();
     app.use(host);
-    server.listen(80);
+    server.listen(8080);
     game = new Game();
+    game.canvas = new Canvas(640, 480)
+    game.context = game.canvas.getContext('2d');
     util.log("Server started.");
 };
 
@@ -66,7 +69,7 @@ function onClientDisconnect() {
 function onNewPlayer(data) {
     var newPlayer = new Player(data.name, colors[game.players.length]);
     newPlayer.id = this.id;
-    newPlayer.init();
+    newPlayer.init(null, null, game);
     this.broadcast.emit("newPlayer", {
         id: newPlayer.id,
         name: newPlayer.name,
@@ -109,7 +112,11 @@ function update(delta) {
 }
 
 function draw(interpolationPercentage) {
-    socket.sockets.emit("draw", {players: game.players, interpolationPercentage: interpolationPercentage});
+    var points = [];
+    for(var i = 0; i < game.players.length; i++) {
+        points.push(game.players[i].history);
+    }
+    socket.sockets.emit("draw", {points: points});
 }
 
 function end(fps, panic) {
@@ -124,6 +131,7 @@ function onMessage(data) {
         game.gameLaunched = true;
         game.init();
         MainLoop.setUpdate(update).setDraw(draw).setEnd(end).start();
+        util.log("Game started.");
     }
 }
 

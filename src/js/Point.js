@@ -1,9 +1,12 @@
-var Point = function(x, y, size) {
+var Point = function(x, y, size, color) {
     this.x = x;
     this.y = y;
     this.size = size;
+    this.color = color;
 
-    var draw = function () {
+    var draw = function (context) {
+        console.log(this.color);
+        context.fillStyle = this.color;
         context.beginPath();
         context.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
         context.fill();
@@ -13,6 +16,7 @@ var Point = function(x, y, size) {
         x: this.x,
         y: this.y,
         size: this.size,
+        color: this.color,
         draw: draw
     };
 };

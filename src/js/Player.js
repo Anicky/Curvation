@@ -1,3 +1,8 @@
+var Point;
+if (typeof require != 'undefined') {
+    Point = require("./Point").Point;
+}
+
 var Player = function (name, color, x, y) {
     this.name = name;
     this.color = color;
@@ -5,14 +10,16 @@ var Player = function (name, color, x, y) {
     this.x = x;
     this.y = y;
     this.id = null;
+    this.game = null;
 
-    var init = function (x, y) {
+    var init = function (x, y, game) {
+        this.game = game;
         this.keyPressedLeft = 0;
         this.keyPressedRight = 0;
-        if (x === undefined) {
+        if (x === undefined || x === null) {
             this.x = setRandomX();
         }
-        if (y === undefined) {
+        if (y === undefined || y === null) {
             this.y = setRandomY();
         }
         this.direction = setRandomAngle();
@@ -51,7 +58,7 @@ var Player = function (name, color, x, y) {
         if (this.currentHole || (timer < DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME)) {
             this.history.pop();
         }
-        this.history.push(new Point(this.x, this.y, this.size));
+        this.history.push(new Point(this.x, this.y, this.size, this.color));
         if (timer >= DEFAULT_WAITING_TIME) {
             this.x += Math.cos(this.direction) * (this.speed * delta);
             this.y += Math.sin(this.direction) * (this.speed * delta);
@@ -67,13 +74,11 @@ var Player = function (name, color, x, y) {
     };
 
     var draw = function (interpolationPercentage) {
-        context.fillStyle = this.color;
         for (var i = 0; i < this.history.length; i++) {
-            this.history[i].draw();
+            this.history[i].draw(this.game.context);
         }
         if (timer < DEFAULT_WAITING_TIME) {
-            drawArrow(
-                context,
+            this.game.drawArrow(
                 this.x + Math.cos(this.direction) * DEFAULT_SNAKE_ARROW_SPACE,
                 this.y + Math.sin(this.direction) * DEFAULT_SNAKE_ARROW_SPACE,
                 this.x + Math.cos(this.direction) * (DEFAULT_SNAKE_ARROW_SPACE + DEFAULT_SNAKE_ARROW_SIZE),
@@ -85,8 +90,8 @@ var Player = function (name, color, x, y) {
     };
 
     var checkCollisions = function (tempX, tempY) {
-        var pixelData = context.getImageData(tempX, tempY, 1, 1);
-        if (this.x <= 0 || this.x >= canvas.width || this.y <= 0 || this.y >= canvas.height || (pixelData.data[3] > 0)) {
+        var pixelData = this.game.context.getImageData(tempX, tempY, 1, 1);
+        if (this.x <= 0 || this.x >= this.game.canvas.width || this.y <= 0 || this.y >= this.game.canvas.height || (pixelData.data[3] > 0)) {
             return true;
         }
         return false;
@@ -129,6 +134,7 @@ var Player = function (name, color, x, y) {
         currentHole: this.currentHole,
         collisionsCheck: this.collisionsCheck,
         history: this.history,
+        game: this.game,
         init: init,
         update: update,
         draw: draw,
