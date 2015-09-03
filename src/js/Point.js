@@ -5,7 +5,6 @@ var Point = function(x, y, size, color) {
     this.color = color;
 
     var draw = function (context) {
-        console.log(this.color);
         context.fillStyle = this.color;
         context.beginPath();
         context.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
