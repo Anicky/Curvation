@@ -23,6 +23,13 @@ You need git to clone the Curvation repository. You can get git from
 We also use a number of node.js tools to initialize Curvation. You must have node.js and
 its package manager (npm) installed.  You can get them from [http://nodejs.org/](http://nodejs.org/).
 
+To run the SASS compilation, you have to install ruby from [https://www.ruby-lang.org/fr/](https://www.ruby-lang.org/fr/) or [http://rubyinstaller.org/](http://rubyinstaller.org/) if you are on Windows.
+Then, just run the following line to install SASS:
+ 
+```
+gem install sass
+```
+
 ### Clone Curvation
 
 Clone the Curvation repository using [git][git]:
