@@ -33,7 +33,7 @@ function init() {
     socket = io.listen(server);
     setEventHandlers();
     app.use(host);
-    server.listen(80);
+    server.listen(8080);
     util.log("Server started.");
 };
 
