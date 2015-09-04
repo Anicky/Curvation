@@ -73,13 +73,17 @@ folders in your project :
 
 ## Run the Server
 
+Add this line in your hosts file (on Windows, this is located in C:\Windows\System32\drivers\etc\hosts):
+
+127.0.0.1	dev.curvation.fr
+
 Do:
 
 ```
 npm start
 ```
 
-Then, you can access your local server in "localhost" or "127.0.0.1".
+Then, you can play in your browser with the URL : http://dev.curvation.fr:8080/
 
 ## Run the Game in local mode
 
