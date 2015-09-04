@@ -34,6 +34,7 @@ function init() {
     setEventHandlers();
     app.use(host);
     server.listen(80);
+    util.log("Server started.");
 };
 
 var setEventHandlers = function () {
