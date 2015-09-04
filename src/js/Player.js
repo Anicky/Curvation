@@ -5,6 +5,7 @@ var Player = function (name, color, x, y) {
     this.x = x;
     this.y = y;
     this.id = null;
+    this.game = null;
 
     var init = function (x, y) {
         this.keyPressedLeft = 0;
@@ -28,7 +29,7 @@ var Player = function (name, color, x, y) {
     };
 
     var update = function (delta) {
-        if (timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME) {
+        if (this.game.timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME) {
             if (this.currentHole) {
                 this.holeTimer++;
                 if (this.holeTimer > this.holeSize) {
@@ -48,11 +49,11 @@ var Player = function (name, color, x, y) {
                 this.holeTimer++;
             }
         }
-        if (this.currentHole || (timer < DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME)) {
+        if (this.currentHole || (this.game.timer < DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME)) {
             this.history.pop();
         }
         this.history.push(new Point(this.x, this.y, this.size));
-        if (timer >= DEFAULT_WAITING_TIME) {
+        if (this.game.timer >= DEFAULT_WAITING_TIME) {
             this.x += Math.cos(this.direction) * (this.speed * delta);
             this.y += Math.sin(this.direction) * (this.speed * delta);
             var tempX = this.x;
@@ -60,20 +61,19 @@ var Player = function (name, color, x, y) {
             this.changeDirection();
             tempX += Math.cos(this.direction) * this.size;
             tempY += Math.sin(this.direction) * this.size;
-            if (!this.currentHole && timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME) {
+            if (!this.currentHole && this.game.timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME) {
                 this.collisionsCheck = this.checkCollisions(tempX, tempY);
             }
         }
     };
 
-    var draw = function (interpolationPercentage) {
-        context.fillStyle = this.color;
+    var draw = function (display, interpolationPercentage) {
+        this.game.display.context.fillStyle = this.color;
         for (var i = 0; i < this.history.length; i++) {
-            this.history[i].draw();
+            this.history[i].draw(this.game.display);
         }
-        if (timer < DEFAULT_WAITING_TIME) {
-            drawArrow(
-                context,
+        if (this.game.timer < DEFAULT_WAITING_TIME) {
+            this.game.display.drawArrow(
                 this.x + Math.cos(this.direction) * DEFAULT_SNAKE_ARROW_SPACE,
                 this.y + Math.sin(this.direction) * DEFAULT_SNAKE_ARROW_SPACE,
                 this.x + Math.cos(this.direction) * (DEFAULT_SNAKE_ARROW_SPACE + DEFAULT_SNAKE_ARROW_SIZE),
@@ -85,8 +85,8 @@ var Player = function (name, color, x, y) {
     };
 
     var checkCollisions = function (tempX, tempY) {
-        var pixelData = context.getImageData(tempX, tempY, 1, 1);
-        if (this.x <= 0 || this.x >= canvas.width || this.y <= 0 || this.y >= canvas.height || (pixelData.data[3] > 0)) {
+        var pixelData = this.game.display.context.getImageData(tempX, tempY, 1, 1);
+        if (this.x <= 0 || this.x >= this.game.display.width || this.y <= 0 || this.y >= this.game.display.height || (pixelData.data[3] > 0)) {
             return true;
         }
         return false;
@@ -129,6 +129,7 @@ var Player = function (name, color, x, y) {
         currentHole: this.currentHole,
         collisionsCheck: this.collisionsCheck,
         history: this.history,
+        game: this.game,
         init: init,
         update: update,
         draw: draw,

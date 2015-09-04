@@ -1,65 +1,5 @@
-var players = [];
-var playersOrdered = null;
-var canvas = null;
-var context = null;
-var gameRunning = true;
-var timer = 0;
-var gameLaunched = false;
-var gamePaused = false;
 var socket;
-
-function update(delta) {
-    if ((gameRunning) && (!gamePaused)) {
-        for (var i = 0; i < players.length; i++) {
-            var p = players[i];
-            if (!p.collisionsCheck) {
-                p.update(delta);
-                if (p.collisionsCheck) {
-                    var playersLost = 0;
-                    for (var j = 0; j < players.length; j++) {
-                        if (!players[j].collisionsCheck) {
-                            players[j].score++;
-                        } else {
-                            playersLost++;
-                        }
-                    }
-                    updateScoresTable();
-                    if ((players.length === 1) || playersLost === players.length - 1) {
-                        gameRunning = false;
-                        break;
-                    }
-                }
-            }
-        }
-        if (!gameRunning) {
-            if (players.length === 1) {
-                $('#gameover .modal-body').html('<p style="color:' + players[0].color + '">Game over !</p>');
-            } else {
-                var winner = null;
-                for (i = 0; i < players.length; i++) {
-                    if (!players[i].collisionsCheck) {
-                        winner = players[i];
-                        break;
-                    }
-                }
-                $('#gameover .modal-body').html('<p style="color:' + winner.color + '"><span class="modal-playername">' + winner.name + '</span> wins !</p>');
-            }
-            $('#gameover').modal('show');
-            setTimeout(function () {
-                $('#gameover').modal('hide');
-                init();
-            }, 2000);
-        }
-        timer++;
-    }
-}
-
-function draw(interpolationPercentage) {
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    for (var i = 0; i < players.length; i++) {
-        players[i].draw(interpolationPercentage);
-    }
-}
+var game;
 
 function end(fps, panic) {
     if (panic) {
@@ -68,47 +8,31 @@ function end(fps, panic) {
     }
 }
 
-function init() {
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    for (var i = 0; i < players.length; i++) {
-        players[i].init();
-    }
-    gameRunning = true;
-    timer = 0;
+function update(delta) {
+    game.update(delta);
+}
 
+function draw(interpolationPercentage) {
+    game.draw(interpolationPercentage);
+}
+
+function run() {
+    game.run();
     MainLoop.setUpdate(update).setDraw(draw).setEnd(end).start();
 }
 
 function updateScoresTable() {
-    playersOrdered = players.slice(0);
-    playersOrdered.sort(function (a, b) {
-        return b.score - a.score;
-    });
+    var playersOrdered = game.getPlayersOrdered();
     $('#scores').html('');
     for (var i = 0; i < playersOrdered.length; i++) {
         $('#scores').append('<div class="row scores-line" id="player-' + i + '" style="color: ' + playersOrdered[i].color + '"><div class="col-xs-2 scores-color"><span style="background-color: ' + playersOrdered[i].color + ';"></span></div><div class="col-xs-7 scores-name">' + playersOrdered[i].name + '</div><div class="col-xs-3 scores-points">' + playersOrdered[i].score + '</div></div>');
     }
 }
 
-function drawArrow(context, fromX, fromY, toX, toY, arrowHeadSize, color) {
-    var dX = toX - fromX;
-    var dY = toY - fromY;
-    var angle = Math.atan2(dY, dX);
-
-    context.strokeStyle = color;
-    context.beginPath();
-    context.moveTo(fromX, fromY);
-    context.lineTo(toX, toY);
-    context.lineTo(toX - arrowHeadSize * Math.cos(angle - Math.PI / 6), toY - arrowHeadSize * Math.sin(angle - Math.PI / 6));
-    context.moveTo(toX, toY);
-    context.lineTo(toX - arrowHeadSize * Math.cos(angle + Math.PI / 6), toY - arrowHeadSize * Math.sin(angle + Math.PI / 6));
-    context.stroke();
-}
-
 function checkPlayersKey(keyCode, isKeyPressed) {
-    if (gameRunning && !gamePaused) {
-        for (var i = 0; i < players.length; i++) {
-            players[i].checkKey(keyCode, KEY_CODES[i], isKeyPressed);
+    if (game.gameRunning && !game.gamePaused) {
+        for (var i = 0; i < game.players.length; i++) {
+            game.players[i].checkKey(keyCode, KEY_CODES[i], isKeyPressed);
         }
     }
 }
@@ -152,32 +76,23 @@ function onMovePlayer(data) {
 
 // Remove player
 function onRemovePlayer(data) {
-    var removePlayer = playerById(data.id);
-    if (!removePlayer) {
-        console.log("Player not found: " + data.id);
-        return;
-    }
-    players.splice(players.indexOf(removePlayer), 1);
+    game.removePlayer(data.id);
     updateScoresTable();
 }
 
-function playerById(id) {
-    for (var i = 0; i < players.length; i++) {
-        if (players[i].id == id) {
-            return players[i];
-        }
-    }
-    return false;
-}
-
 $(document).ready(function () {
+    game = new Game();
+    var canvas = new Canvas();
+    canvas.context = $("#canvas").get(0).getContext("2d");
+    canvas.width = $('.panel-game .panel-body').width();
+    canvas.height = $('.panel-game .panel-body').height();
+    game.display = canvas;
+    $("#canvas").attr('width', canvas.width);
+    $("#canvas").attr('height', canvas.height);
+
     // Init canvas
     $(".startButton").prop("disabled", true);
     $(".onlineGameButton").prop("disabled", true);
-    canvas = document.getElementById('game');
-    canvas.width = $('.panel-body').width();
-    canvas.height = $('.panel-body').height();
-    context = canvas.getContext("2d");
 
     if (typeof io != 'undefined') {
         $(".onlineGameButton").prop("disabled", false);
@@ -193,22 +108,20 @@ $(document).ready(function () {
         checkPlayersKey(e.keyCode, false);
     });
 
-    $(".onlineGameButton").click(function() {
+    $(".onlineGameButton").click(function () {
         socket = io();
         $(".gameModeButtons").slideToggle();
         setEventHandlers();
     });
 
-    $(".localGameButton").click(function() {
+    $(".localGameButton").click(function () {
         $(".gameModeButtons, .playersButtons, .startButton").slideToggle();
     });
 
     // Add player
     $(".addPlayerButton").click(function () {
-        var playerId = players.length;
-        var player = new Player("Player " + (playerId + 1), PLAYER_COLORS[playerId]);
-        player.init();
-        players.push(player);
+        var playerId = game.players.length;
+        game.addPlayer("Player " + (playerId + 1), PLAYER_COLORS[playerId]);
 
         // Update players score
         updateScoresTable();
@@ -218,14 +131,14 @@ $(document).ready(function () {
         $(".startButton").prop("disabled", false);
 
         // Hide button if the max amount of player is reached
-        if (players.length === KEY_CODES.length || players.length === PLAYER_COLORS.length) {
+        if (game.players.length === KEY_CODES.length || game.players.length === PLAYER_COLORS.length) {
             $(this).addClass("hide");
         }
     });
 
     // remove last player
     $(".removePlayerButton").click(function () {
-        players.pop();
+        game.players.pop();
 
         // Update players score
         updateScoresTable();
@@ -234,7 +147,7 @@ $(document).ready(function () {
         $(".addPlayerButton").removeClass("hide");
 
         // Hide button if there is no more player in the game
-        if (players.length === 0) {
+        if (game.players.length === 0) {
             $(this).addClass("hide");
             $(".startButton").prop("disabled", true);
         }
@@ -242,26 +155,19 @@ $(document).ready(function () {
 
     // Start the party
     $(".startButton").click(function () {
-        if (!gameLaunched) {
-            gameLaunched = true;
-            $('.playersButtons, .startButton, .gameRunningButtons').slideToggle();
-            init();
-        }
+        run();
+        $('.playersButtons, .startButton, .gameRunningButtons').slideToggle();
     });
 
     // Pause/Play the game
     $(".pauseButton").click(function () {
-        if (!gamePaused) {
-            $(".playButton").show();
-            $(".pauseButton").hide();
-            gamePaused = true;
-        }
+        game.pause();
+        $(".playButton").show();
+        $(".pauseButton").hide();
     });
     $(".playButton").click(function () {
-        if (gamePaused) {
-            $(".playButton").hide();
-            $(".pauseButton").show();
-            gamePaused = false;
-        }
+        game.pause();
+        $(".playButton").hide();
+        $(".pauseButton").show();
     });
 });
