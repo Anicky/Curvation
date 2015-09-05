@@ -42,3 +42,7 @@ function setRandomHoleSize() {
 function round(value, decimals) {
     return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
 }
+
+function cloneArray(array) {
+    return array.slice(0);
+}

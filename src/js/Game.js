@@ -45,7 +45,7 @@ Game.prototype.getPlayer = function (id) {
 };
 
 Game.prototype.getPlayersOrdered = function () {
-    var playersOrdered = this.players.slice(0);
+    var playersOrdered = cloneArray(this.players);
     playersOrdered.sort(function (a, b) {
         return b.score - a.score;
     });
