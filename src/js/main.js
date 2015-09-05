@@ -1,5 +1,6 @@
 var socket;
 var game;
+var pause = false;
 
 function end(fps, panic) {
     if (panic) {
@@ -9,7 +10,31 @@ function end(fps, panic) {
 }
 
 function update(delta) {
-    game.update(delta);
+    if (!pause) {
+        game.update(delta);
+        updateScoresTable();
+        if (!game.gameRunning) {
+            pause = true;
+            if (game.players.length === 1) {
+                $('#gameover .modal-body').html('<p style="color:' + game.players[0].color + '">Game over !</p>');
+            } else {
+                var winner = null;
+                for (var i = 0; i < game.players.length; i++) {
+                    if (!game.players[i].collisionsCheck) {
+                        winner = game.players[i];
+                        break;
+                    }
+                }
+                $('#gameover .modal-body').html('<p style="color:' + winner.color + '"><span class="modal-playername">' + winner.name + '</span> wins !</p>');
+            }
+            $('#gameover').modal('show');
+            setTimeout(function () {
+                $('#gameover').modal('hide');
+                pause = false;
+                game.run();
+            }, 2000);
+        }
+    }
 }
 
 function draw(interpolationPercentage) {

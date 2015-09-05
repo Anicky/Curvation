@@ -1,6 +1,5 @@
 function Game() {
     this.players = [];
-    this.gameLaunched = false;
     this.gameRunning = false;
     this.gamePaused = false;
     this.timer = 0;
@@ -46,9 +45,8 @@ Game.prototype.getPlayersOrdered = function () {
 };
 
 Game.prototype.run = function () {
-    this.init();
     this.timer = 0;
-    this.gameLaunched = true;
+    this.init();
     this.gameRunning = true;
 };
 
@@ -71,7 +69,6 @@ Game.prototype.update = function (delta) {
                             playersLost++;
                         }
                     }
-                    updateScoresTable();
                     if ((this.players.length === 1) || playersLost === this.players.length - 1) {
                         this.gameRunning = false;
                         break;
@@ -79,45 +76,24 @@ Game.prototype.update = function (delta) {
                 }
             }
         }
-        if (!this.gameRunning) {
-            if (this.players.length === 1) {
-                // @TODO : move this code
-                $('#gameover .modal-body').html('<p style="color:' + this.players[0].color + '">Game over !</p>');
-            } else {
-                var winner = null;
-                for (i = 0; i < this.players.length; i++) {
-                    if (!this.players[i].collisionsCheck) {
-                        winner = this.players[i];
-                        break;
-                    }
-                }
-                // @TODO : move this code
-                $('#gameover .modal-body').html('<p style="color:' + winner.color + '"><span class="modal-playername">' + winner.name + '</span> wins !</p>');
-            }
-            // @TODO : move this code
-            $('#gameover').modal('show');
-            setTimeout(function () {
-                $('#gameover').modal('hide');
-                this.run();
-            }, 2000);
-        }
         this.timer++;
     }
 };
 
 Game.prototype.draw = function (interpolationPercentage) {
-    var entities = [];
-    var i;
-    for (i = 0; i < this.players.length; i++) {
-        entities = entities.concat(this.players[i].history);
-    }
-    if (this.timer < DEFAULT_WAITING_TIME) {
+    if ((this.gameRunning) && (!this.gamePaused)) {
+        var entities = [];
+        var i;
         for (i = 0; i < this.players.length; i++) {
-            entities = entities.concat(this.players[i].getArrow());
-
+            entities = entities.concat(this.players[i].history);
         }
+        if (this.timer < DEFAULT_WAITING_TIME) {
+            for (i = 0; i < this.players.length; i++) {
+                entities = entities.concat(this.players[i].getArrow());
+            }
+        }
+        this.display.draw(entities);
     }
-    this.display.draw(entities);
 };
 
 if (typeof module != 'undefined') {
