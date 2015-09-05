@@ -65,19 +65,11 @@ Game.prototype.pause = function () {
 Game.prototype.update = function (delta) {
     if ((this.gameRunning) && (!this.gamePaused)) {
         for (var i = 0; i < this.players.length; i++) {
-            var player = this.players[i];
-            if (!player.collisionsCheck) {
-                player.update(delta);
-                if (player.collisionsCheck) {
-                    var playersLost = 0;
-                    for (var j = 0; j < this.players.length; j++) {
-                        if (!this.players[j].collisionsCheck) {
-                            this.players[j].score++;
-                        } else {
-                            playersLost++;
-                        }
-                    }
-                    if ((this.players.length === 1) || playersLost === this.players.length - 1) {
+            if (!this.players[i].collisionsCheck) {
+                this.players[i].update(delta);
+                if (this.players[i].collisionsCheck) {
+                    this.incrementPlayersScores();
+                    if (this.isRoundFinished()) {
                         this.gameRunning = false;
                         break;
                     }
@@ -86,6 +78,27 @@ Game.prototype.update = function (delta) {
         }
         this.timer++;
     }
+};
+
+Game.prototype.incrementPlayersScores = function () {
+    for (var i = 0; i < this.players.length; i++) {
+        if (!this.players[i].collisionsCheck) {
+            this.players[i].score++;
+        }
+    }
+};
+
+Game.prototype.isRoundFinished = function () {
+    var playersOut = 0;
+    for (var i = 0; i < this.players.length; i++) {
+        if (this.players[i].collisionsCheck) {
+            playersOut++;
+        }
+    }
+    if (playersOut >= (this.players.length - 1)) {
+        return true;
+    }
+    return false;
 };
 
 Game.prototype.draw = function (interpolationPercentage) {
