@@ -69,10 +69,10 @@ Player.prototype.update = function (delta) {
 };
 
 Player.prototype.getArrow = function () {
-    var fromX = this.x + Math.cos(this.direction) * DEFAULT_SNAKE_ARROW_SPACE;
-    var fromY = this.y + Math.sin(this.direction) * DEFAULT_SNAKE_ARROW_SPACE;
-    var toX = this.x + Math.cos(this.direction) * (DEFAULT_SNAKE_ARROW_SIZE + DEFAULT_SNAKE_ARROW_SPACE);
-    var toY = this.y + Math.sin(this.direction) * (DEFAULT_SNAKE_ARROW_SIZE + DEFAULT_SNAKE_ARROW_SPACE);
+    var fromX = this.x + Math.cos(this.direction) * (DEFAULT_SNAKE_ARROW_SPACE + this.size);
+    var fromY = this.y + Math.sin(this.direction) * (DEFAULT_SNAKE_ARROW_SPACE + this.size);
+    var toX = this.x + Math.cos(this.direction) * (DEFAULT_SNAKE_ARROW_SIZE + DEFAULT_SNAKE_ARROW_SPACE + this.size);
+    var toY = this.y + Math.sin(this.direction) * (DEFAULT_SNAKE_ARROW_SIZE + DEFAULT_SNAKE_ARROW_SPACE + this.size);
     return new Arrow(fromX, fromY, toX, toY, this.direction, DEFAULT_SNAKE_ARROW_HEADSIZE, this.color);
 };
 
