@@ -8,14 +8,17 @@ function Player(name, color, x, y) {
     this.game = null;
 }
 
-Player.prototype.init = function (x, y) {
+Player.prototype.init = function (x, y, id) {
     this.keyPressedLeft = 0;
     this.keyPressedRight = 0;
+    if (id === undefined) {
+        this.id = this.name;
+    }
     if (x === undefined) {
-        this.x = setRandomX();
+        this.x = round(setRandomX(), 1);
     }
     if (y === undefined) {
-        this.y = setRandomY();
+        this.y = round(setRandomY(), 1);
     }
     this.direction = setRandomAngle();
     this.speed = DEFAULT_SNAKE_SPEED;
@@ -42,13 +45,13 @@ Player.prototype.stopHole = function () {
 
 Player.prototype.movePlayer = function (delta) {
     if (this.game.timer >= DEFAULT_WAITING_TIME) {
-        this.x += round(Math.cos(this.direction) * (this.speed * delta), 1);
-        this.y += round(Math.sin(this.direction) * (this.speed * delta), 1);
+        this.x = round(this.x + (Math.cos(this.direction) * (this.speed * delta)), 1);
+        this.y = round(this.y + (Math.sin(this.direction) * (this.speed * delta)), 1);
         var tempX = this.x;
         var tempY = this.y;
         this.changeDirection();
-        tempX += round(Math.cos(this.direction) * this.size, 1);
-        tempY += round(Math.sin(this.direction) * this.size, 1);
+        tempX = round(tempX + (Math.cos(this.direction) * this.size), 1);
+        tempY = round(tempY + (Math.sin(this.direction) * this.size), 1);
         this.collisionsCheck = this.checkCollisions(tempX, tempY);
     }
 };
