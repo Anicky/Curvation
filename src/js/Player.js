@@ -77,6 +77,13 @@ Player.prototype.getArrow = function () {
 };
 
 Player.prototype.checkCollisions = function (tempX, tempY) {
+    /**
+     * @TODO : Détection de collisions à revoir pour se passer du canvas.
+     * Comparer la tête du snake avec toutes les entités du jeu.
+     * En cas de problèmes de performance, utiliser un Quadtree
+     * Voir ici pour l'explication : http://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
+     * Et ici pour la démo : http://www.mikechambers.com/blog/2011/03/21/javascript-quadtree-implementation/
+     */
     var pixelData = this.game.display.context.getImageData(tempX, tempY, 1, 1);
     if (this.x <= 0 || this.x >= this.game.display.width || this.y <= 0 || this.y >= this.game.display.height || (pixelData.data[3] > 0)) {
         return true;
