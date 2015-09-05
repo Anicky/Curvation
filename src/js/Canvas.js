@@ -15,8 +15,12 @@ Canvas.prototype.clear = function () {
 Canvas.prototype.draw = function (entities) {
     this.clear();
     for (var i = 0; i < entities.length; i++) {
-        if ((entities[i]) instanceof PlayerPoint) {
-            this.drawPoint(entities[i]);
+        if ((entities[i]) instanceof PlayerEntity) {
+            if ((entities[i].element) instanceof Point) {
+                this.drawPoint(entities[i]);
+            } else if ((entities[i].element) instanceof Arrow) {
+                this.drawArrow(entities[i]);
+            }
         }
     }
 };
@@ -24,21 +28,21 @@ Canvas.prototype.draw = function (entities) {
 Canvas.prototype.drawPoint = function (entity) {
     this.context.fillStyle = entity.color;
     this.context.beginPath();
-    this.context.arc(entity.point.x, entity.point.y, entity.point.size, 0, 2 * Math.PI);
+    this.context.arc(entity.element.x, entity.element.y, entity.element.size, 0, 2 * Math.PI);
     this.context.fill();
 };
 
-Canvas.prototype.drawArrow = function (fromX, fromY, toX, toY, arrowHeadSize, color) {
-    var dX = toX - fromX;
-    var dY = toY - fromY;
+Canvas.prototype.drawArrow = function (entity) {
+    var dX = entity.element.toX - entity.element.fromX;
+    var dY = entity.element.toY - entity.element.fromY;
     var angle = Math.atan2(dY, dX);
-    this.context.strokeStyle = color;
+    this.context.strokeStyle = entity.color;
     this.context.beginPath();
-    this.context.moveTo(fromX, fromY);
-    this.context.lineTo(toX, toY);
-    this.context.lineTo(toX - arrowHeadSize * Math.cos(angle - Math.PI / 6), toY - arrowHeadSize * Math.sin(angle - Math.PI / 6));
-    this.context.moveTo(toX, toY);
-    this.context.lineTo(toX - arrowHeadSize * Math.cos(angle + Math.PI / 6), toY - arrowHeadSize * Math.sin(angle + Math.PI / 6));
+    this.context.moveTo(entity.element.fromX, entity.element.fromY);
+    this.context.lineTo(entity.element.toX, entity.element.toY);
+    this.context.lineTo(entity.element.toX - entity.element.headSize * Math.cos(angle - Math.PI / 6), entity.element.toY - entity.element.headSize * Math.sin(angle - Math.PI / 6));
+    this.context.moveTo(entity.element.toX, entity.element.toY);
+    this.context.lineTo(entity.element.toX - entity.element.headSize * Math.cos(angle + Math.PI / 6), entity.element.toY - entity.element.headSize * Math.sin(angle + Math.PI / 6));
     this.context.stroke();
 };
 

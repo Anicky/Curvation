@@ -107,8 +107,15 @@ Game.prototype.update = function (delta) {
 
 Game.prototype.draw = function (interpolationPercentage) {
     var entities = [];
-    for (var i = 0; i < this.players.length; i++) {
+    var i;
+    for (i = 0; i < this.players.length; i++) {
         entities = entities.concat(this.players[i].history);
+    }
+    if (this.timer < DEFAULT_WAITING_TIME) {
+        for (i = 0; i < this.players.length; i++) {
+            entities = entities.concat(this.players[i].getArrow());
+
+        }
     }
     this.display.draw(entities);
 };

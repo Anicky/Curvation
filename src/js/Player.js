@@ -53,7 +53,7 @@ Player.prototype.update = function (delta) {
     if (this.currentHole || (this.game.timer < DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME)) {
         this.history.pop();
     }
-    this.history.push(new PlayerPoint(new Point(this.x, this.y, this.size), this.color));
+    this.history.push(new PlayerEntity(new Point(this.x, this.y, this.size), this.color));
     if (this.game.timer >= DEFAULT_WAITING_TIME) {
         this.x += Math.cos(this.direction) * (this.speed * delta);
         this.y += Math.sin(this.direction) * (this.speed * delta);
@@ -68,21 +68,12 @@ Player.prototype.update = function (delta) {
     }
 };
 
-Player.prototype.draw = function (display) {
-    this.game.display.context.fillStyle = this.color;
-    for (var i = 0; i < this.history.length; i++) {
-        this.history[i].draw(this.game.display);
-    }
-    if (this.game.timer < DEFAULT_WAITING_TIME) {
-        this.game.display.drawArrow(
-            this.x + Math.cos(this.direction) * DEFAULT_SNAKE_ARROW_SPACE,
-            this.y + Math.sin(this.direction) * DEFAULT_SNAKE_ARROW_SPACE,
-            this.x + Math.cos(this.direction) * (DEFAULT_SNAKE_ARROW_SPACE + DEFAULT_SNAKE_ARROW_SIZE),
-            this.y + Math.sin(this.direction) * (DEFAULT_SNAKE_ARROW_SPACE + DEFAULT_SNAKE_ARROW_SIZE),
-            DEFAULT_SNAKE_ARROW_HEADSIZE,
-            this.color
-        );
-    }
+Player.prototype.getArrow = function() {
+    var fromX = this.x + Math.cos(this.direction) * DEFAULT_SNAKE_ARROW_SPACE;
+    var fromY = this.y + Math.sin(this.direction) * DEFAULT_SNAKE_ARROW_SPACE;
+    var toX = this.x + Math.cos(this.direction) * (DEFAULT_SNAKE_ARROW_SIZE + DEFAULT_SNAKE_ARROW_SPACE);
+    var toY = this.y + Math.sin(this.direction) * (DEFAULT_SNAKE_ARROW_SIZE + DEFAULT_SNAKE_ARROW_SPACE);
+    return new PlayerEntity(new Arrow(fromX, fromY, toX, toY, this.direction, DEFAULT_SNAKE_ARROW_HEADSIZE), this.color);
 };
 
 Player.prototype.checkCollisions = function (tempX, tempY) {
