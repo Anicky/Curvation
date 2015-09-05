@@ -29,31 +29,18 @@ Player.prototype.init = function (x, y) {
     this.history = [];
 };
 
-Player.prototype.update = function (delta) {
-    if (this.game.timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME) {
-        if (this.currentHole) {
-            this.holeTimer++;
-            if (this.holeTimer > this.holeSize) {
-                this.holeTimer = 0;
-                this.currentHole = false;
-            }
-        } else if (this.holeTimer > DEFAULT_SNAKE_HOLE_MINIMUM_TIME) {
-            var holeProbability = Math.random() * 100;
-            if (holeProbability <= this.holeProbability) {
-                this.holeSize = setRandomHoleSize();
-                this.currentHole = true;
-                this.holeTimer = 0;
-            } else {
-                this.holeTimer++;
-            }
-        } else {
-            this.holeTimer++;
-        }
-    }
-    if (this.currentHole || (this.game.timer < DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME)) {
-        this.history.pop();
-    }
-    this.history.push(new Point(this.x, this.y, this.size, this.color));
+Player.prototype.createHole = function () {
+    this.holeSize = setRandomHoleSize();
+    this.currentHole = true;
+    this.holeTimer = 0;
+};
+
+Player.prototype.stopHole = function () {
+    this.holeTimer = 0;
+    this.currentHole = false;
+};
+
+Player.prototype.movePlayer = function (delta) {
     if (this.game.timer >= DEFAULT_WAITING_TIME) {
         this.x += Math.cos(this.direction) * (this.speed * delta);
         this.y += Math.sin(this.direction) * (this.speed * delta);
@@ -62,10 +49,37 @@ Player.prototype.update = function (delta) {
         this.changeDirection();
         tempX += Math.cos(this.direction) * this.size;
         tempY += Math.sin(this.direction) * this.size;
-        if (!this.currentHole && this.game.timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME) {
-            this.collisionsCheck = this.checkCollisions(tempX, tempY);
+        this.collisionsCheck = this.checkCollisions(tempX, tempY);
+    }
+};
+
+Player.prototype.handleHole = function () {
+    if (this.game.timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME) {
+        if (this.currentHole) {
+            this.holeTimer++;
+            if (this.holeTimer > this.holeSize) {
+                this.stopHole();
+            }
+        } else if (this.holeTimer > DEFAULT_SNAKE_HOLE_MINIMUM_TIME) {
+            var holeProbability = Math.random() * 100;
+            if (holeProbability <= this.holeProbability) {
+                this.createHole();
+            } else {
+                this.holeTimer++;
+            }
+        } else {
+            this.holeTimer++;
         }
     }
+};
+
+Player.prototype.update = function (delta) {
+    this.handleHole();
+    if (this.currentHole || (this.game.timer < DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME)) {
+        this.history.pop();
+    }
+    this.history.push(new Point(this.x, this.y, this.size, this.color));
+    this.movePlayer(delta);
 };
 
 Player.prototype.getArrow = function () {
@@ -84,9 +98,11 @@ Player.prototype.checkCollisions = function (tempX, tempY) {
      * Voir ici pour l'explication : http://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
      * Et ici pour la demo : http://www.mikechambers.com/blog/2011/03/21/javascript-quadtree-implementation/
      */
-    var pixelData = this.game.display.context.getImageData(tempX, tempY, 1, 1);
-    if (this.x <= 0 || this.x >= this.game.display.width || this.y <= 0 || this.y >= this.game.display.height || (pixelData.data[3] > 0)) {
-        return true;
+    if (!this.currentHole && this.game.timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME) {
+        var pixelData = this.game.display.context.getImageData(tempX, tempY, 1, 1);
+        if (this.x <= 0 || this.x >= this.game.display.width || this.y <= 0 || this.y >= this.game.display.height || (pixelData.data[3] > 0)) {
+            return true;
+        }
     }
     return false;
 };
