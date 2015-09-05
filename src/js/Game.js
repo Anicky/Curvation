@@ -7,7 +7,15 @@ function Game() {
 }
 
 Game.prototype.init = function () {
+    this.initDisplay();
+    this.initPlayers();
+};
+
+Game.prototype.initDisplay = function () {
     this.display.init();
+};
+
+Game.prototype.initPlayers = function () {
     for (var i = 0; i < this.players.length; i++) {
         this.players[i].init();
     }
@@ -83,17 +91,28 @@ Game.prototype.update = function (delta) {
 Game.prototype.draw = function (interpolationPercentage) {
     if ((this.gameRunning) && (!this.gamePaused)) {
         var entities = [];
-        var i;
-        for (i = 0; i < this.players.length; i++) {
-            entities = entities.concat(this.players[i].history);
-        }
-        if (this.timer < DEFAULT_WAITING_TIME) {
-            for (i = 0; i < this.players.length; i++) {
-                entities = entities.concat(this.players[i].getArrow());
-            }
-        }
+        entities = entities.concat(this.getPlayerPoints());
+        entities = entities.concat(this.getPlayerArrows());
         this.display.draw(entities);
     }
+};
+
+Game.prototype.getPlayerPoints = function () {
+    var entities = [];
+    for (var i = 0; i < this.players.length; i++) {
+        entities = entities.concat(this.players[i].history);
+    }
+    return entities;
+};
+
+Game.prototype.getPlayerArrows = function () {
+    var entities = [];
+    if (this.timer < DEFAULT_WAITING_TIME) {
+        for (var i = 0; i < this.players.length; i++) {
+            entities = entities.concat(this.players[i].getArrow());
+        }
+    }
+    return entities;
 };
 
 if (typeof module != 'undefined') {
