@@ -42,13 +42,13 @@ Player.prototype.stopHole = function () {
 
 Player.prototype.movePlayer = function (delta) {
     if (this.game.timer >= DEFAULT_WAITING_TIME) {
-        this.x += Math.cos(this.direction) * (this.speed * delta);
-        this.y += Math.sin(this.direction) * (this.speed * delta);
+        this.x += round(Math.cos(this.direction) * (this.speed * delta), 1);
+        this.y += round(Math.sin(this.direction) * (this.speed * delta), 1);
         var tempX = this.x;
         var tempY = this.y;
         this.changeDirection();
-        tempX += Math.cos(this.direction) * this.size;
-        tempY += Math.sin(this.direction) * this.size;
+        tempX += round(Math.cos(this.direction) * this.size, 1);
+        tempY += round(Math.sin(this.direction) * this.size, 1);
         this.collisionsCheck = this.checkCollisions(tempX, tempY);
     }
 };
