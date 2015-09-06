@@ -5,6 +5,16 @@
  */
 const KEY_CODES = [[37, 39], [83, 68], [71, 72], [76, 77]];
 const PLAYER_COLORS = ['#D62525', '#2D70EA', '#396F19', '#F1BC42'];
+/**
+ * self effects codes : 0 = bigger, 1 = thiner, 2 = faster, 3 = slower
+ * @type {number[]}
+ */
+const ENUM_SELF_EFFECTS = [0, 1, 2, 3];
+/**
+ * others effects codes : 0 = bigger, 1 = thiner, 2 = faster, 3 = slower
+ * @type {number[]}
+ */
+const ENUM_OTHERS_EFFECTS = [0, 1, 2, 3];
 
 const DEFAULT_SNAKE_SIZE = 3;
 const DEFAULT_SNAKE_SPEED = 0.1;
@@ -45,4 +55,18 @@ function round(value, decimals) {
 
 function cloneArray(array) {
     return array.slice(0);
+}
+
+/**
+ * return a random effect, on self or others
+ */
+function setRandomEffect() {
+    //random self or others
+    var target = Math.floor(Math.random() * 2);
+    switch (target) {
+        case 0 :
+            return Math.floor(Math.random() * ENUM_SELF_EFFECTS.length);
+        case 1 :
+            return Math.floor(Math.random() * ENUM_OTHERS_EFFECTS.length);
+    }
 }
