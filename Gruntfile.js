@@ -8,6 +8,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-sass');
+    grunt.loadNpmTasks('grunt-spritesmith');
 
     // Project configuration.
     grunt.initConfig({
@@ -101,6 +102,10 @@ module.exports = function (grunt) {
             js: {
                 src: '<%= paths.src.js %>',
                 dest: '<%= paths.dest.js %>'
+            },
+            css: {
+                src: ['<%= paths.dest.cssMin %>', '<%= paths.src.css %>'],
+                dest: '<%= paths.dest.cssMin %>'
             }
         },
 
@@ -157,6 +162,12 @@ module.exports = function (grunt) {
                     'clean:js'
                 ]
             },
+            sprite: {
+                files: '<%= paths.src.img %>',
+                tasks: [
+                    'sprite'
+                ]
+            },
             sass: {
                 files: '<%= paths.src.scss %>',
                 tasks: [
@@ -170,6 +181,22 @@ module.exports = function (grunt) {
             bower: {
                 files: '<%= paths.bower.src %>**/*',
                 tasks: ['copy:bootstrap', 'copy:jquery', 'copy:mainloop', 'copy:fontawesome']
+            }
+        },
+
+        // Make images into sprites
+        sprite: {
+            all: {
+                src: '<%= paths.src.folder %>img/**/*.png',
+                dest: '<%= paths.dest.folder %>img/sprite.png',
+                destCss: '<%= paths.src.folder %>css/sprites.css'
+            }
+        },
+
+        cssmin: {
+            files: {
+                src: '<%= paths.src.css %>',
+                dest: '<%= paths.src.folder %>/css/sprites.css'
             }
         },
 
@@ -200,18 +227,15 @@ module.exports = function (grunt) {
     grunt.registerTask('build', 'Build the files and watch changes', function (debug) {
         // 'grunt build:prod'
         if (debug === 'prod') {
-            var destCss = grunt.config('paths.dest.css');
-            grunt.config('concat.css.dest', destCss);
-
             // Launch the prod tools
-            grunt.task.run(['jshint', 'concat', 'sass:prod', 'uglify:prod', 'copy', 'clean-src']);
+            grunt.task.run(['jshint', 'sprite', 'cssmin', 'sass:prod', 'concat', 'uglify:prod', 'copy', 'clean-src']);
         } else { // 'grunt build'
             // Launch the dev tools
-            grunt.task.run(['jshint', 'concat', 'sass:dev', 'uglify:dev', 'copy', 'clean-src']);
+            grunt.task.run(['jshint', 'sprite', 'sass:dev', 'concat', 'uglify:dev', 'copy', 'clean-src']);
         }
     });
     grunt.registerTask('init', 'build:prod');
     grunt.registerTask('dev', ['build', 'watch']);
-    grunt.registerTask('clean-src', ['clean:js', 'clean:css']);
+    grunt.registerTask('clean-src', 'clean:js');
     grunt.registerTask('clean-all', 'clean:all');
 };
