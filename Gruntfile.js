@@ -18,6 +18,7 @@ module.exports = function (grunt) {
                 folder: 'src/',
                 js: '<%= paths.src.folder %>js/**/*.js',
                 css: '<%= paths.src.folder %>css/**/*.css',
+                scss: '<%= paths.src.folder %>sass/**/*.scss',
                 index: 'index.html'
             },
             bower: {
@@ -100,10 +101,6 @@ module.exports = function (grunt) {
             js: {
                 src: '<%= paths.src.js %>',
                 dest: '<%= paths.dest.js %>'
-            },
-            css: {
-                src: '<%= paths.src.css %>',
-                dest: '<%= paths.dest.cssMin %>'
             }
         },
 
@@ -133,17 +130,9 @@ module.exports = function (grunt) {
             }
         },
 
-        cssmin: {
-            files: {
-                src: '<%= paths.src.css %>',
-                dest: '<%= paths.dest.cssMin %>'
-            }
-        },
-
         // Clean task
         clean: {
             js: '<%= paths.dest.js %>',
-            css: '<%= paths.dest.css %>',
             all: '<%= paths.dest.folder %>**'
         },
 
@@ -168,11 +157,10 @@ module.exports = function (grunt) {
                     'clean:js'
                 ]
             },
-            css: {
-                files: '<%= paths.src.css %>',
+            sass: {
+                files: '<%= paths.src.scss %>',
                 tasks: [
-                    'concat:css',
-                    'clean:css'
+                    'sass:dev'
                 ]
             },
             index: {
@@ -187,12 +175,21 @@ module.exports = function (grunt) {
 
         // Compile SASS files
         sass: {
-            dist: {                          // Target
-                options: {                       // Target options
-                    style: 'expanded'
+            prod: {
+                options: {
+                    style: 'compressed'
                 },
                 files: {
-                    'public/css/curvation.min.css': 'src/sass/curvation.scss'
+                    '<%= paths.dest.cssMin %>': '<%= paths.src.scss %>'
+                }
+            },
+            dev: {
+                options: {
+                    style: 'expanded',
+                    sourcemap: 'none'
+                },
+                files: {
+                    '<%= paths.dest.cssMin %>': '<%= paths.src.scss %>'
                 }
             }
         }
@@ -207,10 +204,10 @@ module.exports = function (grunt) {
             grunt.config('concat.css.dest', destCss);
 
             // Launch the prod tools
-            grunt.task.run(['jshint', 'concat', 'uglify:prod', 'cssmin', 'copy', 'clean-src']);
+            grunt.task.run(['jshint', 'concat', 'sass:prod', 'uglify:prod', 'copy', 'clean-src']);
         } else { // 'grunt build'
             // Launch the dev tools
-            grunt.task.run(['jshint', 'concat', 'sass', 'uglify:dev', 'copy', 'clean-src']);
+            grunt.task.run(['jshint', 'concat', 'sass:dev', 'uglify:dev', 'copy', 'clean-src']);
         }
     });
     grunt.registerTask('init', 'build:prod');
