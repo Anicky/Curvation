@@ -20,6 +20,7 @@ module.exports = function (grunt) {
                 js: '<%= paths.src.folder %>js/**/*.js',
                 css: '<%= paths.src.folder %>css/**/*.css',
                 scss: '<%= paths.src.folder %>sass/**/*.scss',
+                img: '<%= paths.src.folder %>img/**/*.png',
                 index: 'index.html'
             },
             bower: {
