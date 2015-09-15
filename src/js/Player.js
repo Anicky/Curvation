@@ -131,3 +131,6 @@ Player.prototype.checkKey = function (actualKeyCode, availableKeyCodes, keyPress
 if (typeof module != 'undefined') {
     module.exports = Player;
 }
+if (typeof require != 'undefined') {
+    var Point = require("./Point");
+}

@@ -1,18 +1,18 @@
-function Canvas() {
+function CanvasDisplay() {
     this.width = 0;
     this.height = 0;
     this.context = null;
 }
 
-Canvas.prototype.init = function () {
+CanvasDisplay.prototype.init = function () {
     this.clear();
 };
 
-Canvas.prototype.clear = function () {
+CanvasDisplay.prototype.clear = function () {
     this.context.clearRect(0, 0, this.width, this.height);
 };
 
-Canvas.prototype.draw = function (entities) {
+CanvasDisplay.prototype.draw = function (entities) {
     this.clear();
     for (var i = 0; i < entities.length; i++) {
         if ((entities[i]) instanceof Point) {
@@ -23,14 +23,14 @@ Canvas.prototype.draw = function (entities) {
     }
 };
 
-Canvas.prototype.drawPoint = function (entity) {
+CanvasDisplay.prototype.drawPoint = function (entity) {
     this.context.fillStyle = entity.color;
     this.context.beginPath();
     this.context.arc(entity.x, entity.y, entity.size, 0, 2 * Math.PI);
     this.context.fill();
 };
 
-Canvas.prototype.drawArrow = function (entity) {
+CanvasDisplay.prototype.drawArrow = function (entity) {
     var dX = entity.toX - entity.fromX;
     var dY = entity.toY - entity.fromY;
     var angle = Math.atan2(dY, dX);
@@ -45,5 +45,5 @@ Canvas.prototype.drawArrow = function (entity) {
 };
 
 if (typeof module != 'undefined') {
-    module.exports = Canvas;
+    module.exports = CanvasDisplay;
 }

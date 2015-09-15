@@ -1,6 +1,9 @@
 var socket;
 var game;
 var pause = false;
+var onlineGame = false;
+var key_left_pressed = false;
+var key_right_pressed = false;
 
 function end(fps, panic) {
     if (panic) {
@@ -56,8 +59,26 @@ function updateScoresTable() {
 
 function checkPlayersKey(keyCode, isKeyPressed) {
     if (game.gameRunning && !game.gamePaused) {
-        for (var i = 0; i < game.players.length; i++) {
-            game.players[i].checkKey(keyCode, KEY_CODES[i], isKeyPressed);
+        if (onlineGame) {
+            if (isKeyPressed) {
+                if ((keyCode === KEY_CODES[0][0]) && (!key_left_pressed)) {
+                    key_left_pressed = true;
+                    socket.emit("movePlayer", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+                } else if ((keyCode === KEY_CODES[0][1]) && (!key_right_pressed)) {
+                    key_right_pressed = true;
+                    socket.emit("movePlayer", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+                }
+            } else if (keyCode === KEY_CODES[0][0]) {
+                key_left_pressed = false;
+                socket.emit("movePlayer", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+            } else if (keyCode === KEY_CODES[0][1]) {
+                key_right_pressed = false;
+                socket.emit("movePlayer", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+            }
+        } else {
+            for (var i = 0; i < game.players.length; i++) {
+                game.players[i].checkKey(keyCode, KEY_CODES[i], isKeyPressed);
+            }
         }
     }
 }
@@ -68,29 +89,54 @@ var setEventHandlers = function () {
     socket.on("newPlayer", onNewPlayer);
     socket.on("movePlayer", onMovePlayer);
     socket.on("removePlayer", onRemovePlayer);
+    socket.on("serverMessage", onServerMessage);
+    socket.on("draw", onDraw);
 };
+
+function onDraw(data) {
+    // @TODO : à modifier
+    //var points = data.points;
+    //for (var i = 0; i < points.length; i++) {
+    //    for (var j = 0; j < points[i].length; j++) {
+    //        var p = points[i][j];
+    //        p = new Point(points[i][j].x, points[i][j].y, points[i][j].size, points[i][j].color);
+    //        p.draw(game.context);
+    //    }
+    //}
+}
+
+function onServerMessage(data) {
+    if (data.message === 'init') {
+        $(".startButton").slideToggle();
+    } else if (data.message === 'wait') {
+        $(".waitButton").slideToggle();
+    } else if (data.message == 'ready') {
+        $(".startButton").prop("disabled", false);
+    } else if (data.message == 'start') {
+        game.gameLaunched = true;
+        $(".runButtons").slideToggle();
+    }
+}
 
 // Socket connected
 function onSocketConnected() {
-    console.log("Connected to socket server");
     var pseudo = prompt("Quel est votre pseudo ?");
     socket.emit("newPlayer", {name: pseudo});
 }
 
 // Socket disconnected
 function onSocketDisconnect() {
-    console.log("Disconnected from socket server");
 }
 
 // New player
 function onNewPlayer(data) {
-    console.log("New player connected: " + data.id);
     // Initialise the new player
     var newPlayer = new Player(data.name, data.color, data.x, data.y);
     newPlayer.id = data.id;
 
     // Add new player to the remote players array
     game.players.push(newPlayer);
+    //game.addPlayer(newPlayer);
     updateScoresTable();
 }
 
@@ -106,18 +152,15 @@ function onRemovePlayer(data) {
 }
 
 $(document).ready(function () {
+    $(".startButton, .onlineGameButton, .waitButton").prop("disabled", true);
     game = new Game();
-    var canvas = new Canvas();
+    var canvas = new CanvasDisplay();
     canvas.context = $("#canvas").get(0).getContext("2d");
     canvas.width = $('.panel-game .panel-body').width();
     canvas.height = $('.panel-game .panel-body').height();
     game.display = canvas;
     $("#canvas").attr('width', canvas.width);
     $("#canvas").attr('height', canvas.height);
-
-    // Init canvas
-    $(".startButton").prop("disabled", true);
-    $(".onlineGameButton").prop("disabled", true);
 
     if (typeof io != 'undefined') {
         $(".onlineGameButton").prop("disabled", false);
@@ -136,6 +179,7 @@ $(document).ready(function () {
     $(".onlineGameButton").click(function () {
         socket = io();
         $(".gameModeButtons").slideToggle();
+        onlineGame = true;
         setEventHandlers();
     });
 
@@ -180,8 +224,11 @@ $(document).ready(function () {
 
     // Start the party
     $(".startButton").click(function () {
-        run();
-        $('.playersButtons, .startButton, .gameRunningButtons').slideToggle();
+        if (!game.gameLaunched && !onlineGame) {
+            run();
+        } else if (!game.gameLaunched && onlineGame) {
+            socket.emit("message", {start: true});
+        }
     });
 
     // Pause/Play the game

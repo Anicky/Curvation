@@ -131,3 +131,6 @@ Game.prototype.getPlayerArrows = function () {
 if (typeof module != 'undefined') {
     module.exports = Game;
 }
+if (typeof require != 'undefined') {
+    var Player = require("./Player");
+}
