@@ -90,7 +90,7 @@ function onNewPlayer(data) {
     newPlayer.id = data.id;
 
     // Add new player to the remote players array
-    players.push(newPlayer);
+    game.players.push(newPlayer);
     updateScoresTable();
 }
 
