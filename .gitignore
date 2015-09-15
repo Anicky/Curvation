@@ -6,3 +6,4 @@
 /build
 /.sass-cache
 /npm-debug.log
+/src/css
