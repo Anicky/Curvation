@@ -103,11 +103,15 @@ Game.prototype.isRoundFinished = function () {
 
 Game.prototype.draw = function (interpolationPercentage) {
     if ((this.gameRunning) && (!this.gamePaused)) {
-        var entities = [];
-        entities = entities.concat(this.getPlayerPoints());
-        entities = entities.concat(this.getPlayerArrows());
-        this.display.draw(entities);
+        this.display.draw(this.getEntities());
     }
+};
+
+Game.prototype.getEntities = function() {
+    var entities = [];
+    entities = entities.concat(this.getPlayerPoints());
+    entities = entities.concat(this.getPlayerArrows());
+    return entities;
 };
 
 Game.prototype.getPlayerPoints = function () {

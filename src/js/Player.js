@@ -134,3 +134,6 @@ if (typeof module != 'undefined') {
 if (typeof require != 'undefined') {
     var Point = require("./Point");
 }
+if (typeof require != 'undefined') {
+    var Arrow = require("./Arrow");
+}

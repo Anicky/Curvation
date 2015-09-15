@@ -94,15 +94,7 @@ var setEventHandlers = function () {
 };
 
 function onDraw(data) {
-    // @TODO : à modifier
-    //var points = data.points;
-    //for (var i = 0; i < points.length; i++) {
-    //    for (var j = 0; j < points[i].length; j++) {
-    //        var p = points[i][j];
-    //        p = new Point(points[i][j].x, points[i][j].y, points[i][j].size, points[i][j].color);
-    //        p.draw(game.context);
-    //    }
-    //}
+    game.display.draw(data.entities);
 }
 
 function onServerMessage(data) {

@@ -117,11 +117,7 @@ function update(delta) {
 }
 
 function draw(interpolationPercentage) {
-    var points = [];
-    for (var i = 0; i < game.players.length; i++) {
-        points.push(game.players[i].history);
-    }
-    socket.sockets.emit("draw", {points: points});
+    socket.sockets.emit("draw", {entities: game.getEntities()});
 }
 
 function end(fps, panic) {
