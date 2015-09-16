@@ -15,9 +15,9 @@ CanvasDisplay.prototype.clear = function () {
 CanvasDisplay.prototype.draw = function (entities) {
     this.clear();
     for (var i = 0; i < entities.length; i++) {
-        if ((entities[i]) instanceof Point) {
+        if (entities[i].type === 'Point') {
             this.drawPoint(entities[i]);
-        } else if ((entities[i]) instanceof Arrow) {
+        } else if (entities[i].type === 'Arrow') {
             this.drawArrow(entities[i]);
         }
     }

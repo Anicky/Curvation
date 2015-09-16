@@ -6,6 +6,7 @@ function Arrow(fromX, fromY, toX, toY, direction, headSize, color) {
     this.direction = direction;
     this.headSize = headSize;
     this.color = color;
+    this.type = 'Arrow';
 }
 
 if (typeof module != 'undefined') {

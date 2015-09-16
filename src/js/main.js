@@ -105,7 +105,7 @@ function onServerMessage(data) {
     } else if (data.message == 'ready') {
         $(".startButton").prop("disabled", false);
     } else if (data.message == 'start') {
-        game.gameLaunched = true;
+        game.run();
         $(".runButtons").slideToggle();
     }
 }
@@ -123,12 +123,8 @@ function onSocketDisconnect() {
 // New player
 function onNewPlayer(data) {
     // Initialise the new player
-    var newPlayer = new Player(data.name, data.color, data.x, data.y);
-    newPlayer.id = data.id;
-
-    // Add new player to the remote players array
+    var newPlayer = new Player(data.name, data.color, data.id);
     game.players.push(newPlayer);
-    //game.addPlayer(newPlayer);
     updateScoresTable();
 }
 

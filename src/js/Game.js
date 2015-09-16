@@ -21,8 +21,8 @@ Game.prototype.initPlayers = function () {
     }
 };
 
-Game.prototype.addPlayer = function (name, color) {
-    var newPlayer = new Player(name, color);
+Game.prototype.addPlayer = function (name, color, id) {
+    var newPlayer = new Player(name, color, id);
     newPlayer.game = this;
     this.players.push(newPlayer);
 

@@ -72,15 +72,11 @@ function onClientDisconnect() {
 };
 
 function onNewPlayer(data) {
-    game.addPlayer(data.name, colors[game.players.length]);
+    game.addPlayer(data.name, colors[game.players.length], this.id);
     var newPlayer = game.players.slice(-1).pop();
-    newPlayer.id = this.id;
-    newPlayer.init(null, null, game);
     this.broadcast.emit("newPlayer", {
         id: newPlayer.id,
         name: newPlayer.name,
-        x: newPlayer.x,
-        y: newPlayer.y,
         color: newPlayer.color
     });
     if (game.players.length === 1) {
@@ -98,8 +94,6 @@ function onNewPlayer(data) {
         this.emit("newPlayer", {
             id: existingPlayer.id,
             name: existingPlayer.name,
-            x: existingPlayer.x,
-            y: existingPlayer.y,
             color: existingPlayer.color
         });
     }
@@ -107,9 +101,10 @@ function onNewPlayer(data) {
 };
 
 function onMovePlayer(data) {
-    var clientId = this.id;
-    var player = playerById(this.id);
-    player.checkKey(data.keyCode, KEY_CODES[0], data.isKeyPressed);
+    var player = game.getPlayer(this.id);
+    if (player) {
+        player.checkKey(data.keyCode, KEY_CODES[0], data.isKeyPressed);
+    }
 };
 
 function update(delta) {
@@ -117,7 +112,8 @@ function update(delta) {
 }
 
 function draw(interpolationPercentage) {
-    socket.sockets.emit("draw", {entities: game.getEntities()});
+    var entities = game.getEntities();
+    socket.sockets.emit("draw", {entities: entities});
 }
 
 function end(fps, panic) {

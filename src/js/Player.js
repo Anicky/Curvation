@@ -1,25 +1,20 @@
-function Player(name, color, x, y) {
+function Player(name, color, id) {
     this.name = name;
     this.color = color;
     this.score = 0;
-    this.x = x;
-    this.y = y;
-    this.id = null;
+    if (id === undefined) {
+        this.id = this.name;
+    } else {
+        this.id = id;
+    }
     this.game = null;
 }
 
-Player.prototype.init = function (x, y, id) {
+Player.prototype.init = function () {
     this.keyPressedLeft = 0;
     this.keyPressedRight = 0;
-    if (id === undefined) {
-        this.id = this.name;
-    }
-    if (x === undefined) {
-        this.x = round(setRandomX(), 1);
-    }
-    if (y === undefined) {
-        this.y = round(setRandomY(), 1);
-    }
+    this.x = round(setRandomX(), 1);
+    this.y = round(setRandomY(), 1);
     this.direction = setRandomAngle();
     this.speed = DEFAULT_SNAKE_SPEED;
     this.size = DEFAULT_SNAKE_SIZE;
