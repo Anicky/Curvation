@@ -96,9 +96,15 @@ Player.prototype.checkCollisions = function (tempX, tempY) {
      * Voir ici pour l'explication : http://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
      * Et ici pour la demo : http://www.mikechambers.com/blog/2011/03/21/javascript-quadtree-implementation/
      */
+
+    // @TODO : check collisions avec items
+    // @TODO : check collisions avec les murs
+    // @TODO : check collisions avec soi meme
+    // @TODO : check collisions avec les autres
+
     if (!this.currentHole && this.game.timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME) {
         var pixelData = this.game.display.context.getImageData(tempX, tempY, 1, 1);
-        if (this.x <= 0 || this.x >= this.game.display.width || this.y <= 0 || this.y >= this.game.display.height || (pixelData.data[3] > 0)) {
+        if (((this.x - this.size) <= 0) || ((this.x + this.size) >= this.game.display.width) || ((this.y - this.size) <= 0) || ((this.y + this.size) >= this.game.display.height) || (pixelData.data[3] > 0)) {
             return true;
         }
     }
