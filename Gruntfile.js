@@ -8,7 +8,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-sass');
-    grunt.loadNpmTasks('grunt-spritesmith');
 
     // Project configuration.
     grunt.initConfig({
@@ -185,15 +184,6 @@ module.exports = function (grunt) {
             }
         },
 
-        // Make images into sprites
-        sprite: {
-            all: {
-                src: '<%= paths.src.folder %>img/**/*.png',
-                dest: '<%= paths.dest.folder %>img/sprite.png',
-                destCss: '<%= paths.src.folder %>css/sprites.css'
-            }
-        },
-
         cssmin: {
             files: {
                 src: '<%= paths.src.css %>',
@@ -229,10 +219,10 @@ module.exports = function (grunt) {
         // 'grunt build:prod'
         if (debug === 'prod') {
             // Launch the prod tools
-            grunt.task.run(['jshint', 'sprite', 'cssmin', 'sass:prod', 'concat', 'uglify:prod', 'copy', 'clean-src']);
+            grunt.task.run(['jshint', 'cssmin', 'sass:prod', 'concat', 'uglify:prod', 'copy', 'clean-src']);
         } else { // 'grunt build'
             // Launch the dev tools
-            grunt.task.run(['jshint', 'sprite', 'sass:dev', 'concat', 'uglify:dev', 'copy', 'clean-src']);
+            grunt.task.run(['jshint', 'sass:dev', 'concat', 'uglify:dev', 'copy', 'clean-src']);
         }
     });
     grunt.registerTask('init', 'build:prod');
