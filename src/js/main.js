@@ -4,6 +4,7 @@ var pause = false;
 var onlineGame = false;
 var key_left_pressed = false;
 var key_right_pressed = false;
+var onlinePlayerId = null;
 
 function end(fps, panic) {
     if (panic) {
@@ -49,11 +50,13 @@ function run() {
     MainLoop.setUpdate(update).setDraw(draw).setEnd(end).start();
 }
 
-function updateScoresTable() {
-    var playersOrdered = game.getPlayersOrdered();
+function updateScoresTable(players) {
+    if (players === undefined) {
+        players = game.getPlayersOrdered();
+    }
     $('#scores').html('');
-    for (var i = 0; i < playersOrdered.length; i++) {
-        $('#scores').append('<div class="row scores-line" id="player-' + i + '" style="color: ' + playersOrdered[i].color + '"><div class="col-xs-2 scores-color"><span style="background-color: ' + playersOrdered[i].color + ';"></span></div><div class="col-xs-7 scores-name">' + playersOrdered[i].name + '</div><div class="col-xs-3 scores-points">' + playersOrdered[i].score + '</div></div>');
+    for (var i = 0; i < players.length; i++) {
+        $('#scores').append('<div class="row scores-line" id="player-' + i + '" style="color: ' + players[i].color + '"><div class="col-xs-2 scores-color"><span style="background-color: ' + players[i].color + ';"></span></div><div class="col-xs-7 scores-name">' + players[i].name + '</div><div class="col-xs-3 scores-points">' + players[i].score + '</div></div>');
     }
 }
 
@@ -100,6 +103,8 @@ function onDraw(data) {
 function onServerMessage(data) {
     if (data.message === 'init') {
         $(".startButton").slideToggle();
+    } else if (data.message === 'getCurrentPlayerId') {
+        onlinePlayerId = data.id;
     } else if (data.message === 'wait') {
         $(".waitButton").slideToggle();
     } else if (data.message == 'ready') {
@@ -107,6 +112,15 @@ function onServerMessage(data) {
     } else if (data.message == 'start') {
         game.run();
         $(".runButtons").slideToggle();
+    } else if (data.message == 'updateScores') {
+        updateScoresTable(data.players);
+    } else if (data.message == 'roundEnd') {
+        var winner = game.getPlayer(data.winner);
+        $('#gameover .modal-body').html('<p style="color:' + winner.color + '"><span class="modal-playername">' + winner.name + '</span> wins !</p>');
+        $('#gameover').modal('show');
+    } else if (data.message == 'roundStart') {
+        $('#gameover').modal('hide');
+        game.initDisplay();
     }
 }
 
@@ -144,8 +158,8 @@ $(document).ready(function () {
     game = new Game();
     var canvas = new CanvasDisplay();
     canvas.context = $("#canvas").get(0).getContext("2d");
-    canvas.width = $('.panel-game .panel-body').width();
-    canvas.height = $('.panel-game .panel-body').height();
+    canvas.width = 600;
+    canvas.height = 600;
     game.display = canvas;
     $("#canvas").attr('width', canvas.width);
     $("#canvas").attr('height', canvas.height);

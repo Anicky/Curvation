@@ -96,17 +96,55 @@ Player.prototype.checkCollisions = function (tempX, tempY) {
      * Voir ici pour l'explication : http://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
      * Et ici pour la demo : http://www.mikechambers.com/blog/2011/03/21/javascript-quadtree-implementation/
      */
-
-    // @TODO : check collisions avec items
-    // @TODO : check collisions avec les murs
-    // @TODO : check collisions avec soi meme
-    // @TODO : check collisions avec les autres
-
     if (!this.currentHole && this.game.timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME) {
-        var pixelData = this.game.display.context.getImageData(tempX, tempY, 1, 1);
-        if (((this.x - this.size) <= 0) || ((this.x + this.size) >= this.game.display.width) || ((this.y - this.size) <= 0) || ((this.y + this.size) >= this.game.display.height) || (pixelData.data[3] > 0)) {
+        if (this.checkCollisionsWithItems() || this.checkCollisionsWithBorders() || this.checkCollisionsWithItself() || this.checkCollisionsWithOthers()) {
             return true;
         }
+    }
+};
+
+Player.prototype.checkCollisionsWithItems = function() {
+    // @TODO
+    return false;
+};
+
+Player.prototype.checkCollisionsWithBorders = function() {
+    if (((this.x - this.size) <= 0) || ((this.x + this.size) >= this.game.display.width) || ((this.y - this.size) <= 0) || ((this.y + this.size) >= this.game.display.height)) {
+        return true;
+    }
+    return false;
+};
+
+Player.prototype.checkCollisionsWithItself = function() {
+    var lastPointToCheck = round(this.history.length - (5 + (this.size * 3) - (this.speed * 10)), 0);
+    for(var i = 0; i < lastPointToCheck; i++) {
+        if (this.collidesWith(this.history[i])) {
+            return true;
+        }
+    }
+};
+
+Player.prototype.checkCollisionsWithOthers = function() {
+    var players = this.game.players;
+    for(var i = 0; i < players.length; i++) {
+        if (players[i].id !== this.id) {
+            for(var j = 0; j < players[i].history.length; j++) {
+                var point = players[i].history[j];
+                if (this.collidesWith(point)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+};
+
+Player.prototype.collidesWith = function(point) {
+    var dx = this.x - point.x;
+    var dy = this.y - point.y;
+    var distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < this.size + point.size) {
+        return true;
     }
     return false;
 };

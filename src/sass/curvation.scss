@@ -45,13 +45,15 @@ body {
   font-weight: bold;
 }
 
-.panel-game .panel-body {
-  border: 1px solid #ddd;
+.panel-game {
+  background-color: inherit;
 }
 
 #canvas {
+  background-color: #fff;
+  border: 1px solid #ddd;
   display: block;
-  border: black 1px solid;
+  margin: 0 auto;
 }
 
 .gameRunningButtons, .startButton, .playersButtons, .playButton, .waitButton {

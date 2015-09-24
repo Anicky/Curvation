@@ -122,11 +122,16 @@ Game.prototype.getPlayerPoints = function () {
     return entities;
 };
 
-Game.prototype.getPlayerArrows = function () {
+Game.prototype.getPlayerArrows = function (playerId) {
     var entities = [];
     if (this.timer < DEFAULT_WAITING_TIME) {
-        for (var i = 0; i < this.players.length; i++) {
-            entities = entities.concat(this.players[i].getArrow());
+        if(playerId !== undefined) {
+            var player = this.getPlayer(playerId);
+            entities = entities.concat(player.getArrow());
+        } else {
+            for (var i = 0; i < this.players.length; i++) {
+                entities = entities.concat(this.players[i].getArrow());
+            }
         }
     }
     return entities;
