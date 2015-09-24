@@ -213,6 +213,7 @@ $(document).ready(function () {
     // Start the party
     $(".startButton").click(function () {
         if (!game.gameLaunched && !onlineGame) {
+            $(".playersButtons, .startButton, .gameRunningButtons").slideToggle();
             run();
         } else if (!game.gameLaunched && onlineGame) {
             socket.emit("message", {start: true});
