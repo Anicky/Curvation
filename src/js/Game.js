@@ -4,6 +4,7 @@ function Game() {
     this.gamePaused = false;
     this.timer = 0;
     this.display = null;
+    this.collisionInFrame = false;
 }
 
 Game.prototype.init = function () {
@@ -63,11 +64,13 @@ Game.prototype.pause = function () {
 };
 
 Game.prototype.update = function (delta) {
+    this.collisionInFrame = false;
     if ((this.gameRunning) && (!this.gamePaused)) {
         for (var i = 0; i < this.players.length; i++) {
             if (!this.players[i].collisionsCheck) {
                 this.players[i].update(delta);
                 if (this.players[i].collisionsCheck) {
+                    this.collisionInFrame = true;
                     this.incrementPlayersScores();
                     if (this.isRoundFinished()) {
                         this.gameRunning = false;
@@ -107,7 +110,7 @@ Game.prototype.draw = function (interpolationPercentage) {
     }
 };
 
-Game.prototype.getEntities = function() {
+Game.prototype.getEntities = function () {
     var entities = [];
     entities = entities.concat(this.getPlayerPoints());
     entities = entities.concat(this.getPlayerArrows());
@@ -125,7 +128,7 @@ Game.prototype.getPlayerPoints = function () {
 Game.prototype.getPlayerArrows = function (playerId) {
     var entities = [];
     if (this.timer < DEFAULT_WAITING_TIME) {
-        if(playerId !== undefined) {
+        if (playerId !== undefined) {
             var player = this.getPlayer(playerId);
             entities = entities.concat(player.getArrow());
         } else {

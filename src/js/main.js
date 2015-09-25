@@ -16,7 +16,9 @@ function end(fps, panic) {
 function update(delta) {
     if (!pause) {
         game.update(delta);
-        updateScoresTable();
+        if (game.collisionInFrame) {
+            updateScoresTable();
+        }
         if (!game.gameRunning) {
             pause = true;
             if (game.players.length === 1) {

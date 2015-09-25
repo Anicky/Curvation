@@ -108,12 +108,18 @@ function onMovePlayer(data) {
 function update(delta) {
     if (!pause) {
         game.update(delta);
-        var playersOrdered = game.getPlayersOrdered();
-        var playersToEmit = new Array();
-        for(var i = 0; i < playersOrdered.length; i++) {
-            playersToEmit.push({name:playersOrdered[i].name, color:playersOrdered[i].color, score:playersOrdered[i].score});
+        if (game.collisionInFrame) {
+            var playersOrdered = game.getPlayersOrdered();
+            var playersToEmit = new Array();
+            for (var i = 0; i < playersOrdered.length; i++) {
+                playersToEmit.push({
+                    name: playersOrdered[i].name,
+                    color: playersOrdered[i].color,
+                    score: playersOrdered[i].score
+                });
+            }
+            socket.sockets.emit("serverMessage", {message: "updateScores", players: playersToEmit});
         }
-        socket.sockets.emit("serverMessage", {message: "updateScores", players: playersToEmit});
         if (!game.gameRunning) {
             pause = true;
             var winner = null;
@@ -123,13 +129,15 @@ function update(delta) {
                     break;
                 }
             }
-            socket.sockets.emit("serverMessage", {message: "roundEnd", winner: winner.id});
-            setTimeout(function () {
-                pause = false;
-                game.run();
-                socket.sockets.emit("serverMessage", {message: "roundStart"});
-                util.log("Game started.");
-            }, 2000);
+            if (winner) {
+                socket.sockets.emit("serverMessage", {message: "roundEnd", winner: winner.id});
+                setTimeout(function () {
+                    pause = false;
+                    game.run();
+                    socket.sockets.emit("serverMessage", {message: "roundStart"});
+                    util.log("Game started.");
+                }, 2000);
+            }
         }
     }
 }
