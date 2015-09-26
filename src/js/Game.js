@@ -30,7 +30,7 @@ Game.prototype.addPlayer = function (name, color, id) {
 };
 
 Game.prototype.removePlayer = function (id) {
-    var playerToRemoved = getPlayer(id);
+    var playerToRemoved = this.getPlayer(id);
     if (playerToRemoved) {
         this.players.splice(this.players.indexOf(playerToRemoved), 1);
     }
@@ -56,6 +56,7 @@ Game.prototype.getPlayersOrdered = function () {
 Game.prototype.run = function () {
     this.timer = 0;
     this.init();
+    this.gamePaused = false;
     this.gameRunning = true;
 };
 
