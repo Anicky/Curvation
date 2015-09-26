@@ -109,7 +109,7 @@ Player.prototype.checkCollisionsWithItems = function() {
 };
 
 Player.prototype.checkCollisionsWithBorders = function() {
-    if (((this.x - this.size) <= 0) || ((this.x + this.size) >= this.game.display.width) || ((this.y - this.size) <= 0) || ((this.y + this.size) >= this.game.display.height)) {
+    if (((this.x - this.size) <= 0) || ((this.x + this.size) >= 1000) || ((this.y - this.size) <= 0) || ((this.y + this.size) >= 1000)) {
         return true;
     }
     return false;

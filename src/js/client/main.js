@@ -5,6 +5,7 @@ var onlineGame = false;
 var key_left_pressed = false;
 var key_right_pressed = false;
 var onlinePlayerId = null;
+var canvas;
 
 function end(fps, panic) {
     if (panic) {
@@ -158,13 +159,11 @@ function onRemovePlayer(data) {
 $(document).ready(function () {
     $(".startButton, .onlineGameButton, .waitButton").prop("disabled", true);
     game = new Game();
-    var canvas = new CanvasDisplay();
+    $("#canvas").attr('width', Math.min(700, $(".panel-game").width()));
+    $("#canvas").attr('height', Math.min(700, $(".panel-game").width()));
+    canvas = new CanvasDisplay($("#canvas").get(0).width);
     canvas.context = $("#canvas").get(0).getContext("2d");
-    canvas.width = 600;
-    canvas.height = 600;
     game.display = canvas;
-    $("#canvas").attr('width', canvas.width);
-    $("#canvas").attr('height', canvas.height);
 
     if (typeof io != 'undefined') {
         $(".onlineGameButton").prop("disabled", false);
@@ -178,6 +177,12 @@ $(document).ready(function () {
     $(this).keyup(function (e) {
         e.preventDefault();
         checkPlayersKey(e.keyCode, false);
+    });
+
+    $(window).resize(function () {
+        $("#canvas").attr('width', Math.min(700, $(".panel-game").width()));
+        $("#canvas").attr('height', Math.min(700, $(".panel-game").width()));
+        canvas.resize($("#canvas").get(0).width);
     });
 
     $(".onlineGameButton").click(function () {
