@@ -31,15 +31,8 @@ var serverGame;
 var serverLog;
 
 function logFormatter(args) {
-    var dateTimeComponents = new Date().toLocaleDateString(config.serverLocale, {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric'
-    });
-    return dateTimeComponents + ' - [' + args.level + '] ' + args.message;
+    var dateTimeComponents = new Date().toISOString();
+    return dateTimeComponents + ' ' + args.level.toUpperCase() + ' ' + args.message;
 }
 
 function init() {
