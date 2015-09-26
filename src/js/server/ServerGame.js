@@ -124,7 +124,7 @@ ServerGame.prototype.startGame = function (client) {
 };
 
 if (typeof require != 'undefined') {
-    var MainLoop = require('../../public/libs/mainloop.min.js');
+    var MainLoop = require('../../../public/libs/mainloop.min.js');
 }
 
 if (typeof module != 'undefined') {

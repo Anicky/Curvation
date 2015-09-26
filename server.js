@@ -1,11 +1,11 @@
 var util = require("util")
 var io = require("socket.io")
-var Player = require("./src/js/Player");
-var Point = require("./src/js/Point");
-var Game = require("./src/js/Game");
-var ServerDisplay = require('./src/js/ServerDisplay');
-var ServerGame = require('./src/js/ServerGame');
-var ServerLog = require('./src/js/ServerLog');
+var Player = require("./src/js/shared/Player");
+var Point = require("./src/js/shared/Point");
+var Game = require("./src/js/shared/Game");
+var ServerDisplay = require('./src/js/server/ServerDisplay');
+var ServerGame = require('./src/js/server/ServerGame');
+var ServerLog = require('./src/js/server/ServerLog');
 var config = require('./config.json');
 var fs = require("fs");
 var http = require('http');
@@ -20,7 +20,7 @@ function include(f) {
     eval.apply(global, [read(f)]);
 }
 
-include('./src/js/tools.js');
+include('./src/js/shared/tools.js');
 
 var socket;
 var app;

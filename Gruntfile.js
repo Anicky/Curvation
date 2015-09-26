@@ -16,7 +16,7 @@ module.exports = function (grunt) {
         paths: {
             src: {
                 folder: 'src/',
-                js: '<%= paths.src.folder %>js/**/*.js',
+                js: ['<%= paths.src.folder %>js/client/*.js', '<%= paths.src.folder %>js/shared/*.js'],
                 css: '<%= paths.src.folder %>css/**/*.css',
                 scss: '<%= paths.src.folder %>sass/**/*.scss',
                 img: '<%= paths.src.folder %>img/**/*.png',
