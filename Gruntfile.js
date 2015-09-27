@@ -8,6 +8,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-sass');
+    grunt.loadNpmTasks('grunt-spritesmith');
 
     // Project configuration.
     grunt.initConfig({
@@ -16,7 +17,7 @@ module.exports = function (grunt) {
         paths: {
             src: {
                 folder: 'src/',
-                js: ['<%= paths.src.folder %>js/client/*.js', '<%= paths.src.folder %>js/shared/*.js'],
+                js: '<%= paths.src.folder %>js/**/*.js',
                 css: '<%= paths.src.folder %>css/**/*.css',
                 scss: '<%= paths.src.folder %>sass/**/*.scss',
                 img: '<%= paths.src.folder %>img/**/*.png',
@@ -35,7 +36,8 @@ module.exports = function (grunt) {
                 js: '<%= paths.dest.folder %>js/<%= pkg.name %>.js',
                 jsMin: '<%= paths.dest.folder %>js/<%= pkg.name %>.min.js',
                 css: '<%= paths.dest.folder %>css/<%= pkg.name %>.css',
-                cssMin: '<%= paths.dest.folder %>css/<%= pkg.name %>.min.css'
+                cssMin: '<%= paths.dest.folder %>css/<%= pkg.name %>.min.css',
+                sprite: '<%= paths.dest.folder %>img/sprite.png'
             }
         },
 
@@ -186,8 +188,8 @@ module.exports = function (grunt) {
 
         cssmin: {
             files: {
-                src: '<%= paths.src.css %>',
-                dest: '<%= paths.src.folder %>/css/sprites.css'
+                src: '<%= paths.dest.cssMin %>',
+                dest: '<%= paths.dest.cssMin %>'
             }
         },
 
@@ -210,6 +212,16 @@ module.exports = function (grunt) {
                     '<%= paths.dest.cssMin %>': '<%= paths.src.scss %>'
                 }
             }
+        },
+
+        // Compile images to sprite and make associate css file
+        sprite: {
+            all: {
+                src: '<%= paths.src.img %>',
+                dest: '<%= paths.dest.sprite %>',
+                imgPath: '../img/sprite.png',
+                destCss: '<%= paths.src.folder %>css/sprites.css'
+            }
         }
     });
 
@@ -219,10 +231,10 @@ module.exports = function (grunt) {
         // 'grunt build:prod'
         if (debug === 'prod') {
             // Launch the prod tools
-            grunt.task.run(['jshint', 'cssmin', 'sass:prod', 'concat', 'uglify:prod', 'copy', 'clean-src']);
+            grunt.task.run(['jshint', 'sass:prod', 'sprite', 'concat', 'uglify:prod', 'cssmin', 'copy', 'clean-src']);
         } else { // 'grunt build'
             // Launch the dev tools
-            grunt.task.run(['jshint', 'sass:dev', 'concat', 'uglify:dev', 'copy', 'clean-src']);
+            grunt.task.run(['jshint', 'sass:dev', 'sprite', 'concat', 'uglify:dev', 'copy', 'clean-src']);
         }
     });
     grunt.registerTask('init', 'build:prod');
