@@ -56,6 +56,7 @@ function init() {
     });
 
     app = new express();
+    app.use('/', express.static(path.join(__dirname, 'public')));
 
     host = vhost(config.serverUrl, express.static(path.join(__dirname, 'public')));
     app.use(host);
