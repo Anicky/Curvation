@@ -1,6 +1,7 @@
 /* Node.js API - https://nodejs.org/api */
 var fs = require("fs");
 var http = require('http');
+var path = require("path");
 var util = require("util");
 
 /* Express web framework - http://expressjs.com/4x/api.html */
@@ -56,7 +57,7 @@ function init() {
 
     app = new express();
 
-    host = vhost(config.serverUrl, express.static('public'));
+    host = vhost(config.serverUrl, express.static(path.join(__dirname, 'public')));
     app.use(host);
 
     server = http.createServer(app);
