@@ -14,6 +14,15 @@ function end(fps, panic) {
     }
 }
 
+function onlineUpdate(delta) {
+    if (!pause) {
+        game.update(delta);
+        if (game.collisionInFrame) {
+            updateScoresTable();
+        }
+    }
+}
+
 function update(delta) {
     if (!pause) {
         game.update(delta);
@@ -38,6 +47,7 @@ function update(delta) {
             setTimeout(function () {
                 $('#gameover').modal('hide');
                 pause = false;
+                game.setRandomPositions();
                 game.run();
             }, 2000);
         }
@@ -49,8 +59,14 @@ function draw(interpolationPercentage) {
 }
 
 function run() {
+    game.setRandomPositions();
     game.run();
     MainLoop.setUpdate(update).setDraw(draw).setEnd(end).start();
+}
+
+function onlineRun() {
+    game.run();
+    MainLoop.setUpdate(onlineUpdate).setDraw(draw).setEnd(end).start();
 }
 
 function updateScoresTable(players) {
@@ -66,6 +82,8 @@ function updateScoresTable(players) {
 function checkPlayersKey(keyCode, isKeyPressed) {
     if (game.gameRunning && !game.gamePaused) {
         if (onlineGame) {
+            var currentPlayer = game.getPlayer(onlinePlayerId);
+            currentPlayer.checkKey(keyCode, KEY_CODES[0], isKeyPressed);
             if (isKeyPressed) {
                 if ((keyCode === KEY_CODES[0][0]) && (!key_left_pressed)) {
                     key_left_pressed = true;
@@ -96,12 +114,7 @@ var setEventHandlers = function () {
     socket.on("movePlayer", onMovePlayer);
     socket.on("removePlayer", onRemovePlayer);
     socket.on("serverMessage", onServerMessage);
-    socket.on("draw", onDraw);
 };
-
-function onDraw(data) {
-    game.drawer.draw(data.entities);
-}
 
 function onServerMessage(data) {
     if (data.message === 'init') {
@@ -113,7 +126,7 @@ function onServerMessage(data) {
     } else if (data.message == 'ready') {
         $(".startButton").prop("disabled", false);
     } else if (data.message == 'start') {
-        game.run();
+        onlineRun();
         $(".runButtons").slideToggle();
     } else if (data.message == 'updateScores') {
         updateScoresTable(data.players);
@@ -122,8 +135,14 @@ function onServerMessage(data) {
         $('#gameover .modal-body').html('<p style="color:' + winner.color + '"><span class="modal-playername">' + winner.name + '</span> wins !</p>');
         $('#gameover').modal('show');
     } else if (data.message == 'roundStart') {
+        for (var i = 0; i < game.players.length; i++) {
+            var player = game.getPlayer(data.players[i].id);
+            player.x = data.players[i].x;
+            player.y = data.players[i].y;
+            player.direction = data.players[i].direction;
+        }
         $('#gameover').modal('hide');
-        game.initDisplay();
+        game.run();
     }
 }
 
@@ -140,14 +159,22 @@ function onSocketDisconnect() {
 // New player
 function onNewPlayer(data) {
     // Initialise the new player
-    var newPlayer = new Player(data.name, data.color, data.id);
-    game.players.push(newPlayer);
+    game.addPlayer(data.name, data.color, data.id);
+    var player = game.getPlayer(data.id);
+    if(player) {
+        player.x = data.x;
+        player.y = data.y;
+        player.direction = data.direction;
+    }
     updateScoresTable();
 }
 
 // Move player
 function onMovePlayer(data) {
-    // @TODO
+    var player = game.getPlayer(data.playerId);
+    if (player) {
+        player.checkKey(data.data.keyCode, KEY_CODES[0], data.data.isKeyPressed);
+    }
 }
 
 // Remove player
@@ -186,6 +213,7 @@ $(document).ready(function () {
     });
 
     $(".onlineGameButton").click(function () {
+        game.mode = GAME_MODE_ONLINE;
         socket = io();
         $(".gameModeButtons").slideToggle();
         onlineGame = true;
@@ -193,6 +221,7 @@ $(document).ready(function () {
     });
 
     $(".localGameButton").click(function () {
+        game.mode = GAME_MODE_LOCAL;
         $(".gameModeButtons, .playersButtons, .startButton").slideToggle();
     });
 

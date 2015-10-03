@@ -6,6 +6,9 @@
 const KEY_CODES = [[37, 39], [83, 68], [71, 72], [76, 77]];
 const PLAYER_COLORS = ['#D62525', '#2D70EA', '#396F19', '#F1BC42'];
 
+const GAME_MODE_LOCAL = 1;
+const GAME_MODE_ONLINE = 2;
+
 const DEFAULT_SNAKE_SIZE = 5;
 const DEFAULT_SNAKE_SPEED = 15 / 100;
 const DEFAULT_SNAKE_CURVE = 3;

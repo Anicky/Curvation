@@ -1,5 +1,6 @@
-function ServerGame(game, socket, log) {
-    this.game = game;
+function ServerGame(socket, log) {
+    this.game = new Game();
+    this.game.mode = GAME_MODE_ONLINE;
     this.socket = socket;
     this.log = log;
 }
@@ -18,7 +19,6 @@ ServerGame.prototype.update = function (delta) {
                     score: playersOrdered[i].score
                 });
             }
-            this.socket.sockets.emit("serverMessage", {message: "updateScores", players: playersToEmit});
         }
         if (!this.game.gameRunning) {
             this.game.pause();
@@ -33,8 +33,18 @@ ServerGame.prototype.update = function (delta) {
                 this.socket.sockets.emit("serverMessage", {message: "roundEnd", winner: winner.id});
                 var that = this;
                 setTimeout(function () {
+                    that.game.setRandomPositions();
+                    var playersData = [];
+                    for (var i = 0; i < that.game.players.length; i++) {
+                        playersData.push({
+                            id: that.game.players[i].id,
+                            x: that.game.players[i].x,
+                            y: that.game.players[i].y,
+                            direction: that.game.players[i].direction
+                        });
+                    }
                     that.game.run();
-                    that.socket.sockets.emit("serverMessage", {message: "roundStart"});
+                    that.socket.sockets.emit("serverMessage", {message: "roundStart", players: playersData});
                     that.log.gameStart();
                 }, 2000);
             }
@@ -43,13 +53,6 @@ ServerGame.prototype.update = function (delta) {
 };
 
 ServerGame.prototype.draw = function (interpolationPercentage) {
-    var playersPoints = this.game.getPlayerPoints();
-    for (var i = 0; i < this.game.players.length; i++) {
-        var entities = [];
-        entities = entities.concat(playersPoints);
-        entities = entities.concat(this.game.getPlayerArrows(this.game.players[i].id));
-        this.socket.to(this.game.players[i].id).emit("draw", {entities: entities});
-    }
 };
 
 ServerGame.prototype.end = function (fps, panic) {
@@ -68,17 +71,40 @@ ServerGame.prototype.clientDisconnect = function (client) {
     }
     this.game.players.splice(this.game.players.indexOf(removePlayer), 1);
     client.broadcast.emit("removePlayer", {id: client.id});
+    if (this.game.players.length === 0) {
+        this.game = new Game();
+        this.game.mode = GAME_MODE_ONLINE;
+    }
 };
 
 ServerGame.prototype.addPlayer = function (client, data) {
     this.game.addPlayer(data.name, PLAYER_COLORS[this.game.players.length], client.id);
-    client.emit("serverMessage", {message: "getCurrentPlayerId", id: client.id});
     var newPlayer = this.game.players.slice(-1).pop();
+    newPlayer.setRandomPosition();
+    client.emit("serverMessage", {
+        message: "getCurrentPlayerId",
+        id: client.id
+    });
     client.broadcast.emit("newPlayer", {
         id: newPlayer.id,
         name: newPlayer.name,
-        color: newPlayer.color
+        color: newPlayer.color,
+        x: newPlayer.x,
+        y: newPlayer.y,
+        direction: newPlayer.direction
     });
+    var i, existingPlayer;
+    for (i = 0; i < this.game.players.length; i++) {
+        existingPlayer = this.game.players[i];
+        client.emit("newPlayer", {
+            id: existingPlayer.id,
+            name: existingPlayer.name,
+            color: existingPlayer.color,
+            x: existingPlayer.x,
+            y: existingPlayer.y,
+            direction: existingPlayer.direction
+        });
+    }
     if (this.game.players.length === 1) {
         client.emit("serverMessage", {message: "init"});
     } else {
@@ -88,21 +114,13 @@ ServerGame.prototype.addPlayer = function (client, data) {
         }
         client.emit("serverMessage", {message: "wait"});
     }
-    var i, existingPlayer;
-    for (i = 0; i < this.game.players.length; i++) {
-        existingPlayer = this.game.players[i];
-        client.emit("newPlayer", {
-            id: existingPlayer.id,
-            name: existingPlayer.name,
-            color: existingPlayer.color
-        });
-    }
 };
 
 ServerGame.prototype.movePlayer = function (client, data) {
     var player = this.game.getPlayer(client.id);
     if (player) {
         player.checkKey(data.keyCode, KEY_CODES[0], data.isKeyPressed);
+        client.broadcast.emit("movePlayer", {playerId: client.id, data: data});
     }
 };
 
@@ -124,6 +142,7 @@ ServerGame.prototype.startGame = function (client) {
 };
 
 if (typeof require != 'undefined') {
+    var Game = require("../shared/Game");
     var MainLoop = require('../../../public/libs/mainloop.min.js');
 }
 

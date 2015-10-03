@@ -1,15 +1,25 @@
+// @TODO : Gerer trous en online (seulement cote serveur avec notif aux joueurs quand ca arrive)
+// @TODO : Dessiner fleche seulement sur joueur current en online
+
 function Game() {
+    this.mode = null;
+    this.drawer = new Drawer();
     this.players = [];
     this.gameRunning = false;
     this.gamePaused = false;
     this.timer = 0;
-    this.drawer = null;
     this.collisionInFrame = false;
 }
 
 Game.prototype.init = function () {
     this.initDisplay();
     this.initPlayers();
+};
+
+Game.prototype.setRandomPositions = function () {
+    for (var i = 0; i < this.players.length; i++) {
+        this.players[i].setRandomPosition();
+    }
 };
 
 Game.prototype.initDisplay = function () {
@@ -23,10 +33,7 @@ Game.prototype.initPlayers = function () {
 };
 
 Game.prototype.addPlayer = function (name, color, id) {
-    var newPlayer = new Player(name, color, id);
-    newPlayer.game = this;
-    this.players.push(newPlayer);
-
+    this.players.push(new Player(this, name, color, id));
 };
 
 Game.prototype.removePlayer = function (id) {
@@ -108,7 +115,7 @@ Game.prototype.isRoundFinished = function () {
 Game.prototype.draw = function (interpolationPercentage) {
     if ((this.gameRunning) && (!this.gamePaused)) {
         this.drawer.init();
-        for(var i = 0; i < this.players.length; i++) {
+        for (var i = 0; i < this.players.length; i++) {
             this.players[i].draw(this.timer);
         }
     }
@@ -119,4 +126,5 @@ if (typeof module != 'undefined') {
 }
 if (typeof require != 'undefined') {
     var Player = require("./Player");
+    var Drawer = require("./Drawer");
 }
