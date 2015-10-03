@@ -100,7 +100,7 @@ var setEventHandlers = function () {
 };
 
 function onDraw(data) {
-    game.display.draw(data.entities);
+    game.drawer.draw(data.entities);
 }
 
 function onServerMessage(data) {
@@ -163,7 +163,7 @@ $(document).ready(function () {
     $("#canvas").attr('height', Math.min(700, $(".panel-game").width()));
     canvas = new CanvasDisplay($("#canvas").get(0).width);
     canvas.context = $("#canvas").get(0).getContext("2d");
-    game.display = canvas;
+    game.drawer = canvas;
 
     if (typeof io != 'undefined') {
         $(".onlineGameButton").prop("disabled", false);
@@ -233,10 +233,10 @@ $(document).ready(function () {
 
     // Start the party
     $(".startButton").click(function () {
-        if (!game.gameLaunched && !onlineGame) {
+        if (!game.gameRunning && !onlineGame) {
             $(".playersButtons, .startButton, .gameRunningButtons").slideToggle();
             run();
-        } else if (!game.gameLaunched && onlineGame) {
+        } else if (!game.gameRunning && onlineGame) {
             socket.emit("message", {start: true});
         }
     });

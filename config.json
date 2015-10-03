@@ -1,8 +1,6 @@
 {
   "serverUrl": "dev.curvation.fr",
   "serverPort": 8080,
-  "serverDisplayWidth": 600,
-  "serverDisplayHeight": 600,
   "serverLog": "server.log",
   "serverLocale" : "en-us"
 }

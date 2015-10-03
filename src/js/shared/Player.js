@@ -76,8 +76,15 @@ Player.prototype.update = function (delta) {
     if (this.currentHole || (this.game.timer < DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME)) {
         this.history.pop();
     }
-    this.history.push(new Point(this.x, this.y, this.size, this.color));
+    this.history.push(new Point(this.x, this.y, this.size));
     this.movePlayer(delta);
+};
+
+Player.prototype.draw = function(timer) {
+    this.game.drawer.drawHistory(this.history, this.color);
+    if (timer < DEFAULT_WAITING_TIME) {
+        this.game.drawer.drawArrow(this.getArrow(), this.color);
+    }
 };
 
 Player.prototype.getArrow = function () {
@@ -85,7 +92,7 @@ Player.prototype.getArrow = function () {
     var fromY = this.y + Math.sin(this.direction) * (DEFAULT_SNAKE_ARROW_SPACE + this.size);
     var toX = this.x + Math.cos(this.direction) * (DEFAULT_SNAKE_ARROW_SIZE + DEFAULT_SNAKE_ARROW_SPACE + this.size);
     var toY = this.y + Math.sin(this.direction) * (DEFAULT_SNAKE_ARROW_SIZE + DEFAULT_SNAKE_ARROW_SPACE + this.size);
-    return new Arrow(fromX, fromY, toX, toY, this.direction, DEFAULT_SNAKE_ARROW_HEADSIZE, this.color);
+    return new Arrow(fromX, fromY, toX, toY, this.direction, DEFAULT_SNAKE_ARROW_HEADSIZE, this.size);
 };
 
 Player.prototype.checkCollisions = function (tempX, tempY) {

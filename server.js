@@ -20,7 +20,7 @@ var winston = require('winston');
 var Player = require("./src/js/shared/Player");
 var Point = require("./src/js/shared/Point");
 var Game = require("./src/js/shared/Game");
-var ServerDisplay = require('./src/js/server/ServerDisplay');
+var Drawer = require('./src/js/shared/Drawer');
 var ServerGame = require('./src/js/server/ServerGame');
 var ServerLog = require('./src/js/server/ServerLog');
 
@@ -71,7 +71,7 @@ function init() {
     serverLog = new ServerLog(winston);
     serverGame = new ServerGame(game, socket, serverLog);
 
-    game.display = new ServerDisplay(config.serverDisplayWidth, config.serverDisplayHeight);
+    game.drawer = new Drawer();
 
     serverLog.serverStart();
 };
