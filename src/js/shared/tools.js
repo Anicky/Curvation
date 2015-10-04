@@ -23,6 +23,8 @@ const DEFAULT_SNAKE_ARROW_SPACE = 20;
 const DEFAULT_SNAKE_ARROW_SIZE = 100;
 const DEFAULT_SNAKE_ARROW_HEADSIZE = 30;
 
+const MAP_SIZE = 1000;
+
 function setRandomX() {
     return Math.floor(Math.random() * (1000 - DEFAULT_BEGIN_PADDING * 2 + 1)) + DEFAULT_BEGIN_PADDING;
 }

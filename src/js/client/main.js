@@ -159,10 +159,10 @@ function onRemovePlayer(data) {
 $(document).ready(function () {
     $(".startButton, .onlineGameButton, .waitButton").prop("disabled", true);
     game = new Game();
-    $("#canvas").attr('width', Math.min(700, $(".panel-game").width()));
-    $("#canvas").attr('height', Math.min(700, $(".panel-game").width()));
-    canvas = new CanvasDisplay($("#canvas").get(0).width);
-    canvas.context = $("#canvas").get(0).getContext("2d");
+    $("#canvas").attr('width', Math.min(700, $(".panel-game").width()))
+        .attr('height', Math.min(700, $(".panel-game").width()));
+    var canvasDOM = $("#canvas").get(0);
+    canvas = new CanvasDisplay(canvasDOM.width, canvasDOM.getContext("2d"));
     game.display = canvas;
 
     if (typeof io != 'undefined') {
@@ -182,7 +182,7 @@ $(document).ready(function () {
     $(window).resize(function () {
         $("#canvas").attr('width', Math.min(700, $(".panel-game").width()));
         $("#canvas").attr('height', Math.min(700, $(".panel-game").width()));
-        canvas.resize($("#canvas").get(0).width);
+        canvas.size = $("#canvas").get(0).width;
     });
 
     $(".onlineGameButton").click(function () {
