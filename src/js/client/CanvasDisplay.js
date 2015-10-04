@@ -1,5 +1,5 @@
 /**
- * CanvasDisplay Constructor
+ * Class CanvasDisplay
  * @param {number} size
  * @param context
  * @constructor
@@ -164,3 +164,7 @@ CanvasDisplay.prototype.postprocess = function () {
 CanvasDisplay.prototype.clear = function () {
     this.context.clearRect(0, 0, this.size, this.size);
 };
+
+if (typeof require != 'undefined') {
+    var Drawer = require("../shared/Drawer");
+}
