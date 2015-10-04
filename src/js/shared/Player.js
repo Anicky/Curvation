@@ -1,4 +1,7 @@
-function Player(name, color, id) {
+function Player(game, name, color, id) {
+    this.x = 0;
+    this.y = 0;
+    this.direction = 0;
     this.name = name;
     this.color = color;
     this.score = 0;
@@ -7,15 +10,12 @@ function Player(name, color, id) {
     } else {
         this.id = id;
     }
-    this.game = null;
+    this.game = game;
 }
 
 Player.prototype.init = function () {
     this.keyPressedLeft = 0;
     this.keyPressedRight = 0;
-    this.x = round(setRandomX(), 1);
-    this.y = round(setRandomY(), 1);
-    this.direction = setRandomAngle();
     this.speed = DEFAULT_SNAKE_SPEED;
     this.size = DEFAULT_SNAKE_SIZE;
     this.curve = DEFAULT_SNAKE_CURVE;
@@ -27,6 +27,12 @@ Player.prototype.init = function () {
     this.history = [];
 };
 
+Player.prototype.setRandomPosition = function () {
+    this.x = round(setRandomX(), 1);
+    this.y = round(setRandomY(), 1);
+    this.direction = setRandomAngle();
+};
+
 Player.prototype.createHole = function () {
     this.holeSize = setRandomHoleSize();
     this.currentHole = true;
@@ -36,19 +42,6 @@ Player.prototype.createHole = function () {
 Player.prototype.stopHole = function () {
     this.holeTimer = 0;
     this.currentHole = false;
-};
-
-Player.prototype.movePlayer = function (delta) {
-    if (this.game.timer >= DEFAULT_WAITING_TIME) {
-        this.x = round(this.x + (Math.cos(this.direction) * (this.speed * delta)), 1);
-        this.y = round(this.y + (Math.sin(this.direction) * (this.speed * delta)), 1);
-        var tempX = this.x;
-        var tempY = this.y;
-        this.changeDirection();
-        tempX = round(tempX + (Math.cos(this.direction) * this.size), 1);
-        tempY = round(tempY + (Math.sin(this.direction) * this.size), 1);
-        this.collisionsCheck = this.checkCollisions(tempX, tempY);
-    }
 };
 
 Player.prototype.handleHole = function () {
@@ -72,12 +65,32 @@ Player.prototype.handleHole = function () {
 };
 
 Player.prototype.update = function (delta) {
-    this.handleHole();
+    if (this.game.mode === GAME_MODE_LOCAL) {
+        this.handleHole();
+    }
     if (this.currentHole || (this.game.timer < DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME)) {
         this.history.pop();
     }
-    this.history.push(new Point(this.x, this.y, this.size, this.color));
-    this.movePlayer(delta);
+    this.history.push(new Point(this.x, this.y, this.size));
+    if (this.game.timer >= DEFAULT_WAITING_TIME) {
+        this.collisionsCheck = this.checkCollisions();
+        if (!this.collisionsCheck) {
+            this.movePlayer(delta);
+        }
+    }
+};
+
+Player.prototype.movePlayer = function (delta) {
+    this.x = round(this.x + (Math.cos(this.direction) * (this.speed * delta)), 1);
+    this.y = round(this.y + (Math.sin(this.direction) * (this.speed * delta)), 1);
+    this.changeDirection();
+};
+
+Player.prototype.draw = function (timer) {
+    this.game.drawer.drawCurve(this.history, this.color);
+    if (timer < DEFAULT_WAITING_TIME) {
+        this.game.drawer.drawArrow(this.getArrow(), this.color);
+    }
 };
 
 Player.prototype.getArrow = function () {
@@ -85,10 +98,10 @@ Player.prototype.getArrow = function () {
     var fromY = this.y + Math.sin(this.direction) * (DEFAULT_SNAKE_ARROW_SPACE + this.size);
     var toX = this.x + Math.cos(this.direction) * (DEFAULT_SNAKE_ARROW_SIZE + DEFAULT_SNAKE_ARROW_SPACE + this.size);
     var toY = this.y + Math.sin(this.direction) * (DEFAULT_SNAKE_ARROW_SIZE + DEFAULT_SNAKE_ARROW_SPACE + this.size);
-    return new Arrow(fromX, fromY, toX, toY, this.direction, DEFAULT_SNAKE_ARROW_HEADSIZE, this.color);
+    return new Arrow(fromX, fromY, toX, toY, this.direction, DEFAULT_SNAKE_ARROW_HEADSIZE, this.size);
 };
 
-Player.prototype.checkCollisions = function (tempX, tempY) {
+Player.prototype.checkCollisions = function () {
     /**
      * @TODO : Detection de collisions a revoir pour se passer du canvas.
      * Comparer la tete du snake avec toutes les entites du jeu.
@@ -103,32 +116,32 @@ Player.prototype.checkCollisions = function (tempX, tempY) {
     }
 };
 
-Player.prototype.checkCollisionsWithItems = function() {
+Player.prototype.checkCollisionsWithItems = function () {
     // @TODO
     return false;
 };
 
-Player.prototype.checkCollisionsWithBorders = function() {
+Player.prototype.checkCollisionsWithBorders = function () {
     if (((this.x - this.size) <= 0) || ((this.x + this.size) >= 1000) || ((this.y - this.size) <= 0) || ((this.y + this.size) >= 1000)) {
         return true;
     }
     return false;
 };
 
-Player.prototype.checkCollisionsWithItself = function() {
+Player.prototype.checkCollisionsWithItself = function () {
     var lastPointToCheck = round(this.history.length - (5 + (this.size * 3) - (this.speed * 10)), 0);
-    for(var i = 0; i < lastPointToCheck; i++) {
+    for (var i = 0; i < lastPointToCheck; i++) {
         if (this.collidesWith(this.history[i])) {
             return true;
         }
     }
 };
 
-Player.prototype.checkCollisionsWithOthers = function() {
+Player.prototype.checkCollisionsWithOthers = function () {
     var players = this.game.players;
-    for(var i = 0; i < players.length; i++) {
+    for (var i = 0; i < players.length; i++) {
         if (players[i].id !== this.id) {
-            for(var j = 0; j < players[i].history.length; j++) {
+            for (var j = 0; j < players[i].history.length; j++) {
                 var point = players[i].history[j];
                 if (this.collidesWith(point)) {
                     return true;
@@ -139,7 +152,7 @@ Player.prototype.checkCollisionsWithOthers = function() {
     return false;
 };
 
-Player.prototype.collidesWith = function(point) {
+Player.prototype.collidesWith = function (point) {
     var dx = this.x - point.x;
     var dy = this.y - point.y;
     var distance = Math.sqrt(dx * dx + dy * dy);

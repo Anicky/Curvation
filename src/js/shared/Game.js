@@ -1,9 +1,13 @@
+// @TODO : Gerer trous en online (seulement cote serveur avec notif aux joueurs quand ca arrive)
+// @TODO : Dessiner fleche seulement sur joueur current en online
+
 function Game() {
+    this.mode = null;
+    this.drawer = new Drawer();
     this.players = [];
     this.gameRunning = false;
     this.gamePaused = false;
     this.timer = 0;
-    this.display = null;
     this.collisionInFrame = false;
 }
 
@@ -12,8 +16,14 @@ Game.prototype.init = function () {
     this.initPlayers();
 };
 
+Game.prototype.setRandomPositions = function () {
+    for (var i = 0; i < this.players.length; i++) {
+        this.players[i].setRandomPosition();
+    }
+};
+
 Game.prototype.initDisplay = function () {
-    this.display.init();
+    this.drawer.init();
 };
 
 Game.prototype.initPlayers = function () {
@@ -23,10 +33,7 @@ Game.prototype.initPlayers = function () {
 };
 
 Game.prototype.addPlayer = function (name, color, id) {
-    var newPlayer = new Player(name, color, id);
-    newPlayer.game = this;
-    this.players.push(newPlayer);
-
+    this.players.push(new Player(this, name, color, id));
 };
 
 Game.prototype.removePlayer = function (id) {
@@ -107,38 +114,11 @@ Game.prototype.isRoundFinished = function () {
 
 Game.prototype.draw = function (interpolationPercentage) {
     if ((this.gameRunning) && (!this.gamePaused)) {
-        this.display.draw(this.getEntities());
-    }
-};
-
-Game.prototype.getEntities = function () {
-    var entities = [];
-    entities = entities.concat(this.getPlayerPoints());
-    entities = entities.concat(this.getPlayerArrows());
-    return entities;
-};
-
-Game.prototype.getPlayerPoints = function () {
-    var entities = [];
-    for (var i = 0; i < this.players.length; i++) {
-        entities = entities.concat(this.players[i].history);
-    }
-    return entities;
-};
-
-Game.prototype.getPlayerArrows = function (playerId) {
-    var entities = [];
-    if (this.timer < DEFAULT_WAITING_TIME) {
-        if (playerId !== undefined) {
-            var player = this.getPlayer(playerId);
-            entities = entities.concat(player.getArrow());
-        } else {
-            for (var i = 0; i < this.players.length; i++) {
-                entities = entities.concat(this.players[i].getArrow());
-            }
+        this.drawer.init();
+        for (var i = 0; i < this.players.length; i++) {
+            this.players[i].draw(this.timer);
         }
     }
-    return entities;
 };
 
 if (typeof module != 'undefined') {
@@ -146,4 +126,5 @@ if (typeof module != 'undefined') {
 }
 if (typeof require != 'undefined') {
     var Player = require("./Player");
+    var Drawer = require("./Drawer");
 }

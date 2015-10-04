@@ -17,10 +17,6 @@ var io = require("socket.io");
 var winston = require('winston');
 
 /* Curvation - Classes */
-var Player = require("./src/js/shared/Player");
-var Point = require("./src/js/shared/Point");
-var Game = require("./src/js/shared/Game");
-var ServerDisplay = require('./src/js/server/ServerDisplay');
 var ServerGame = require('./src/js/server/ServerGame');
 var ServerLog = require('./src/js/server/ServerLog');
 
@@ -67,11 +63,8 @@ function init() {
     socket = io.listen(server);
     socket.sockets.on("connection", onSocketConnection);
 
-    game = new Game();
     serverLog = new ServerLog(winston);
-    serverGame = new ServerGame(game, socket, serverLog);
-
-    game.display = new ServerDisplay(config.serverDisplayWidth, config.serverDisplayHeight);
+    serverGame = new ServerGame(socket, serverLog);
 
     serverLog.serverStart();
 };
