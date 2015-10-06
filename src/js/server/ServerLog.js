@@ -6,12 +6,12 @@ ServerLog.prototype.serverStart = function () {
     this.util.log("info", "Server started.");
 };
 
-ServerLog.prototype.gameStart = function () {
-    this.util.log("info", "Game started.");
+ServerLog.prototype.gameStart = function (players) {
+    this.util.log("info", "Game started. Players : " + players.join(', '));
 };
 
-ServerLog.prototype.gameEnd = function () {
-    this.util.log("info", "Game ended.");
+ServerLog.prototype.gameEnd = function (player) {
+    this.util.log("info", "Game ended. Winner : " + player);
 };
 
 ServerLog.prototype.playerConnection = function (id) {

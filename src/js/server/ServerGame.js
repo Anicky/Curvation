@@ -22,7 +22,6 @@ ServerGame.prototype.update = function (delta) {
         }
         if (!this.game.gameRunning) {
             this.game.pause();
-            this.log.gameEnd();
             var winner = null;
             for (i = 0; i < this.game.players.length; i++) {
                 if (!this.game.players[i].collisionsCheck) {
@@ -31,6 +30,7 @@ ServerGame.prototype.update = function (delta) {
                 }
             }
             if (winner) {
+                this.log.gameEnd(winner);
                 this.socket.sockets.emit("serverMessage", {message: "roundEnd", winner: winner.id});
                 var that = this;
                 setTimeout(function () {
@@ -46,7 +46,7 @@ ServerGame.prototype.update = function (delta) {
                     }
                     that.game.run();
                     that.socket.sockets.emit("serverMessage", {message: "roundStart", players: playersData});
-                    that.log.gameStart();
+                    that.log.gameStart(that.game.players);
                 }, 2000);
             }
         }
@@ -138,7 +138,7 @@ ServerGame.prototype.startGame = function (client) {
         }).start();
         client.emit("serverMessage", {message: "start"});
         client.broadcast.emit("serverMessage", {message: "start"});
-        this.log.gameStart();
+        this.log.gameStart(this.game.players);
     }
 };
 

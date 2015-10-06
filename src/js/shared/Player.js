@@ -180,6 +180,10 @@ Player.prototype.checkKey = function (actualKeyCode, availableKeyCodes, keyPress
     }
 };
 
+Player.prototype.toString = function () {
+    return this.name + ' (' + this.id + ')';
+};
+
 if (typeof module != 'undefined') {
     module.exports = Player;
 }
