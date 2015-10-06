@@ -12,10 +12,10 @@ var CanvasDisplay = function (size, context) {
     var _size = size;
     var _context = context || null;
 
-    /**
-     * Define getter and setter for _size private attribute
-     */
     Object.defineProperties(this, {
+        /**
+         * Define getter and setter for _size private attribute
+         */
         "size": {
             // canvas.size
             get: function () { return _size; },
@@ -27,30 +27,27 @@ var CanvasDisplay = function (size, context) {
                 _size = size;
             },
             enumerable: true
-        }
-    });
-
-
-    /**
-     * Define getter and setter for _context private attribute
-     */
-    Object.defineProperties(this, {
+        },
+        /**
+         * Define getter and setter for _context private attribute
+         */
         "context": {
             // canvas.context
             get: function () { return _context; },
             // canvas.context = ...
             set: function(context) { _context = context; },
             enumerable: true
+        },
+        /**
+         * Define getter for compilated ratio attribute
+         */
+        "ratio": {
+            // canvas.ratio
+            get: function () {
+                return _size / MAP_SIZE;
+            },
+            enumerable: true
         }
-    });
-
-    /**
-     * Define getter for compilated ratio attribute
-     */
-    Object.defineProperty(this, 'ratio', {
-        // canvas.ratio
-        get: function() { return _size / MAP_SIZE; },
-        enumerable: true
     });
 };
 

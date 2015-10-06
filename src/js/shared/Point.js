@@ -18,14 +18,14 @@ var Point = function (x, y, size) {
     var _y = y;
     var _size = size;
 
-    /**
-     * Define getter and setter for _x private attribute
-     */
     Object.defineProperties(this, {
+        /**
+         * Define getter and setter for _x private attribute
+         */
         "x": {
-            // canvas.size
+            // canvas.x
             get: function () { return _x; },
-            // canvas.size = ...
+            // canvas.x = ...
             set: function(x) {
                 if (typeof x !== 'number') {
                     throw new TypeError('Point constructor : The attribute x must be a number.');
@@ -33,17 +33,14 @@ var Point = function (x, y, size) {
                 _x = x;
             },
             enumerable: true
-        }
-    });
-
-    /**
-     * Define getter and setter for _y private attribute
-     */
-    Object.defineProperties(this, {
+        },
+        /**
+         * Define getter and setter for _y private attribute
+         */
         "y": {
-            // canvas.size
+            // canvas.y
             get: function () { return _y; },
-            // canvas.size = ...
+            // canvas.y = ...
             set: function(y) {
                 if (typeof y !== 'number') {
                     throw new TypeError('Point constructor : The attribute y must be a number.');
@@ -51,13 +48,10 @@ var Point = function (x, y, size) {
                 _y = y;
             },
             enumerable: true
-        }
-    });
-
-    /**
-     * Define getter and setter for _size private attribute
-     */
-    Object.defineProperties(this, {
+        },
+        /**
+         * Define getter and setter for _size private attribute
+         */
         "size": {
             // canvas.size
             get: function () { return _size; },
