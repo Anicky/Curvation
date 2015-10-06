@@ -22,6 +22,7 @@ ServerGame.prototype.update = function (delta) {
         }
         if (!this.game.gameRunning) {
             this.game.pause();
+            this.log.gameEnd();
             var winner = null;
             for (i = 0; i < this.game.players.length; i++) {
                 if (!this.game.players[i].collisionsCheck) {

@@ -10,6 +10,10 @@ ServerLog.prototype.gameStart = function () {
     this.util.log("info", "Game started.");
 };
 
+ServerLog.prototype.gameEnd = function () {
+    this.util.log("info", "Game ended.");
+};
+
 ServerLog.prototype.playerConnection = function (id) {
     this.util.log("info", "New player has connected: " + id);
 };
@@ -19,7 +23,7 @@ ServerLog.prototype.playerDisconnection = function (id) {
 };
 
 ServerLog.prototype.playerNotFound = function (id) {
-    this.util.log("info", "Player not found: " + id);
+    this.util.log("error", "Player not found: " + id);
 };
 
 if (typeof module != 'undefined') {
