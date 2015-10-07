@@ -88,7 +88,7 @@ Player.prototype.movePlayer = function (delta) {
 
 Player.prototype.draw = function (timer) {
     this.game.drawer.drawCurve(this.history, this.color);
-    if ((timer < DEFAULT_WAITING_TIME) && (this.game.currentPlayerId === this.id)) {
+    if ((timer < DEFAULT_WAITING_TIME) && ((this.game.mode === GAME_MODE_LOCAL) || (this.game.mode === GAME_MODE_ONLINE) && (this.game.currentPlayerId === this.id))) {
         this.game.drawer.drawArrow(this.getArrow(), this.color);
     }
 };
