@@ -121,6 +121,7 @@ function onServerMessage(data) {
         $(".startButton").slideToggle();
     } else if (data.message === 'getCurrentPlayerId') {
         onlinePlayerId = data.id;
+        game.currentPlayerId = onlinePlayerId;
     } else if (data.message === 'wait') {
         $(".waitButton").slideToggle();
     } else if (data.message == 'ready') {

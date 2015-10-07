@@ -1,5 +1,4 @@
 // @TODO : Gerer trous en online (seulement cote serveur avec notif aux joueurs quand ca arrive)
-// @TODO : Dessiner fleche seulement sur joueur current en online
 
 function Game() {
     this.mode = null;
@@ -9,6 +8,7 @@ function Game() {
     this.gamePaused = false;
     this.timer = 0;
     this.collisionInFrame = false;
+    this.currentPlayerId = null;
 }
 
 Game.prototype.init = function () {
