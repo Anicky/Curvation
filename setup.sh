@@ -4,6 +4,7 @@ echo "*******************************"
 echo "Provisioning virtual machine..."
 echo "*******************************" 
 
+sudo iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000
 mkdir /home/vagrant/node_modules
 mkdir /home/vagrant/bower_components
 cd /var/www/curvation
