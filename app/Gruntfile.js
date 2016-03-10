@@ -13,7 +13,7 @@ module.exports = function (grunt) {
                 folder: 'src/',
                 js: ['<%= paths.src.folder %>js/shared/*.js', '<%= paths.src.folder %>js/client/*.js'],
                 css: '<%= paths.src.folder %>css/**/*.css',
-                scss: '<%= paths.src.folder %>sass/**/*.scss',
+                scss: '<%= paths.src.folder %>scss/**/*.scss',
                 img: '<%= paths.src.folder %>img/**/*.png',
                 index: 'index.html'
             },

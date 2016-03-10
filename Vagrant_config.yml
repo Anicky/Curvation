@@ -1,0 +1,15 @@
+---
+vagrant_box: debian/jessie64
+vagrant_box_version: 8.2.1
+vagrant_user: vagrant
+vagrant_hostname: dev.curvation
+vagrant_machine_name: curvationvm
+vagrant_ip: 192.168.50.4
+vagrant_public_ip: ""
+vagrant_synced_folders:
+  - local_path: ./app
+    destination: /var/www/curvation
+    type: nfs
+    create: true
+vagrant_memory: 1024
+vagrant_cpus: 2

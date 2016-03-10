@@ -28,7 +28,7 @@
   "main": "public/js/curvation.min.js",
   "scripts": {
     "postinstall": "bower install && grunt init",
-    "start": "nodemon server.js"
+    "start": "nodemon app.js"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
