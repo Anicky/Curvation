@@ -54,6 +54,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       create: synced_folder.include?('create') ? synced_folder['create'] : false,
       mount_options: synced_folder.include?('mount_options') ? synced_folder['mount_options'] : []
   end
+  
+  config.vm.provider :virtualbox do |v|
+    v.name = vconfig['vagrant_hostname']
+    v.memory = vconfig['vagrant_memory']
+    v.cpus = vconfig['vagrant_cpus']
+  end
 
   config.vm.provision :shell, privileged: false, :path => "setup.sh"
 
