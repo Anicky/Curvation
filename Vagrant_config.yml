@@ -5,7 +5,7 @@ vagrant_user: vagrant
 vagrant_hostname: curvation.dev
 vagrant_machine_name: curvationvm
 vagrant_ip: 192.168.50.4
-vagrant_public_ip: ""
+vagrant_public_ip: 172.16.31.210
 vagrant_synced_folders:
   - local_path: ./app
     destination: /var/www/curvation
