@@ -33,9 +33,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.network :private_network, ip: vconfig['vagrant_ip']
   end
 
-  if !vconfig['vagrant_public_ip'].empty? && vconfig['vagrant_public_ip'] == "0.0.0.0"
+  if !vconfig['vagrant_public_ip'].nil? && vconfig['vagrant_public_ip'] == "0.0.0.0"
     config.vm.network :public_network
-  elsif !vconfig['vagrant_public_ip'].empty?
+  elsif !vconfig['vagrant_public_ip'].nil?
     config.vm.network :public_network, ip: vconfig['vagrant_public_ip']
   end
 
