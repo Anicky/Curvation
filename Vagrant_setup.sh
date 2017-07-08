@@ -18,8 +18,6 @@ rm -r /tmp/curvation/logs
 mv /tmp/curvation/* /var/www/curvation
 cd /var/www/curvation
 npm install
-bower install
-grunt init
 
 echo "*********************************"
 echo "Success!"
