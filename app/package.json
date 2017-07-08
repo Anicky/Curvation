@@ -3,10 +3,7 @@
   "version": "0.0.1",
   "description": "Curvation is a solo/online game. You control a Curvation and try not to hit the others or the wall, as longer as you can. The last one standing wins.",
   "homepage": "https://github.com/Anicky/Curvation#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/Anicky/Curvation.git"
-  },
+  "repository": "git+ssh://git@github.com/Anicky/Curvation.git",
   "bugs": {
     "url": "https://github.com/Anicky/Curvation/issues"
   },
@@ -24,8 +21,8 @@
     "Claire-Hélène Stentz",
     "Guillaume Thirard"
   ],
-  "license": "ISC",
-  "main": "public/js/curvation.min.js",
+  "license": "GPL-3.0",
+  "main": "app.js",
   "scripts": {
     "postinstall": "bower install && grunt init",
     "start": "nodemon app.js"
