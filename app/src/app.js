@@ -17,11 +17,11 @@ var io = require("socket.io");
 var winston = require('winston');
 
 /* Curvation - Classes */
-var ServerGame = require('./src/js/server/ServerGame');
-var ServerLog = require('./src/js/server/ServerLog');
+var ServerGame = require('./js/server/ServerGame');
+var ServerLog = require('./js/server/ServerLog');
 
 /* Curvation - Server config  */
-var config = require('./config.json');
+var config = require('../config.json');
 
 /**
  * @TODO : Effectuer la copie de ce fichier vers le dossier /public (Gruntfile.js)
@@ -52,9 +52,9 @@ function init() {
     });
 
     app = new express();
-    app.use('/', express.static(path.join(__dirname, 'public')));
+    app.use('/', express.static(path.join(__dirname, '../public')));
 
-    host = vhost(config.serverUrl, express.static(path.join(__dirname, 'public')));
+    host = vhost(config.serverUrl, express.static(path.join(__dirname, '../public')));
     app.use(host);
 
     server = http.createServer(app);

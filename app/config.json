@@ -1,6 +1,6 @@
 {
   "serverUrl": "dev.curvation.fr",
   "serverPort": 3000,
-  "serverLog": "server.log",
+  "serverLog": "logs/server.log",
   "serverLocale" : "en-us"
 }

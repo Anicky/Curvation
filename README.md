@@ -44,12 +44,49 @@ docker build -t curvation .
 
 To launch the app :
 ```
+docker run --name curvation -p 80:3000 curvation
+```
+
+To launch the app in background :
+```
 docker run --name curvation -d -p 80:3000 curvation
 ```
 
-To share src folder (for development) :
+#### Development mode
+
+* To share the "src" folder and not launching the app by default :
 ```
-docker run --name curvation -d -p 80:3000 -v /c/Users/USERNAME/Curvation/app/src:/var/www/curvation/src curvation
+docker run --name curvation -d -t -p 80:3000 -v /c/Users/USERNAME/Curvation/app/src:/var/www/curvation/src curvation
+```
+
+* To access the container :
+```
+docker exec -it curvation bash
+```
+
+* To launch the app (when inside the container) :
+```
+npm start
+```
+
+* To get the IP of the container :
+```
+docker inspect curvation | grep IPAddress | cut -d '"' -f 4
+```
+
+* If you have docker-machine on Windows, you have to get the IP of the Docker machine :
+```
+docker-machine ip
+```
+
+* To stop the container :
+```
+docker stop curvation
+```
+
+* To remove the container :
+```
+docker rm curvation
 ```
 
 ### Using Nodejs

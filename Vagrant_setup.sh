@@ -6,17 +6,18 @@ echo "*******************************"
 
 sudo iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000
 sudo sed -i -e '$i \iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000\n' /etc/rc.local
-mkdir /home/vagrant/node_modules
-mkdir /home/vagrant/bower_components
-cd /var/www/curvation
-ln -s /home/vagrant/node_modules/ node_modules
-ln -s /home/vagrant/bower_components/ bower_components
-sudo apt-get -qq update
-sudo apt-get -y -qq install nodejs build-essential npm libssl-dev ruby git
+sudo apt -qq update
+sudo apt -y -qq install nodejs build-essential npm libssl-dev ruby git
 sudo ln -s /usr/bin/nodejs /usr/bin/node
 sudo npm install -g bower grunt-cli nodemon
 sudo gem install sass
-sudo npm install
+mkdir -p /var/www/curvation
+sudo chown -R vagrant:vagrant /var/www/curvation
+rm -r /tmp/curvation/src
+rm -r /tmp/curvation/logs
+mv /tmp/curvation/* /var/www/curvation
+cd /var/www/curvation
+npm install
 bower install
 grunt init
 
