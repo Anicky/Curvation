@@ -5,10 +5,10 @@ FROM debian:jessie
 EXPOSE 3000
 
 # Add project sources
-ADD /app /app
+ADD /app /var/www/curvation
 
 # Change current directory
-WORKDIR /app
+WORKDIR /var/www/curvation
 
 # Install project
 RUN apt update \

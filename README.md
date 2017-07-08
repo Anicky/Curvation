@@ -44,7 +44,12 @@ docker build -t curvation .
 
 To launch the app :
 ```
-docker run -d -p 3000:3000 curvation
+docker run --name curvation -d -p 80:3000 curvation
+```
+
+To share src folder (for development) :
+```
+docker run --name curvation -d -p 80:3000 -v /c/Users/USERNAME/Curvation/app/src:/var/www/curvation/src curvation
 ```
 
 ### Using Nodejs
