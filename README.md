@@ -5,22 +5,51 @@
 Curvation is a game created by :
 * Julien DE CONTI
 * Jérémie JALOUZET
-* Alexis MAZAUDIER
 * Claire-Hélène STENTZ
 * Guillaume THIRARD
 
 This project is open-source, you can make forks and purpose pull request if you want to add features.
 
-## Getting Started
+## Installation
 
-To get you started you can simply clone the Curvation repository and install the dependencies:
+### Using Vagrant
 
-### Prerequisites
+Download and install :
+* VirtualBox (https://www.virtualbox.org/)
+* Vagrant (https://www.vagrantup.com/)
 
-You need git to clone the Curvation repository. You can get git from
-[http://git-scm.com/](http://git-scm.com/).
+Run the virtual machine using this command :
 
-We also use a number of node.js tools to initialize Curvation. You must have node.js and
+```
+vagrant up
+```
+
+To launch the app :
+
+```
+vagrant ssh
+cd /var/www/curvation
+npm start
+```
+
+### Using Docker
+
+Download and install :
+* Docker (https://www.docker.com/)
+
+Create the container using this command :
+```
+docker build -t curvation .
+```
+
+To launch the app :
+```
+docker run -d -p 3000:3000 curvation
+```
+
+### Using Nodejs
+
+We use a number of node.js tools to initialize Curvation. You must have node.js and
 its package manager (npm) installed.  You can get them from [http://nodejs.org/](http://nodejs.org/).
 
 To run the SASS compilation, you have to install ruby from [https://www.ruby-lang.org/fr/](https://www.ruby-lang.org/fr/) or [http://rubyinstaller.org/](http://rubyinstaller.org/) if you are on Windows.
@@ -29,24 +58,6 @@ Then, just run the following line to install SASS:
 ```
 gem install sass
 ```
-
-### Clone Curvation
-
-Clone the Curvation repository using [git][git]:
-
-```
-git clone https://github.com/Anicky/Curvation.git
-cd Curvation
-```
-
-If you just want to start a new project without the Curvation commit history then you can do:
-
-```bash
-git clone --depth=1 https://github.com/Anicky/Curvation.git <your-project-name>
-```
-
-### Install Dependencies
-
 We have some dependencies in this project: `bower`, `grunt` and angular framework code (soon...).
 Grunt.js help us manage application.
 
@@ -71,7 +82,7 @@ folders in your project :
 * `node_modules/` - contains the npm packages for the tools we need
 * `public/` - ...
 
-## Run the Server
+To run the server :
 
 Add this line in your hosts file (on Windows, this is located in C:\Windows\System32\drivers\etc\hosts):
 
@@ -111,11 +122,3 @@ npm update
 ```
 
 This will find the latest versions that match the version ranges specified in the `package.json` file.
-
-## Contact
-
-For more information on Curvation please check out ...
-
-[git]: http://git-scm.com/
-[npm]: https://www.npmjs.org/
-[node]: http://nodejs.org
