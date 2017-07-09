@@ -6,6 +6,7 @@ var key_left_pressed = false;
 var key_right_pressed = false;
 var onlinePlayerId = null;
 var canvas;
+var pseudo = null;
 
 function end(fps, panic) {
     if (panic) {
@@ -149,8 +150,9 @@ function onServerMessage(data) {
 
 // Socket connected
 function onSocketConnected() {
-    var pseudo = prompt("Quel est votre pseudo ?");
     socket.emit("newPlayer", {name: pseudo});
+    $(".gameModeButtons").slideToggle();
+    onlineGame = true;
 }
 
 // Socket disconnected
@@ -162,7 +164,7 @@ function onNewPlayer(data) {
     // Initialise the new player
     game.addPlayer(data.name, data.color, data.id);
     var player = game.getPlayer(data.id);
-    if(player) {
+    if (player) {
         player.x = data.x;
         player.y = data.y;
         player.direction = data.direction;
@@ -214,11 +216,14 @@ $(document).ready(function () {
     });
 
     $(".onlineGameButton").click(function () {
-        game.mode = GAME_MODE_ONLINE;
-        socket = io();
-        $(".gameModeButtons").slideToggle();
-        onlineGame = true;
-        setEventHandlers();
+        pseudo = prompt("Quel est votre pseudo ?");
+        if (pseudo) {
+            game.mode = GAME_MODE_ONLINE;
+            socket = io();
+            setEventHandlers();
+        } else {
+            $(".onlineGameButton").blur();
+        }
     });
 
     $(".localGameButton").click(function () {
