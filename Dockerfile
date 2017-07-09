@@ -11,10 +11,10 @@ ADD /app /var/www/curvation
 WORKDIR /var/www/curvation
 
 # Install project dependencies
-RUN apt -qq update \
-&& apt -qq -y install -y curl gnupg \
+RUN apt-get -qq update \
+&& apt-get -qq -y install -y curl gnupg \
 && curl -sL https://deb.nodesource.com/setup_8.x | bash - \
-&& apt install -qq -y nodejs build-essential libssl-dev \
+&& apt-get install -qq -y nodejs build-essential libssl-dev \
 && npm install -g grunt-cli nodemon browserify
 
 # Add "node" user
