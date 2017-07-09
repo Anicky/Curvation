@@ -24,9 +24,10 @@
   "main": "app.js",
   "scripts": {
     "postinstall": "grunt init",
-    "start": "node src/app.js"
+    "start": "nodemon src/app.js"
   },
   "devDependencies": {
+    "gulp-jshint": "^2.0.4",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-clean": "^1.1.0",
@@ -38,19 +39,19 @@
     "grunt-contrib-uglify": "^3.0.1",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-spritesmith": "^6.4.0",
-    "gulp-jshint": "^2.0.4",
     "jit-grunt": "^0.10.0",
     "jshint": "^2.9.5",
     "nodemon": "^1.11.0"
   },
   "dependencies": {
+    "bootstrap": "^3.3.7",
+    "browserify": "^14.4.0",
+    "font-awesome": "^4.7.0",
     "express": "^4.15.3",
+    "jquery": "^3.2.1",
+    "mainloop.js": "^1.0.4",
     "socket.io": "^2.0.3",
     "vhost": "^3.0.2",
-    "winston": "^2.3.1",
-    "jquery": "^3.2.1",
-    "bootstrap": "^3.3.7",
-    "font-awesome": "^4.7.0",
-    "mainloop.js": "^1.0.4"
+    "winston": "^2.3.1"
   }
 }
