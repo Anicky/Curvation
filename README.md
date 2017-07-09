@@ -94,21 +94,12 @@ docker rm curvation
 We use a number of node.js tools to initialize Curvation. You must have node.js and
 its package manager (npm) installed.  You can get them from [http://nodejs.org/](http://nodejs.org/).
 
-To run the SASS compilation, you have to install ruby from [https://www.ruby-lang.org/fr/](https://www.ruby-lang.org/fr/) or [http://rubyinstaller.org/](http://rubyinstaller.org/) if you are on Windows.
-Then, just run the following line to install SASS:
- 
-```
-gem install sass
-```
-We have some dependencies in this project: `bower`, `grunt` and angular framework code (soon...).
+We have some dependencies in this project: `grunt` and angular framework code (soon...).
 Grunt.js help us manage application.
 
 * We get the tools we depend upon via `npm`, the [node package manager][npm].
 
-We need to install the dependencies `bower` and `grunt-cli` :
-```
-npm install -g bower
-```
+We need to install the dependencies `grunt-cli` :
 ```
 npm install -g grunt-cli
 ```
