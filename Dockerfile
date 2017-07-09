@@ -15,7 +15,7 @@ RUN apt-get -qq update \
 && apt-get -qq -y install -y curl gnupg \
 && curl -sL https://deb.nodesource.com/setup_8.x | bash - \
 && apt-get install -qq -y nodejs \
-&& npm install -g grunt-cli nodemon browserify
+&& npm install -g grunt-cli
 
 # Add "node" user
 RUN useradd -ms /bin/bash node
