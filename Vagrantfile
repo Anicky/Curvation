@@ -43,7 +43,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.forward_agent = true
 
   config.vm.box = vconfig['vagrant_box']
-  config.vm.box_version = vconfig['vagrant_box_version']
 
   for synced_folder in vconfig['vagrant_synced_folders'];
     config.vm.synced_folder synced_folder['local_path'], synced_folder['destination'],

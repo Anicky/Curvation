@@ -1,5 +1,5 @@
 # Download OS image
-FROM debian:jessie
+FROM debian:stretch
 
 # Expose port of application
 EXPOSE 3000
@@ -11,10 +11,10 @@ ADD /app /var/www/curvation
 WORKDIR /var/www/curvation
 
 # Install project dependencies
-RUN apt update -qq \
-&& apt install -y curl \
-&& curl -sL https://deb.nodesource.com/setup_6.x | bash - \
-&& apt install -y nodejs build-essential libssl-dev \
+RUN apt -qq update \
+&& apt -qq -y install -y curl gnupg \
+&& curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+&& apt install -qq -y nodejs build-essential libssl-dev \
 && npm install -g grunt-cli nodemon browserify
 
 # Add "node" user
