@@ -61,7 +61,7 @@ module.exports = function (grunt) {
                 separator: ''
             },
             js: {
-                src: '<%= paths.src.js %>',
+                src: ['<%= paths.dest.folder %>tmp/*.js', '<%= paths.src.js %>'],
                 dest: '<%= paths.dest.js %>'
             },
             css: {
@@ -79,7 +79,7 @@ module.exports = function (grunt) {
                     mangle: true,
                     drop_console: true
                 },
-                src: '<%= paths.src.js %>',
+                src: '<%= paths.dest.js %>',
                 dest: '<%= paths.dest.jsMin %>'
             },
             dev: {
@@ -91,7 +91,7 @@ module.exports = function (grunt) {
                     drop_console: false,
                     preserveComments: 'all'
                 },
-                src: '<%= paths.src.js %>',
+                src: '<%= paths.dest.js %>',
                 dest: '<%= paths.dest.jsMin %>'
             }
         },
@@ -99,6 +99,7 @@ module.exports = function (grunt) {
         // Clean task
         clean: {
             js: '<%= paths.dest.js %>',
+            tmp: '<%= paths.dest.folder %>tmp',
             all: '<%= paths.dest.folder %>**'
         },
 
@@ -182,7 +183,7 @@ module.exports = function (grunt) {
         browserify: {
                 dist: {
                     src: ['<%= paths.src.folder %>libs.js'],
-                    dest: '<%= paths.dest.folder %>js/bundle.js'
+                    dest: '<%= paths.dest.folder %>tmp/bundle.js'
                 }
         }
     });
@@ -193,14 +194,14 @@ module.exports = function (grunt) {
         // 'grunt build:prod'
         if (debug === 'prod') {
             // Launch the prod tools
-            grunt.task.run(['jshint', 'less:prod', 'sprite', 'concat', 'uglify:prod', 'cssmin', 'copy', 'clean-src', 'browserify']);
+            grunt.task.run(['jshint', 'less:prod', 'sprite', 'browserify', 'concat', 'uglify:prod', 'cssmin', 'copy', 'clean-src']);
         } else { // 'grunt build'
             // Launch the dev tools
-            grunt.task.run(['jshint', 'less:dev', 'sprite', 'concat', 'uglify:dev', 'copy', 'clean-src', 'browserify']);
+            grunt.task.run(['jshint', 'less:dev', 'sprite', 'browserify', 'concat', 'uglify:dev', 'copy', 'clean-src']);
         }
     });
     grunt.registerTask('init', 'build:prod');
     grunt.registerTask('dev', ['build', 'watch']);
-    grunt.registerTask('clean-src', 'clean:js');
+    grunt.registerTask('clean-src', ['clean:js', 'clean:tmp']);
     grunt.registerTask('clean-all', 'clean:all');
 };
