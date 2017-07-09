@@ -127,7 +127,7 @@ Do:
 npm start
 ```
 
-Then, you can play in your browser with the URL : http://dev.curvation.fr:8080/
+Then, you can play in your browser with the URL : http://dev.curvation.fr:3000/
 
 ## Run the Game in local mode
 
