@@ -201,7 +201,7 @@ module.exports = function (grunt) {
         }
     });
     grunt.registerTask('init', 'build:prod');
-    grunt.registerTask('dev', ['build', 'watch']);
+    grunt.registerTask('dev', ['build', 'browserify', 'watch']);
     grunt.registerTask('clean-src', ['clean:js', 'clean:tmp']);
     grunt.registerTask('clean-all', 'clean:all');
 };
