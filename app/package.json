@@ -23,34 +23,30 @@
   "license": "GPL-3.0",
   "main": "app.js",
   "scripts": {
-    "postinstall": "grunt init",
-    "start": "node src/app.js"
+    "postinstall": "gulp",
+    "start": "nodemon src/app.js"
   },
   "devDependencies": {
-    "grunt": "^1.0.1",
-    "grunt-browserify": "^5.0.0",
-    "grunt-contrib-clean": "^1.1.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-cssmin": "^2.2.0",
-    "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-less": "^1.4.1",
-    "grunt-contrib-uglify": "^3.0.1",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-spritesmith": "^6.4.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-cssmin": "^0.2.0",
     "gulp-jshint": "^2.0.4",
-    "jit-grunt": "^0.10.0",
+    "gulp-jsmin": "^0.1.5",
+    "gulp-less": "^3.3.2",
+    "gulp.spritesmith": "^6.5.0",
     "jshint": "^2.9.5",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
+    "bootstrap": "^3.3.7",
+    "browserify": "^14.4.0",
     "express": "^4.15.3",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.2.1",
+    "mainloop.js": "^1.0.4",
     "socket.io": "^2.0.3",
     "vhost": "^3.0.2",
-    "winston": "^2.3.1",
-    "jquery": "^3.2.1",
-    "bootstrap": "^3.3.7",
-    "font-awesome": "^4.7.0",
-    "mainloop.js": "^1.0.4"
+    "winston": "^2.3.1"
   }
 }
