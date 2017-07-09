@@ -1,13 +1,15 @@
+# OS
 *~
-/.idea
-/.vagrant
 
+# IDE
+/.idea
+
+# Vagrant
+/.vagrant
 Vagrant_config_local.yml
 
+# App
 /app/public
 /app/node_modules
-/app/bower_components
-/app/.sass-cache
-/app/src/css
 /app/npm-debug.log
 /app/logs
