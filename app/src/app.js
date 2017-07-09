@@ -24,7 +24,7 @@ var ServerLog = require('./js/server/ServerLog');
 var config = require('./config.json');
 
 /**
- * @TODO : Effectuer la copie de ce fichier vers le dossier /public (Gruntfile.js)
+ * @TODO : Effectuer la copie de ce fichier vers le dossier /dist (Gruntfile.js)
  */
 /* Curvation - Tools */
 include('./src/js/shared/tools.js');
@@ -52,9 +52,9 @@ function init() {
     });
 
     app = new express();
-    app.use('/', express.static(path.join(__dirname, '../public')));
+    app.use('/', express.static(path.join(__dirname, '../dist')));
 
-    host = vhost(config.serverUrl, express.static(path.join(__dirname, '../public')));
+    host = vhost(config.serverUrl, express.static(path.join(__dirname, '../dist')));
     app.use(host);
 
     server = http.createServer(app);

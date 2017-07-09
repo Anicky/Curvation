@@ -9,7 +9,7 @@
 vagrant/config_local.yml
 
 # App
-/app/public
+/app/dist
 /app/node_modules
 /app/npm-debug.log
 /app/logs

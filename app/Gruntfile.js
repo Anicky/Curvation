@@ -18,7 +18,7 @@ module.exports = function (grunt) {
                 index: 'index.html'
             },
             dest: {
-                folder: 'public/',
+                folder: 'dist/',
                 js: '<%= paths.dest.folder %>js/<%= pkg.name %>.js',
                 jsMin: '<%= paths.dest.folder %>js/<%= pkg.name %>.min.js',
                 css: '<%= paths.dest.folder %>css/<%= pkg.name %>.css',
