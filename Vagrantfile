@@ -19,6 +19,12 @@ if !File.exist?("#{dir}/Vagrant_config.yml")
   raise 'Configuration file not found! Please copy ansible/vars/example.config.yml to ansible/vars/config.yml and try again.'
 end
 vconfig = YAML::load_file("#{dir}/Vagrant_config.yml")
+# Use a local config file to define specific values (IP, host cpu/memory...)
+if !File.exist?("#{dir}/Vagrant_config_local.yml")
+  raise 'Local configuration file Vagrant_config_local.yml not found! Please use Vagrant_config_local.yml.example as an example and try again.'
+end
+vconfig_local = YAML::load_file("#{dir}/Vagrant_config_local.yml")
+vconfig.merge!(vconfig_local)
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.hostname = vconfig['vagrant_hostname']
