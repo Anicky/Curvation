@@ -64,9 +64,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.cpus = vconfig['vagrant_cpus']
   end
 
-  config.vm.provision "file", source: "app", destination: "/tmp/curvation"
+  config.vm.provision "file", source: "app/Gruntfile.js", destination: "/tmp/curvation/Gruntfile.js"
+  config.vm.provision "file", source: "app/package.json", destination: "/tmp/curvation/package.json"
   config.vm.provision "shell", privileged: false, path: "vagrant/setup.sh"
-  config.vm.provision "shell", privileged: false, path: "vagrant/boot.sh", run: 'always'
 
   # Set the name of the VM. See: http://stackoverflow.com/a/17864388/100134
   config.vm.define vconfig['vagrant_machine_name'] do |d|
