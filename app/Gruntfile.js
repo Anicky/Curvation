@@ -176,7 +176,7 @@ module.exports = function (grunt) {
                 src: '<%= paths.src.img %>',
                 dest: '<%= paths.dest.sprite %>',
                 imgPath: '../img/sprite.png',
-                destCss: '<%= paths.src.folder %>css/sprites.css'
+                destCss: '<%= paths.dest.folder %>tmp/sprites.css'
             }
         },
 
