@@ -67,7 +67,7 @@ function init() {
     serverGame = new ServerGame(socket, serverLog);
 
     serverLog.serverStart();
-};
+}
 
 function onSocketConnection(client) {
     serverGame.clientConnect(client);
