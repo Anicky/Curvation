@@ -144,7 +144,7 @@ ServerGame.prototype.startGame = function (client) {
 
 if (typeof require != 'undefined') {
     var Game = require("../shared/Game");
-    var MainLoop = require('../../../public/libs/mainloop.min.js');
+    var MainLoop = require('mainloop.js');
 }
 
 if (typeof module != 'undefined') {

@@ -13,17 +13,9 @@ module.exports = function (grunt) {
                 folder: 'src/',
                 js: ['<%= paths.src.folder %>js/shared/*.js', '<%= paths.src.folder %>js/client/*.js'],
                 css: '<%= paths.src.folder %>css/**/*.css',
-                scss: '<%= paths.src.folder %>scss/**/*.scss',
+                less: '<%= paths.src.folder %>less/**/*.less',
                 img: '<%= paths.src.folder %>img/**/*.png',
                 index: 'index.html'
-            },
-            bower: {
-                src: 'bower_components/',
-                dest: 'public/libs/',
-                bootstrap: 'bootstrap/dist/',
-                jquery: 'jquery/dist/',
-                mainloop: 'MainLoop.js/build/',
-                fontawesome: 'font-awesome/'
             },
             dest: {
                 folder: 'public/',
@@ -41,39 +33,12 @@ module.exports = function (grunt) {
                 src: '<%= paths.src.folder %><%= paths.src.index %>',
                 dest: '<%= paths.dest.folder %><%= paths.src.index %>'
             },
-            bootstrap: {
-                files: [
-                    {
-                        src: '<%= paths.bower.src %><%= paths.bower.bootstrap %>js/bootstrap.min.js',
-                        dest: '<%= paths.bower.dest %>bootstrap.min.js'
-                    },
-                    {
-                        src: '<%= paths.bower.src %><%= paths.bower.bootstrap %>css/bootstrap.min.css',
-                        dest: '<%= paths.bower.dest %>bootstrap.min.css'
-                    }
-                ]
-            },
-            jquery: {
-                src: '<%= paths.bower.src %><%= paths.bower.jquery %>jquery.min.js',
-                dest: '<%= paths.bower.dest %>jquery.min.js'
-            },
-            mainloop: {
-                src: '<%= paths.bower.src %><%= paths.bower.mainloop %>mainloop.min.js',
-                dest: '<%= paths.bower.dest %>mainloop.min.js'
-            },
-            fontawesome: {
-                files: [
-                    {
-                        src: '<%= paths.bower.src %><%= paths.bower.fontawesome %>css/font-awesome.min.css',
-                        dest: '<%= paths.bower.dest %><%= paths.bower.fontawesome %>/css/font-awesome.min.css'
-                    },
-                    {
-                        cwd: '<%= paths.bower.src %><%= paths.bower.fontawesome %>fonts',
-                        src: '**.*',
-                        dest: '<%= paths.bower.dest %><%= paths.bower.fontawesome %>fonts/',
-                        expand: true
-                    }
-                ]
+            fonts: {
+                expand: true,
+                cwd: 'node_modules/font-awesome/fonts/',
+                src: '**',
+                flatten: true,
+                dest: '<%= paths.dest.folder %>fonts/'
             }
         },
 
@@ -164,19 +129,15 @@ module.exports = function (grunt) {
                     'sprite'
                 ]
             },
-            sass: {
-                files: '<%= paths.src.scss %>',
+            less: {
+                files: '<%= paths.src.less %>',
                 tasks: [
-                    'sass:dev'
+                    'less:dev'
                 ]
             },
             index: {
                 files: '<%= paths.src.folder %><%= paths.src.index %>',
                 tasks: ['copy:index']
-            },
-            bower: {
-                files: '<%= paths.bower.src %>**/*',
-                tasks: ['copy:bootstrap', 'copy:jquery', 'copy:mainloop', 'copy:fontawesome']
             }
         },
 
@@ -187,14 +148,14 @@ module.exports = function (grunt) {
             }
         },
 
-        // Compile SASS files
-        sass: {
+        // Compile LESS files
+        less: {
             prod: {
                 options: {
                     style: 'compressed'
                 },
                 files: {
-                    '<%= paths.dest.cssMin %>': '<%= paths.src.scss %>'
+                    '<%= paths.dest.cssMin %>': '<%= paths.src.less %>'
                 }
             },
             dev: {
@@ -203,7 +164,7 @@ module.exports = function (grunt) {
                     sourcemap: 'none'
                 },
                 files: {
-                    '<%= paths.dest.cssMin %>': '<%= paths.src.scss %>'
+                    '<%= paths.dest.cssMin %>': '<%= paths.src.less %>'
                 }
             }
         },
@@ -216,6 +177,13 @@ module.exports = function (grunt) {
                 imgPath: '../img/sprite.png',
                 destCss: '<%= paths.src.folder %>css/sprites.css'
             }
+        },
+
+        browserify: {
+                dist: {
+                    src: ['<%= paths.src.folder %>libs.js'],
+                    dest: '<%= paths.dest.folder %>js/bundle.js'
+                }
         }
     });
 
@@ -225,10 +193,10 @@ module.exports = function (grunt) {
         // 'grunt build:prod'
         if (debug === 'prod') {
             // Launch the prod tools
-            grunt.task.run(['jshint', 'sass:prod', 'sprite', 'concat', 'uglify:prod', 'cssmin', 'copy', 'clean-src']);
+            grunt.task.run(['jshint', 'less:prod', 'sprite', 'concat', 'uglify:prod', 'cssmin', 'copy', 'clean-src', 'browserify']);
         } else { // 'grunt build'
             // Launch the dev tools
-            grunt.task.run(['jshint', 'sass:dev', 'sprite', 'concat', 'uglify:dev', 'copy', 'clean-src']);
+            grunt.task.run(['jshint', 'less:dev', 'sprite', 'concat', 'uglify:dev', 'copy', 'clean-src', 'browserify']);
         }
     });
     grunt.registerTask('init', 'build:prod');

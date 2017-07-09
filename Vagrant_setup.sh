@@ -7,10 +7,9 @@ echo "*******************************"
 sudo iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000
 sudo sed -i -e '$i \iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000\n' /etc/rc.local
 sudo apt -qq update
-sudo apt -y -qq install nodejs build-essential npm libssl-dev ruby git
-sudo ln -s /usr/bin/nodejs /usr/bin/node
-sudo npm install -g bower grunt-cli nodemon
-sudo gem install sass
+sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo bash -
+sudo apt -y -qq install nodejs build-essential libssl-dev
+sudo npm install -g grunt-cli nodemon browserify
 mkdir -p /var/www/curvation
 sudo chown -R vagrant:vagrant /var/www/curvation
 rm -r /tmp/curvation/src

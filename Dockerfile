@@ -11,11 +11,11 @@ ADD /app /var/www/curvation
 WORKDIR /var/www/curvation
 
 # Install project dependencies
-RUN apt update \
-&& apt install -y nodejs build-essential npm libssl-dev ruby git \
-&& ln -s /usr/bin/nodejs /usr/bin/node \
-&& npm install -g bower grunt-cli nodemon \
-&& gem install sass
+RUN apt update -qq \
+&& apt install -y curl \
+&& curl -sL https://deb.nodesource.com/setup_6.x | bash - \
+&& apt install -y nodejs build-essential libssl-dev \
+&& npm install -g grunt-cli nodemon browserify
 
 # Add "node" user
 RUN useradd -ms /bin/bash node
