@@ -15,9 +15,6 @@ end
 # Use config.yml for basic VM configuration.
 require 'yaml'
 dir = File.dirname(File.expand_path(__FILE__))
-if !File.exist?("#{dir}/Vagrant_config.yml")
-  raise 'Configuration file not found! Please copy ansible/vars/example.config.yml to ansible/vars/config.yml and try again.'
-end
 vconfig = YAML::load_file("#{dir}/Vagrant_config.yml")
 # Use a local config file to define specific values (IP, host cpu/memory...)
 if !File.exist?("#{dir}/Vagrant_config_local.yml")
