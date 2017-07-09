@@ -15,12 +15,12 @@ end
 # Use config.yml for basic VM configuration.
 require 'yaml'
 dir = File.dirname(File.expand_path(__FILE__))
-vconfig = YAML::load_file("#{dir}/Vagrant_config.yml")
+vconfig = YAML::load_file("#{dir}/vagrant/config.yml")
 # Use a local config file to define specific values (IP, host cpu/memory...)
-if !File.exist?("#{dir}/Vagrant_config_local.yml")
-  raise 'Local configuration file Vagrant_config_local.yml not found! Please use Vagrant_config_local.yml.example as an example and try again.'
+if !File.exist?("#{dir}/vagrant/config_local.yml")
+  raise 'Local configuration file vagrant/config_local.yml not found! Please use vagrant/config_local.yml.example as an example and try again.'
 end
-vconfig_local = YAML::load_file("#{dir}/Vagrant_config_local.yml")
+vconfig_local = YAML::load_file("#{dir}/vagrant/config_local.yml")
 vconfig.merge!(vconfig_local)
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -65,8 +65,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision "file", source: "app", destination: "/tmp/curvation"
-  config.vm.provision "shell", privileged: false, path: "Vagrant_setup.sh"
-  config.vm.provision "shell", privileged: false, path: "Vagrant_boot.sh", run: 'always'
+  config.vm.provision "shell", privileged: false, path: "vagrant/setup.sh"
+  config.vm.provision "shell", privileged: false, path: "vagrant/boot.sh", run: 'always'
 
   # Set the name of the VM. See: http://stackoverflow.com/a/17864388/100134
   config.vm.define vconfig['vagrant_machine_name'] do |d|

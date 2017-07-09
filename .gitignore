@@ -6,7 +6,7 @@
 
 # Vagrant
 /.vagrant
-Vagrant_config_local.yml
+vagrant/config_local.yml
 
 # App
 /app/public
