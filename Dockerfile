@@ -12,10 +12,10 @@ WORKDIR /var/www/curvation
 
 # Install project dependencies
 RUN apt-get -qq update \
-&& apt-get -qq -y install -y curl gnupg \
+&& apt-get -qq -y install -y curl gnupg git \
 && curl -sL https://deb.nodesource.com/setup_8.x | bash - \
 && apt-get install -qq -y nodejs \
-&& npm install -g gulp
+&& npm install -g gulp-cli
 
 # Add "node" user
 RUN useradd -ms /bin/bash node
