@@ -201,11 +201,9 @@ $(document).ready(function () {
 
     // Bind all events for the movement
     $(this).keydown(function (e) {
-        e.preventDefault();
         checkPlayersKey(e.keyCode, true);
     });
     $(this).keyup(function (e) {
-        e.preventDefault();
         checkPlayersKey(e.keyCode, false);
     });
 
