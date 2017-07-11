@@ -113,7 +113,10 @@ module.exports = function (grunt) {
             },
             gruntfile: {
                 files: 'Gruntfile.js',
-                tasks: ['jshint:gruntfile']
+                tasks: ['jshint:gruntfile'],
+                options: {
+                    spawn: false,
+                }
             },
             js: {
                 files: '<%= paths.src.js %>',
@@ -122,23 +125,35 @@ module.exports = function (grunt) {
                     'concat:js',
                     'uglify:dev',
                     'clean:js'
-                ]
+                ],
+                options: {
+                    spawn: false,
+                }
             },
             sprite: {
                 files: '<%= paths.src.img %>',
                 tasks: [
                     'sprite'
-                ]
+                ],
+                options: {
+                    spawn: false,
+                }
             },
             less: {
                 files: '<%= paths.src.less %>',
                 tasks: [
                     'less:dev'
-                ]
+                ],
+                options: {
+                    spawn: false,
+                }
             },
             index: {
                 files: '<%= paths.src.folder %><%= paths.src.index %>',
-                tasks: ['copy:index']
+                tasks: ['copy:index'],
+                options: {
+                    spawn: false,
+                }
             }
         },
 
