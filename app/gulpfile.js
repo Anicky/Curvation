@@ -71,10 +71,21 @@ gulp.task('delete:tmp', function () {
     return del('dist/tmp/');
 });
 
-// @TODO : Fix watch task
 gulp.task('watch', function () {
-    return watch('src/less/*.less', { ignoreInitial: false })
-        .pipe(gulp.dest('build'));
+    gulp.watch(['src/js/shared/*.js', 'src/js/client/*.js'], {usePolling: true}, gulp.series(
+            gulp.series(
+                gulp.parallel(
+                    'lint',
+                    'browserify'
+                ),
+                'concat:js'
+            ),
+            'compress:js',
+            'delete:tmp'
+        ));
+    gulp.watch('src/less/*.less', {usePolling: true}, gulp.series('less', 'compress:css'));
+    gulp.watch('src/img/*', {usePolling: true}, gulp.series('sprites'));
+    gulp.watch('src/index.html', {usePolling: true}, gulp.series('copy:index'));
 });
 
 gulp.task('default',
