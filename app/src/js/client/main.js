@@ -88,17 +88,17 @@ function checkPlayersKey(keyCode, isKeyPressed) {
             if (isKeyPressed) {
                 if ((keyCode === KEY_CODES[0][0]) && (!key_left_pressed)) {
                     key_left_pressed = true;
-                    socket.emit("movePlayer", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+                    socket.emit("playerInput", {keyCode: keyCode, isKeyPressed: isKeyPressed});
                 } else if ((keyCode === KEY_CODES[0][1]) && (!key_right_pressed)) {
                     key_right_pressed = true;
-                    socket.emit("movePlayer", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+                    socket.emit("playerInput", {keyCode: keyCode, isKeyPressed: isKeyPressed});
                 }
             } else if (keyCode === KEY_CODES[0][0]) {
                 key_left_pressed = false;
-                socket.emit("movePlayer", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+                socket.emit("playerInput", {keyCode: keyCode, isKeyPressed: isKeyPressed});
             } else if (keyCode === KEY_CODES[0][1]) {
                 key_right_pressed = false;
-                socket.emit("movePlayer", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+                socket.emit("playerInput", {keyCode: keyCode, isKeyPressed: isKeyPressed});
             }
         } else {
             for (var i = 0; i < game.players.length; i++) {
@@ -109,70 +109,55 @@ function checkPlayersKey(keyCode, isKeyPressed) {
 }
 
 var setEventHandlers = function () {
+    // À la connection du joueur
     socket.on("connect", onSocketConnected);
-    socket.on("disconnect", onSocketDisconnect);
+
+    // Informations provenant du serveur sur les joueurs
     socket.on("newPlayer", onNewPlayer);
     socket.on("movePlayer", onMovePlayer);
     socket.on("removePlayer", onRemovePlayer);
-    socket.on("serverMessage", onServerMessage);
+
+    // Informations provenant du serveur sur l'état de la partie
+    socket.on("roundStart", onRoundStart);
+    socket.on("updateScores", onUpdateScores);
+    socket.on("roundEnd", onRoundEnd);
+
+    // Traitement des messages génériques provenant du serveur
+    socket.on("message", onMessage);
+
+    // À la déconnection du joueur
+    socket.on("disconnect", onSocketDisconnect);
 };
 
-function onServerMessage(data) {
-    if (data.message === 'init') {
-        $(".startButton").slideToggle();
-    } else if (data.message === 'getCurrentPlayerId') {
-        onlinePlayerId = data.id;
-        game.currentPlayerId = onlinePlayerId;
-    } else if (data.message === 'wait') {
-        $(".waitButton").slideToggle();
-    } else if (data.message == 'ready') {
-        $(".startButton").prop("disabled", false);
-    } else if (data.message == 'start') {
-        onlineRun();
-        $(".runButtons").slideToggle();
-    } else if (data.message == 'updateScores') {
-        updateScoresTable(data.players);
-    } else if (data.message == 'roundEnd') {
-        var winner = game.getPlayer(data.winner);
-        $('#gameover .modal-body').html('<p style="color:' + winner.color + '"><span class="modal-playername">' + winner.name + '</span> wins !</p>');
-        $('#gameover').modal('show');
-    } else if (data.message == 'roundStart') {
-        for (var i = 0; i < game.players.length; i++) {
-            var player = game.getPlayer(data.players[i].id);
-            player.x = data.players[i].x;
-            player.y = data.players[i].y;
-            player.direction = data.players[i].direction;
-        }
-        $('#gameover').modal('hide');
-        game.run();
-    }
-}
-
-// Socket connected
+// Event: à la connection d'un joueur
 function onSocketConnected() {
-    socket.emit("newPlayer", {name: pseudo});
-    $(".gameModeButtons").slideToggle();
     onlineGame = true;
+
+    // Récupère l'ID du joueur
+    onlinePlayerId = this.id;
+    game.currentPlayerId = onlinePlayerId;
+
+    // Envoi les informations du joueur au serveur
+    socket.emit("newPlayer", {name: pseudo});
+
+    // Cache les modes de jeu
+    $(".gameModeButtons").slideToggle();
 }
 
-// Socket disconnected
-function onSocketDisconnect() {
-}
-
-// New player
+// Event: Ajout d'un autre joueur
 function onNewPlayer(data) {
     // Initialise the new player
     game.addPlayer(data.name, data.color, data.id);
+
     var player = game.getPlayer(data.id);
-    if (player) {
-        player.x = data.x;
-        player.y = data.y;
-        player.direction = data.direction;
-    }
+    player.x = data.x;
+    player.y = data.y;
+    player.direction = data.direction;
+
     updateScoresTable();
 }
 
-// Move player
+// Event: Déplacement d'un joueur
 function onMovePlayer(data) {
     var player = game.getPlayer(data.playerId);
     if (player) {
@@ -180,10 +165,54 @@ function onMovePlayer(data) {
     }
 }
 
-// Remove player
+// Event: Départ d'un autre joueur
 function onRemovePlayer(data) {
     game.removePlayer(data.id);
     updateScoresTable();
+}
+
+// Event: Démarrage d'un round
+function onRoundStart(data) {
+    for (var i = 0; i < game.players.length; i++) {
+        var player = game.getPlayer(data.players[i].id);
+        player.x = data.players[i].x;
+        player.y = data.players[i].y;
+        player.direction = data.players[i].direction;
+    }
+    $('#gameover').modal('hide');
+    game.run();
+}
+
+// Event: Mise à jour des scores
+// TODO: à appliquer lorsqu'un joueur perd
+function onUpdateScores(data) {
+    updateScoresTable(data.players);
+}
+
+// Event: Fin d'un round
+function onRoundEnd(data) {
+    var winner = game.getPlayer(data.winner);
+    $('#gameover .modal-body').html('<p style="color:' + winner.color + '"><span class="modal-playername">' + winner.name + '</span> wins !</p>');
+    $('#gameover').modal('show');
+    updateScoresTable(data.players);
+}
+
+// Event: Récupération d'un message
+function onMessage(data) {
+    if (data.message === 'init') {
+        $(".startButton").slideToggle();
+    } else if (data.message === 'wait') {
+        $(".waitButton").slideToggle();
+    } else if (data.message == 'ready') {
+        $(".startButton").prop("disabled", false);
+    } else if (data.message == 'start') {
+        onlineRun();
+        $(".runButtons").slideToggle();
+    }
+}
+
+// Event: Déconnection du joueur
+function onSocketDisconnect() {
 }
 
 $(document).ready(function () {
@@ -270,7 +299,7 @@ $(document).ready(function () {
             $(".playersButtons, .startButton, .gameRunningButtons").slideToggle();
             run();
         } else if (!game.gameRunning && onlineGame) {
-            socket.emit("message", {start: true});
+            socket.emit("startGame");
         }
     });
 

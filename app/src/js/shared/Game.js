@@ -12,6 +12,7 @@ function Game() {
 }
 
 Game.prototype.init = function () {
+    this.timer = 0;
     this.initDisplay();
     this.initPlayers();
 };
@@ -37,9 +38,9 @@ Game.prototype.addPlayer = function (name, color, id) {
 };
 
 Game.prototype.removePlayer = function (id) {
-    var playerToRemoved = this.getPlayer(id);
-    if (playerToRemoved) {
-        this.players.splice(this.players.indexOf(playerToRemoved), 1);
+    var player = this.getPlayer(id);
+    if (player) {
+        this.players.splice(this.players.indexOf(player), 1);
     }
 };
 
@@ -61,7 +62,6 @@ Game.prototype.getPlayersOrdered = function () {
 };
 
 Game.prototype.run = function () {
-    this.timer = 0;
     this.init();
     this.gamePaused = false;
     this.gameRunning = true;

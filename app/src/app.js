@@ -1,8 +1,8 @@
 /* Node.js API - https://nodejs.org/api */
-var fs = require("fs");
-var http = require('http');
-var path = require("path");
-var util = require("util");
+var fs = require("fs"),
+    http = require('http'),
+    path = require("path"),
+    util = require("util");
 
 /* Express web framework - http://expressjs.com/4x/api.html */
 var express = require('express');
@@ -34,7 +34,6 @@ var socket;
 var app;
 var server;
 var host;
-var game;
 var serverGame;
 var serverLog;
 
@@ -70,29 +69,32 @@ function init() {
 }
 
 function onSocketConnection(client) {
-    serverGame.clientConnect(client);
-    client.on("disconnect", onClientDisconnect);
-    client.on("newPlayer", onNewPlayer);
-    client.on("movePlayer", onMovePlayer);
-    client.on("message", onMessage);
-}
+    // Connection d'un nouveau joueur
+    serverGame.newClientConnected(client);
 
-function onClientDisconnect() {
-    serverGame.clientDisconnect(this);
+    // Messages provenant d'un joueur
+    client.on("newPlayer", onNewPlayer);
+    client.on("startGame", onStartGame);
+    client.on("playerInput", onPlayerInput);
+
+    // Déconnection d'un joueur
+    client.on("disconnect", onClientDisconnect);
 }
 
 function onNewPlayer(data) {
     serverGame.addPlayer(this, data);
 }
 
-function onMovePlayer(data) {
+function onStartGame(data) {
+    serverGame.startGame(this, data);
+}
+
+function onPlayerInput(data) {
     serverGame.movePlayer(this, data);
 }
 
-function onMessage(data) {
-    if (data.start) {
-        serverGame.startGame(this);
-    }
+function onClientDisconnect() {
+    serverGame.clientDisconnect(this);
 }
 
 function logFormatter(args) {

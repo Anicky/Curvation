@@ -1,9 +1,13 @@
 function ServerGame(socket, log) {
-    this.game = new Game();
-    this.game.mode = GAME_MODE_ONLINE;
     this.socket = socket;
     this.log = log;
+    this.resetGame(this);
 }
+
+ServerGame.prototype.resetGame = function () {
+    this.game = new Game();
+    this.game.mode = GAME_MODE_ONLINE;
+};
 
 ServerGame.prototype.update = function (delta) {
     var i;
@@ -31,7 +35,7 @@ ServerGame.prototype.update = function (delta) {
             }
             if (winner) {
                 this.log.gameEnd(winner);
-                this.socket.sockets.emit("serverMessage", {message: "roundEnd", winner: winner.id});
+                this.socket.sockets.emit("roundEnd", {winner: winner.id});
                 var that = this;
                 setTimeout(function () {
                     that.game.setRandomPositions();
@@ -45,7 +49,7 @@ ServerGame.prototype.update = function (delta) {
                         });
                     }
                     that.game.run();
-                    that.socket.sockets.emit("serverMessage", {message: "roundStart", players: playersData});
+                    that.socket.sockets.emit("roundStart", {players: playersData});
                     that.log.gameStart(that.game.players);
                 }, 2000);
             }
@@ -59,69 +63,54 @@ ServerGame.prototype.draw = function (interpolationPercentage) {
 ServerGame.prototype.end = function (fps, panic) {
 };
 
-ServerGame.prototype.clientConnect = function (client) {
+ServerGame.prototype.newClientConnected = function (client) {
     this.log.playerConnection(client.id);
 };
 
-ServerGame.prototype.clientDisconnect = function (client) {
-    this.log.playerDisconnection(client.id);
-    var removePlayer = this.game.getPlayer(client.id);
-    if (!removePlayer) {
-        this.log.playerNotFound(client.id);
-        return;
-    }
-    this.game.players.splice(this.game.players.indexOf(removePlayer), 1);
-    client.broadcast.emit("removePlayer", {id: client.id});
-    if (this.game.players.length === 0) {
-        this.game = new Game();
-        this.game.mode = GAME_MODE_ONLINE;
-    }
-};
-
 ServerGame.prototype.addPlayer = function (client, data) {
+    // Ajoute un joueur à la partie
     this.game.addPlayer(data.name, PLAYER_COLORS[this.game.players.length], client.id);
-    var newPlayer = this.game.players.slice(-1).pop();
-    newPlayer.setRandomPosition();
-    client.emit("serverMessage", {
-        message: "getCurrentPlayerId",
-        id: client.id
-    });
+
+    // Récupère le joueur
+    var player = this.game.players.slice(-1).pop();
+
+    // Positionne le joueur aléatoirement sur la map
+    player.setRandomPosition();
+
+    // Informe tous les autres joueurs de l'ajout de ce joueur
     client.broadcast.emit("newPlayer", {
-        id: newPlayer.id,
-        name: newPlayer.name,
-        color: newPlayer.color,
-        x: newPlayer.x,
-        y: newPlayer.y,
-        direction: newPlayer.direction
+        id: player.id,
+        name: player.name,
+        color: player.color,
+        x: player.x,
+        y: player.y,
+        direction: player.direction
     });
-    var i, existingPlayer;
-    for (i = 0; i < this.game.players.length; i++) {
-        existingPlayer = this.game.players[i];
+
+    // Informe le nouveau joueur de la présence de tous les joueurs (lui + autres)
+    for (var i = 0; i < this.game.players.length; i++) {
         client.emit("newPlayer", {
-            id: existingPlayer.id,
-            name: existingPlayer.name,
-            color: existingPlayer.color,
-            x: existingPlayer.x,
-            y: existingPlayer.y,
-            direction: existingPlayer.direction
+            id: this.game.players[i].id,
+            name: this.game.players[i].name,
+            color: this.game.players[i].color,
+            x: this.game.players[i].x,
+            y: this.game.players[i].y,
+            direction: this.game.players[i].direction
         });
     }
+    // Si le joueur est le premier, il initialise la partie
     if (this.game.players.length === 1) {
-        client.emit("serverMessage", {message: "init"});
+        client.emit("message", {message: "init"});
     } else {
+        // À partir du 2° joueur, on définit le premier joueur comme créateur
         if (this.game.players.length === 2) {
             var author = this.game.players[0].id;
-            this.socket.to(author).emit("serverMessage", {message: "ready"});
+            // On informe le créateur que la partie peut être lancée
+            this.socket.to(author).emit("message", {message: "ready"});
         }
-        client.emit("serverMessage", {message: "wait"});
-    }
-};
 
-ServerGame.prototype.movePlayer = function (client, data) {
-    var player = this.game.getPlayer(client.id);
-    if (player) {
-        player.checkKey(data.keyCode, KEY_CODES[0], data.isKeyPressed);
-        client.broadcast.emit("movePlayer", {playerId: client.id, data: data});
+        // Le joueur n'est pas le createur de la partie, on l'informe que la partie est en attente
+        client.emit("message", {message: "wait"});
     }
 };
 
@@ -136,9 +125,40 @@ ServerGame.prototype.startGame = function (client) {
         }).setEnd(function (fps, panic) {
             that.end(fps, panic);
         }).start();
-        client.emit("serverMessage", {message: "start"});
-        client.broadcast.emit("serverMessage", {message: "start"});
+        client.emit("message", {message: "start"});
+        client.broadcast.emit("message", {message: "start"});
         this.log.gameStart(this.game.players);
+    }
+};
+
+ServerGame.prototype.movePlayer = function (client, data) {
+    var player = this.game.getPlayer(client.id);
+    if (player) {
+        player.checkKey(data.keyCode, KEY_CODES[0], data.isKeyPressed);
+        client.broadcast.emit("movePlayer", {playerId: client.id, data: data});
+    }
+};
+
+ServerGame.prototype.clientDisconnect = function (client) {
+    this.log.playerDisconnection(client.id);
+
+    // Trouve le joueur dans la partie
+    var player = this.game.getPlayer(client.id);
+
+    if (!player) {
+        this.log.playerNotFound(client.id);
+        return;
+    }
+
+    // Supprime le joueur de la partie
+    this.game.removePlayer(client.id);
+
+    // Informe les autres joueurs de ce départ
+    client.broadcast.emit("removePlayer", {id: client.id});
+
+    // Redémarre une partie si il n'y a plus de joueurs
+    if (this.game.players.length === 0) {
+        this.resetGame(this);
     }
 };
 
