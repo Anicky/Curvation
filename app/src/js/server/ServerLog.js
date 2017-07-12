@@ -2,6 +2,26 @@ function ServerLog(util) {
     this.util = util;
 }
 
+ServerLog.prototype.writeLog = function (message, type, data) {
+    if (!data || typeof data !== 'undefined') {
+        this.util.log(type, message);
+    } else {
+        this.util.log(type, message, data);
+    }
+};
+
+ServerLog.prototype.writeDebugLog = function (message, data) {
+    this.writeLog("debug", message, data);
+};
+
+ServerLog.prototype.writeInfoLog = function (message, data) {
+    this.writeLog("info", message, data);
+};
+
+ServerLog.prototype.writeErrorLog = function (message, data) {
+    this.writeLog("error", message, data);
+};
+
 ServerLog.prototype.serverStart = function () {
     this.util.log("info", "Server started.");
 };
