@@ -34,6 +34,6 @@ Drawer.prototype.drawCurve = function (entities, color) {};
  */
 Drawer.prototype.postprocess = function () {};
 
-if (typeof module != 'undefined') {
+if (typeof module !== 'undefined') {
     module.exports = Drawer;
 }

@@ -1,8 +1,8 @@
 /* Node.js API - https://nodejs.org/api */
-var fs = require("fs"),
+var fs = require('fs'),
     http = require('http'),
-    path = require("path"),
-    util = require("util");
+    path = require('path'),
+    util = require('util');
 
 /* Express web framework - http://expressjs.com/4x/api.html */
 var express = require('express');
@@ -11,7 +11,7 @@ var express = require('express');
 var vhost = require('vhost');
 
 /* socket.io - http://socket.io/docs */
-var io = require("socket.io");
+var io = require('socket.io');
 
 /* winston - https://github.com/winstonjs/winston */
 var winston = require('winston');
@@ -60,7 +60,7 @@ function init() {
     server.listen(config.serverPort);
 
     socket = io.listen(server);
-    socket.sockets.on("connection", onSocketConnection);
+    socket.sockets.on('connection', onSocketConnection);
 
     serverLog = new ServerLog(winston);
     serverGame = new ServerGame(socket, serverLog);
@@ -73,12 +73,12 @@ function onSocketConnection(client) {
     serverGame.newClientConnected(client);
 
     // Messages provenant d'un joueur
-    client.on("newPlayer", onNewPlayer);
-    client.on("startGame", onStartGame);
-    client.on("playerInput", onPlayerInput);
+    client.on('newPlayer', onNewPlayer);
+    client.on('startGame', onStartGame);
+    client.on('playerInput', onPlayerInput);
 
     // Déconnection d'un joueur
-    client.on("disconnect", onClientDisconnect);
+    client.on('disconnect', onClientDisconnect);
 }
 
 function onNewPlayer(data) {

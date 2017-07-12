@@ -172,10 +172,10 @@ Player.prototype.changeDirection = function () {
 };
 
 Player.prototype.checkKey = function (actualKeyCode, availableKeyCodes, keyPressed) {
-    if (actualKeyCode == availableKeyCodes[0]) {
+    if (actualKeyCode === availableKeyCodes[0]) {
         this.keyPressedLeft = keyPressed;
     }
-    if (actualKeyCode == availableKeyCodes[1]) {
+    if (actualKeyCode === availableKeyCodes[1]) {
         this.keyPressedRight = keyPressed;
     }
 };
@@ -184,12 +184,12 @@ Player.prototype.toString = function () {
     return this.name + ' (' + this.id + ')';
 };
 
-if (typeof module != 'undefined') {
+if (typeof module !== 'undefined') {
     module.exports = Player;
 }
-if (typeof require != 'undefined') {
-    var Point = require("./Point");
+if (typeof require !== 'undefined') {
+    var Point = require('./Point');
 }
-if (typeof require != 'undefined') {
-    var Arrow = require("./Arrow");
+if (typeof require !== 'undefined') {
+    var Arrow = require('./Arrow');
 }

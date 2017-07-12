@@ -46,7 +46,7 @@ Game.prototype.removePlayer = function (id) {
 
 Game.prototype.getPlayer = function (id) {
     for (var i = 0; i < this.players.length; i++) {
-        if (this.players[i].id == id) {
+        if (this.players[i].id === id) {
             return this.players[i];
         }
     }
@@ -121,10 +121,10 @@ Game.prototype.draw = function (interpolationPercentage) {
     }
 };
 
-if (typeof module != 'undefined') {
+if (typeof module !== 'undefined') {
     module.exports = Game;
 }
-if (typeof require != 'undefined') {
-    var Player = require("./Player");
-    var Drawer = require("./Drawer");
+if (typeof require !== 'undefined') {
+    var Player = require('./Player');
+    var Drawer = require('./Drawer');
 }

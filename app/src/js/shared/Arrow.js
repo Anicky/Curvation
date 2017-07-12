@@ -8,6 +8,6 @@ function Arrow(fromX, fromY, toX, toY, direction, headSize, size) {
     this.size = size;
 }
 
-if (typeof module != 'undefined') {
+if (typeof module !== 'undefined') {
     module.exports = Arrow;
 }

@@ -16,7 +16,7 @@ var CanvasDisplay = function (size, context) {
         /**
          * Define getter and setter for _size private attribute
          */
-        "size": {
+        'size': {
             // canvas.size
             get: function () { return _size; },
             // canvas.size = ...
@@ -31,7 +31,7 @@ var CanvasDisplay = function (size, context) {
         /**
          * Define getter and setter for _context private attribute
          */
-        "context": {
+        'context': {
             // canvas.context
             get: function () { return _context; },
             // canvas.context = ...
@@ -41,7 +41,7 @@ var CanvasDisplay = function (size, context) {
         /**
          * Define getter for compilated ratio attribute
          */
-        "ratio": {
+        'ratio': {
             // canvas.ratio
             get: function () {
                 return _size / MAP_SIZE;
@@ -162,6 +162,6 @@ CanvasDisplay.prototype.clear = function () {
     this.context.clearRect(0, 0, this.size, this.size);
 };
 
-if (typeof require != 'undefined') {
-    var Drawer = require("../shared/Drawer");
+if (typeof require !== 'undefined') {
+    var Drawer = require('../shared/Drawer');
 }

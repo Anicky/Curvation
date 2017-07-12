@@ -22,7 +22,7 @@ var Point = function (x, y, size) {
         /**
          * Define getter and setter for _x private attribute
          */
-        "x": {
+        'x': {
             // canvas.x
             get: function () { return _x; },
             // canvas.x = ...
@@ -37,7 +37,7 @@ var Point = function (x, y, size) {
         /**
          * Define getter and setter for _y private attribute
          */
-        "y": {
+        'y': {
             // canvas.y
             get: function () { return _y; },
             // canvas.y = ...
@@ -52,7 +52,7 @@ var Point = function (x, y, size) {
         /**
          * Define getter and setter for _size private attribute
          */
-        "size": {
+        'size': {
             // canvas.size
             get: function () { return _size; },
             // canvas.size = ...
@@ -67,6 +67,6 @@ var Point = function (x, y, size) {
     });
 };
 
-if (typeof module != 'undefined') {
+if (typeof module !== 'undefined') {
     module.exports = Point;
 }

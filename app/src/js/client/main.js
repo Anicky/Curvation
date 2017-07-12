@@ -88,17 +88,17 @@ function checkPlayersKey(keyCode, isKeyPressed) {
             if (isKeyPressed) {
                 if ((keyCode === KEY_CODES[0][0]) && (!key_left_pressed)) {
                     key_left_pressed = true;
-                    socket.emit("playerInput", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+                    socket.emit('playerInput', {keyCode: keyCode, isKeyPressed: isKeyPressed});
                 } else if ((keyCode === KEY_CODES[0][1]) && (!key_right_pressed)) {
                     key_right_pressed = true;
-                    socket.emit("playerInput", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+                    socket.emit('playerInput', {keyCode: keyCode, isKeyPressed: isKeyPressed});
                 }
             } else if (keyCode === KEY_CODES[0][0]) {
                 key_left_pressed = false;
-                socket.emit("playerInput", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+                socket.emit('playerInput', {keyCode: keyCode, isKeyPressed: isKeyPressed});
             } else if (keyCode === KEY_CODES[0][1]) {
                 key_right_pressed = false;
-                socket.emit("playerInput", {keyCode: keyCode, isKeyPressed: isKeyPressed});
+                socket.emit('playerInput', {keyCode: keyCode, isKeyPressed: isKeyPressed});
             }
         } else {
             for (var i = 0; i < game.players.length; i++) {
@@ -110,23 +110,23 @@ function checkPlayersKey(keyCode, isKeyPressed) {
 
 var setEventHandlers = function () {
     // À la connection du joueur
-    socket.on("connect", onSocketConnected);
+    socket.on('connect', onSocketConnected);
 
     // Informations provenant du serveur sur les joueurs
-    socket.on("newPlayer", onNewPlayer);
-    socket.on("movePlayer", onMovePlayer);
-    socket.on("removePlayer", onRemovePlayer);
+    socket.on('newPlayer', onNewPlayer);
+    socket.on('movePlayer', onMovePlayer);
+    socket.on('removePlayer', onRemovePlayer);
 
     // Informations provenant du serveur sur l'état de la partie
-    socket.on("roundStart", onRoundStart);
-    socket.on("updateScores", onUpdateScores);
-    socket.on("roundEnd", onRoundEnd);
+    socket.on('roundStart', onRoundStart);
+    socket.on('updateScores', onUpdateScores);
+    socket.on('roundEnd', onRoundEnd);
 
     // Traitement des messages génériques provenant du serveur
-    socket.on("message", onMessage);
+    socket.on('message', onMessage);
 
     // À la déconnection du joueur
-    socket.on("disconnect", onSocketDisconnect);
+    socket.on('disconnect', onSocketDisconnect);
 };
 
 // Event: à la connection d'un joueur
@@ -138,10 +138,10 @@ function onSocketConnected() {
     game.currentPlayerId = onlinePlayerId;
 
     // Envoi les informations du joueur au serveur
-    socket.emit("newPlayer", {name: pseudo});
+    socket.emit('newPlayer', {name: pseudo});
 
     // Cache les modes de jeu
-    $(".gameModeButtons").slideToggle();
+    $('.gameModeButtons').slideToggle();
 }
 
 // Event: Ajout d'un autre joueur
@@ -200,14 +200,14 @@ function onRoundEnd(data) {
 // Event: Récupération d'un message
 function onMessage(data) {
     if (data.message === 'init') {
-        $(".startButton").slideToggle();
+        $('.startButton').slideToggle();
     } else if (data.message === 'wait') {
-        $(".waitButton").slideToggle();
-    } else if (data.message == 'ready') {
-        $(".startButton").prop("disabled", false);
-    } else if (data.message == 'start') {
+        $('.waitButton').slideToggle();
+    } else if (data.message === 'ready') {
+        $('.startButton').prop('disabled', false);
+    } else if (data.message === 'start') {
         onlineRun();
-        $(".runButtons").slideToggle();
+        $('.runButtons').slideToggle();
     }
 }
 
@@ -216,16 +216,16 @@ function onSocketDisconnect() {
 }
 
 $(document).ready(function () {
-    $(".startButton, .onlineGameButton, .waitButton").prop("disabled", true);
+    $('.startButton, .onlineGameButton, .waitButton').prop('disabled', true);
     game = new Game();
-    $("#canvas").attr('width', Math.min(700, $(".panel-game").width()))
-        .attr('height', Math.min(700, $(".panel-game").width()));
-    var canvasDOM = $("#canvas").get(0);
-    canvas = new CanvasDisplay(canvasDOM.width, canvasDOM.getContext("2d"));
+    $('#canvas').attr('width', Math.min(700, $('.panel-game').width()))
+        .attr('height', Math.min(700, $('.panel-game').width()));
+    var canvasDOM = $('#canvas').get(0);
+    canvas = new CanvasDisplay(canvasDOM.width, canvasDOM.getContext('2d'));
     game.drawer = canvas;
 
-    if (typeof io != 'undefined') {
-        $(".onlineGameButton").prop("disabled", false);
+    if (typeof io !== 'undefined') {
+        $('.onlineGameButton').prop('disabled', false);
     }
 
     // Bind all events for the movement
@@ -237,81 +237,81 @@ $(document).ready(function () {
     });
 
     $(window).resize(function () {
-        $("#canvas").attr('width', Math.min(700, $(".panel-game").width()));
-        $("#canvas").attr('height', Math.min(700, $(".panel-game").width()));
-        canvas.size = $("#canvas").get(0).width;
+        $('#canvas').attr('width', Math.min(700, $('.panel-game').width()));
+        $('#canvas').attr('height', Math.min(700, $('.panel-game').width()));
+        canvas.size = $('#canvas').get(0).width;
     });
 
-    $(".onlineGameButton").click(function () {
-        pseudo = prompt("Quel est votre pseudo ?");
+    $('.onlineGameButton').click(function () {
+        pseudo = prompt('Quel est votre pseudo ?');
         if (pseudo) {
             game.mode = GAME_MODE_ONLINE;
             socket = io();
             setEventHandlers();
         } else {
-            $(".onlineGameButton").blur();
+            $('.onlineGameButton').blur();
         }
     });
 
-    $(".localGameButton").click(function () {
+    $('.localGameButton').click(function () {
         game.mode = GAME_MODE_LOCAL;
-        $(".gameModeButtons, .playersButtons, .startButton").slideToggle();
+        $('.gameModeButtons, .playersButtons, .startButton').slideToggle();
     });
 
     // Add player
-    $(".addPlayerButton").click(function () {
+    $('.addPlayerButton').click(function () {
         var playerId = game.players.length;
-        game.addPlayer("Player " + (playerId + 1), PLAYER_COLORS[playerId]);
+        game.addPlayer('Player ' + (playerId + 1), PLAYER_COLORS[playerId]);
 
         // Update players score
         updateScoresTable();
 
         // Display remove button
-        $(".removePlayerButton").removeClass("hide");
-        $(".startButton").prop("disabled", false);
+        $('.removePlayerButton').removeClass('hide');
+        $('.startButton').prop('disabled', false);
 
         // Hide button if the max amount of player is reached
         if (game.players.length === KEY_CODES.length || game.players.length === PLAYER_COLORS.length) {
-            $(this).addClass("hide");
+            $(this).addClass('hide');
         }
     });
 
     // remove last player
-    $(".removePlayerButton").click(function () {
+    $('.removePlayerButton').click(function () {
         game.players.pop();
 
         // Update players score
         updateScoresTable();
 
         // Display add button
-        $(".addPlayerButton").removeClass("hide");
+        $('.addPlayerButton').removeClass('hide');
 
         // Hide button if there is no more player in the game
         if (game.players.length === 0) {
-            $(this).addClass("hide");
-            $(".startButton").prop("disabled", true);
+            $(this).addClass('hide');
+            $('.startButton').prop('disabled', true);
         }
     });
 
     // Start the party
-    $(".startButton").click(function () {
+    $('.startButton').click(function () {
         if (!game.gameRunning && !onlineGame) {
-            $(".playersButtons, .startButton, .gameRunningButtons").slideToggle();
+            $('.playersButtons, .startButton, .gameRunningButtons').slideToggle();
             run();
         } else if (!game.gameRunning && onlineGame) {
-            socket.emit("startGame");
+            socket.emit('startGame');
         }
     });
 
     // Pause/Play the game
-    $(".pauseButton").click(function () {
+    $('.pauseButton').click(function () {
         game.pause();
-        $(".playButton").show();
-        $(".pauseButton").hide();
+        $('.playButton').show();
+        $('.pauseButton').hide();
     });
-    $(".playButton").click(function () {
+    $('.playButton').click(function () {
         game.pause();
-        $(".playButton").hide();
-        $(".pauseButton").show();
+        $('.playButton').hide();
+        $('.pauseButton').show();
     });
 });

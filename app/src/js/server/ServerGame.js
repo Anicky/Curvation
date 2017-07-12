@@ -35,7 +35,7 @@ ServerGame.prototype.update = function (delta) {
             }
             if (winner) {
                 this.log.gameEnd(winner);
-                this.socket.sockets.emit("roundEnd", {winner: winner.id});
+                this.socket.sockets.emit('roundEnd', {winner: winner.id});
                 var that = this;
                 setTimeout(function () {
                     that.game.setRandomPositions();
@@ -49,7 +49,7 @@ ServerGame.prototype.update = function (delta) {
                         });
                     }
                     that.game.run();
-                    that.socket.sockets.emit("roundStart", {players: playersData});
+                    that.socket.sockets.emit('roundStart', {players: playersData});
                     that.log.gameStart(that.game.players);
                 }, 2000);
             }
@@ -78,7 +78,7 @@ ServerGame.prototype.addPlayer = function (client, data) {
     player.setRandomPosition();
 
     // Informe tous les autres joueurs de l'ajout de ce joueur
-    client.broadcast.emit("newPlayer", {
+    client.broadcast.emit('newPlayer', {
         id: player.id,
         name: player.name,
         color: player.color,
@@ -89,7 +89,7 @@ ServerGame.prototype.addPlayer = function (client, data) {
 
     // Informe le nouveau joueur de la présence de tous les joueurs (lui + autres)
     for (var i = 0; i < this.game.players.length; i++) {
-        client.emit("newPlayer", {
+        client.emit('newPlayer', {
             id: this.game.players[i].id,
             name: this.game.players[i].name,
             color: this.game.players[i].color,
@@ -100,17 +100,17 @@ ServerGame.prototype.addPlayer = function (client, data) {
     }
     // Si le joueur est le premier, il initialise la partie
     if (this.game.players.length === 1) {
-        client.emit("message", {message: "init"});
+        client.emit('message', {message: 'init'});
     } else {
         // À partir du 2° joueur, on définit le premier joueur comme créateur
         if (this.game.players.length === 2) {
             var author = this.game.players[0].id;
             // On informe le créateur que la partie peut être lancée
-            this.socket.to(author).emit("message", {message: "ready"});
+            this.socket.to(author).emit('message', {message: 'ready'});
         }
 
         // Le joueur n'est pas le createur de la partie, on l'informe que la partie est en attente
-        client.emit("message", {message: "wait"});
+        client.emit('message', {message: 'wait'});
     }
 };
 
@@ -125,8 +125,8 @@ ServerGame.prototype.startGame = function (client) {
         }).setEnd(function (fps, panic) {
             that.end(fps, panic);
         }).start();
-        client.emit("message", {message: "start"});
-        client.broadcast.emit("message", {message: "start"});
+        client.emit('message', {message: 'start'});
+        client.broadcast.emit('message', {message: 'start'});
         this.log.gameStart(this.game.players);
     }
 };
@@ -135,7 +135,7 @@ ServerGame.prototype.movePlayer = function (client, data) {
     var player = this.game.getPlayer(client.id);
     if (player) {
         player.checkKey(data.keyCode, KEY_CODES[0], data.isKeyPressed);
-        client.broadcast.emit("movePlayer", {playerId: client.id, data: data});
+        client.broadcast.emit('movePlayer', {playerId: client.id, data: data});
     }
 };
 
@@ -154,7 +154,7 @@ ServerGame.prototype.clientDisconnect = function (client) {
     this.game.removePlayer(client.id);
 
     // Informe les autres joueurs de ce départ
-    client.broadcast.emit("removePlayer", {id: client.id});
+    client.broadcast.emit('removePlayer', {id: client.id});
 
     // Redémarre une partie si il n'y a plus de joueurs
     if (this.game.players.length === 0) {
@@ -162,11 +162,11 @@ ServerGame.prototype.clientDisconnect = function (client) {
     }
 };
 
-if (typeof require != 'undefined') {
-    var Game = require("../shared/Game");
+if (typeof require !== 'undefined') {
+    var Game = require('../shared/Game');
     var MainLoop = require('mainloop.js');
 }
 
-if (typeof module != 'undefined') {
+if (typeof module !== 'undefined') {
     module.exports = ServerGame;
 }
