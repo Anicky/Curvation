@@ -6,6 +6,7 @@ echo "*******************************"
 
 echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
 echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
+echo "cd /var/www/curvation" >> /home/vagrant/.bashrc
 sudo apt-get -qq update
 sudo apt-get -qq -y install curl gnupg iptables-persistent
 sudo iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000
