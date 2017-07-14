@@ -23,7 +23,7 @@
   "license": "GPL-3.0",
   "main": "app.js",
   "scripts": {
-    "postinstall": "grunt init",
+    "postinstall": "grunt",
     "start": "nodemon src/app.js"
   },
   "devDependencies": {
