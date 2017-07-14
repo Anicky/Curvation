@@ -23,7 +23,8 @@ module.exports = function (grunt) {
                 jsMin: '<%= paths.dest.folder %>js/<%= pkg.name %>.min.js',
                 css: '<%= paths.dest.folder %>css/<%= pkg.name %>.css',
                 cssMin: '<%= paths.dest.folder %>css/<%= pkg.name %>.min.css',
-                sprite: '<%= paths.dest.folder %>img/sprite.png'
+                sprite: '<%= paths.dest.folder %>img/sprite.png',
+                tmp: '<%= paths.dest.folder %>tmp/'
             }
         },
 
@@ -61,7 +62,7 @@ module.exports = function (grunt) {
                 separator: ''
             },
             js: {
-                src: ['<%= paths.dest.folder %>tmp/*.js', '<%= paths.src.js %>'],
+                src: ['<%= paths.dest.tmp %>*.js', '<%= paths.src.js %>'],
                 dest: '<%= paths.dest.js %>'
             },
             css: {
@@ -99,8 +100,10 @@ module.exports = function (grunt) {
         // Clean task
         clean: {
             js: '<%= paths.dest.js %>',
-            tmp: '<%= paths.dest.folder %>tmp',
-            all: '<%= paths.dest.folder %>**'
+            tmp: '<%= paths.dest.tmp %>',
+            all: '<%= paths.dest.folder %>**',
+            prod: ['<%= paths.dest.js %>', '<%= paths.dest.tmp %>'],
+            dev: []
         },
 
         // Watch task
@@ -115,7 +118,7 @@ module.exports = function (grunt) {
                 files: 'Gruntfile.js',
                 tasks: ['jshint:gruntfile'],
                 options: {
-                    spawn: false,
+                    spawn: false
                 }
             },
             js: {
@@ -127,7 +130,7 @@ module.exports = function (grunt) {
                     'clean:js'
                 ],
                 options: {
-                    spawn: false,
+                    spawn: false
                 }
             },
             sprite: {
@@ -136,7 +139,7 @@ module.exports = function (grunt) {
                     'sprite'
                 ],
                 options: {
-                    spawn: false,
+                    spawn: false
                 }
             },
             less: {
@@ -145,23 +148,24 @@ module.exports = function (grunt) {
                     'less:dev'
                 ],
                 options: {
-                    spawn: false,
+                    spawn: false
                 }
             },
             index: {
                 files: '<%= paths.src.folder %><%= paths.src.index %>',
                 tasks: ['copy:index'],
                 options: {
-                    spawn: false,
+                    spawn: false
                 }
             }
         },
 
         cssmin: {
-            files: {
+            prod: {
                 src: '<%= paths.dest.cssMin %>',
                 dest: '<%= paths.dest.cssMin %>'
-            }
+            },
+            dev: {}
         },
 
         // Compile LESS files
@@ -191,32 +195,33 @@ module.exports = function (grunt) {
                 src: '<%= paths.src.img %>',
                 dest: '<%= paths.dest.sprite %>',
                 imgPath: '../img/sprite.png',
-                destCss: '<%= paths.dest.folder %>tmp/sprites.css'
+                destCss: '<%= paths.dest.tmp %>sprites.css'
             }
         },
 
         browserify: {
             dist: {
                 src: ['<%= paths.src.folder %>libs.js'],
-                dest: '<%= paths.dest.folder %>tmp/bundle.js'
+                dest: '<%= paths.dest.tmp %>bundle.js'
             }
         }
     });
 
     // Tasks definition
-    grunt.registerTask('default', 'init');
-    grunt.registerTask('build', 'Build the files and watch changes', function (debug) {
-        // 'grunt build:prod'
-        if (debug === 'prod') {
-            // Launch the prod tools
-            grunt.task.run(['jshint', 'less:prod', 'sprite', 'browserify', 'concat', 'uglify:prod', 'cssmin', 'copy', 'clean-src']);
-        } else { // 'grunt build'
-            // Launch the dev tools
-            grunt.task.run(['jshint', 'less:dev', 'sprite', 'browserify', 'concat', 'uglify:dev', 'copy', 'clean-src']);
-        }
+    grunt.registerTask('default', 'build:prod');
+    grunt.registerTask('build', function (target) {
+        grunt.task.run([
+            'jshint',
+            'less:' + target,
+            'sprite',
+            'browserify',
+            'concat',
+            'uglify:' + target,
+            'cssmin:' + target,
+            'copy',
+            'clean:' + target]
+        );
     });
-    grunt.registerTask('init', 'build:prod');
-    grunt.registerTask('dev', ['build', 'browserify', 'watch']);
-    grunt.registerTask('clean-src', ['clean:js', 'clean:tmp']);
+    grunt.registerTask('dev', ['build:dev', 'watch']);
     grunt.registerTask('clean-all', 'clean:all');
 };
