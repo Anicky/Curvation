@@ -196,10 +196,10 @@ module.exports = function (grunt) {
         },
 
         browserify: {
-                dist: {
-                    src: ['<%= paths.src.folder %>libs.js'],
-                    dest: '<%= paths.dest.folder %>tmp/bundle.js'
-                }
+            dist: {
+                src: ['<%= paths.src.folder %>libs.js'],
+                dest: '<%= paths.dest.folder %>tmp/bundle.js'
+            }
         }
     });
 
