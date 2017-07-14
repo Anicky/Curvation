@@ -27,7 +27,6 @@
     "start": "nodemon src/app.js"
   },
   "devDependencies": {
-    "gulp-jshint": "^2.0.4",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-clean": "^1.1.0",
@@ -40,7 +39,6 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-spritesmith": "^6.4.0",
     "jit-grunt": "^0.10.0",
-    "jshint": "^2.9.5",
     "nodemon": "^1.11.0"
   },
   "dependencies": {
