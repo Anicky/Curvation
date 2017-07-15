@@ -111,6 +111,8 @@ module.exports = function (grunt) {
                 files: '<%= paths.src.ts %>',
                 tasks: [
                     'tslint:ts',
+                    'ts',
+                    'browserify',
                     'uglify:dev',
                     'clean:js'
                 ],

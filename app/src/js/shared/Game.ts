@@ -6,25 +6,26 @@ import Tools = require('./Tools');
 
 class Game {
 
-    private fpsMax;
-    private fpsIntended;
-    private frametimeMax = 1000 / this.fpsMax;
-    private mode = null;
-    private drawer = null;
-    private players = [];
-    private gameRunning = false;
-    private gamePaused = false;
-    private timer = 0;
-    private collisionInFrame = false;
-    private currentPlayerId = null;
-    private server = false; //FIX
-    private lastFrameTime = 1000 / this.fpsIntended;
-    private deltaTime = 0;
-    private updateId;
+    public fpsMax;
+    public fpsIntended;
+    public frametimeMax;
+    public mode = null;
+    public drawer = null;
+    public players = [];
+    public gameRunning = false;
+    public gamePaused = false;
+    public timer = 0;
+    public collisionInFrame = false;
+    public currentPlayerId = null;
+    public server = false; //FIX
+    public lastFrameTime = 1000 / this.fpsIntended;
+    public deltaTime = 0;
+    public updateId;
 
     constructor(fpsMax, fpsIntended) {
         this.fpsMax = fpsMax;
         this.fpsIntended = fpsIntended;
+        this.frametimeMax = 1000 / this.fpsMax
     }
 
     public init() {

@@ -2,11 +2,11 @@ import Game = require('../shared/Game');
 import Tools = require('../shared/Tools');
 
 class ServerGame {
-    private socket;
-    private log;
-    private game;
-    private fpsMax;
-    private fpsIntended;
+    public socket;
+    public log;
+    public game;
+    public fpsMax;
+    public fpsIntended;
     
     public constructor(socket, log, fpsMax, fpsIntended) {
         this.socket = socket;

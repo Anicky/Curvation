@@ -1,8 +1,9 @@
 import Drawer = require('../shared/Drawer');
+import Tools = require('../shared/Tools');
 
 class CanvasDisplay implements Drawer {
-    private size: number;
-    private context;
+    public size: number;
+    public context;
 
     constructor(size: number, context) {
         this.size = size;
@@ -10,7 +11,7 @@ class CanvasDisplay implements Drawer {
     }
 
     public getRatio() {
-        return this.size / 1000;// MAP_SIZE
+        return this.size / Tools.MAP_SIZE;
     }
 
     public init() {

@@ -16,8 +16,8 @@ class Tools {
     public static DEFAULT_SNAKE_CURVE = 3;
 
     public static DEFAULT_BEGIN_PADDING = 30;
-    public static DEFAULT_WAITING_TIME = 100 /** (FPS_MAX / FPS_INTENDED)*/;
-    public static DEFAULT_NO_COLLISIONS_TIME = 100 /** (FPS_MAX / FPS_INTENDED)*/;
+    public static DEFAULT_WAITING_TIME = 100;
+    public static DEFAULT_NO_COLLISIONS_TIME = 100;
 
     public static DEFAULT_SNAKE_HOLE_SIZE_MIN = 8;
     public static DEFAULT_SNAKE_HOLE_SIZE_MAX = 16;
@@ -31,11 +31,11 @@ class Tools {
     public static MAP_SIZE = 1000;
 
     public static setRandomX() {
-        return Math.floor(Math.random() * (1000 - Tools.DEFAULT_BEGIN_PADDING * 2 + 1)) + Tools.DEFAULT_BEGIN_PADDING;
+        return Math.floor(Math.random() * (Tools.MAP_SIZE - Tools.DEFAULT_BEGIN_PADDING * 2 + 1)) + Tools.DEFAULT_BEGIN_PADDING;
     }
 
     public static setRandomY() {
-        return Math.floor(Math.random() * (1000 - Tools.DEFAULT_BEGIN_PADDING * 2 + 1)) + Tools.DEFAULT_BEGIN_PADDING;
+        return Math.floor(Math.random() * (Tools.MAP_SIZE - Tools.DEFAULT_BEGIN_PADDING * 2 + 1)) + Tools.DEFAULT_BEGIN_PADDING;
     }
 
     public static setRandomAngle() {
@@ -47,7 +47,7 @@ class Tools {
     }
 
     public static round(value, decimals) {
-        return value.toFixed(decimals);
+        return new Number(value.toFixed(decimals));
     }
 
     public static cloneArray(array) {

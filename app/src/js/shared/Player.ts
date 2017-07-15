@@ -4,25 +4,25 @@ import Tools = require('./Tools');
 
 class Player {
 
-    private x;
-    private y;
-    private direction;
-    private name;
-    private color;
-    private score;
-    private id;
-    private game;
-    private keyPressedLeft;
-    private keyPressedRight;
-    private speed;
-    private size;
-    private curve;
-    private holeSize;
-    private holeProbability;
-    private holeTimer;
-    private currentHole;
-    private collisionsCheck;
-    private history;
+    public x;
+    public y;
+    public direction;
+    public name;
+    public color;
+    public score;
+    public id;
+    public game;
+    public keyPressedLeft;
+    public keyPressedRight;
+    public speed;
+    public size;
+    public curve;
+    public holeSize;
+    public holeProbability;
+    public holeTimer;
+    public currentHole;
+    public collisionsCheck;
+    public history;
 
     constructor(game, name, color, id) {
         this.x = 0;
@@ -107,8 +107,8 @@ class Player {
     };
 
     public movePlayer(delta) {
-        this.x = this.x + (Math.cos(this.direction) * (this.speed * (delta / this.game.frametimeMax)));
-        this.y = this.y + (Math.sin(this.direction) * (this.speed * (delta / this.game.frametimeMax)));
+        this.x = Tools.round(this.x + (Math.cos(this.direction) * (this.speed * (delta / this.game.frametimeMax))), 1);
+        this.y = Tools.round(this.y + (Math.sin(this.direction) * (this.speed * (delta / this.game.frametimeMax))), 1);
         this.changeDirection(delta);
     };
 
@@ -129,17 +129,16 @@ class Player {
 
     public checkCollisions() {
         /**
-         * @TODO : Detection de collisions a revoir pour se passer du canvas.
          * Comparer la tete du snake avec toutes les entites du jeu.
          * En cas de problemes de performance, utiliser un Quadtree
          * Voir ici pour l'explication : http://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
          * Et ici pour la demo : http://www.mikechambers.com/blog/2011/03/21/javascript-quadtree-implementation/
          */
-        /*if (!this.currentHole && this.game.timer >= DEFAULT_WAITING_TIME + DEFAULT_NO_COLLISIONS_TIME) {
-         if (this.checkCollisionsWithItems() || this.checkCollisionsWithBorders() || this.checkCollisionsWithItself() || this.checkCollisionsWithOthers()) {
-         return true;
-         }
-         }*/
+        if ((!this.currentHole) && (this.game.timer >= (Tools.DEFAULT_WAITING_TIME + Tools.DEFAULT_NO_COLLISIONS_TIME))) {
+            if (this.checkCollisionsWithItems() || this.checkCollisionsWithBorders() || this.checkCollisionsWithItself() || this.checkCollisionsWithOthers()) {
+                return true;
+            }
+        }
     };
 
     public checkCollisionsWithItems() {
@@ -148,17 +147,19 @@ class Player {
     };
 
     public checkCollisionsWithBorders() {
-        if (((this.x - this.size) <= 0) || ((this.x + this.size) >= 1000) || ((this.y - this.size) <= 0) || ((this.y + this.size) >= 1000)) {
+        if (((this.x - this.size) <= 0) || ((this.x + this.size) >= Tools.MAP_SIZE) || ((this.y - this.size) <= 0) || ((this.y + this.size) >= Tools.MAP_SIZE)) {
             return true;
         }
         return false;
     };
 
     public checkCollisionsWithItself() {
-        var lastPointToCheck = Tools.round(this.history.length - (5 + (this.size * 3) - (this.speed * 10)), 0);
-        for (var i = 0; i < lastPointToCheck; i++) {
-            if (this.collidesWith(this.history[i])) {
-                return true;
+        var lastPointToCheck = Tools.round(this.history.length - (5 + (this.size * 3) - (this.speed * 100)), 0);
+        if (this.history.length > lastPointToCheck) {
+            for (var i = 0; i < lastPointToCheck; i++) {
+                if (this.collidesWith(this.history[i])) {
+                    return true;
+                }
             }
         }
     };

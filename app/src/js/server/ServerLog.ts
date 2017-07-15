@@ -1,6 +1,6 @@
 class ServerLog {
 
-    private util;
+    public util;
 
     public constructor(util) {
         this.util = util;
