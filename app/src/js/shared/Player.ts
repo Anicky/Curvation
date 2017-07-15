@@ -154,12 +154,10 @@ class Player {
     };
 
     public checkCollisionsWithItself() {
-        var lastPointToCheck = Tools.round(this.history.length - (5 + (this.size * 3) - (this.speed * 100)), 0);
-        if (this.history.length > lastPointToCheck) {
-            for (var i = 0; i < lastPointToCheck; i++) {
-                if (this.collidesWith(this.history[i])) {
-                    return true;
-                }
+        var lastPointToCheck = Tools.round(this.history.length - (5 + (this.size * 3) - (this.speed * 0.5)), 0);
+        for (var i = 0; i < lastPointToCheck; i++) {
+            if (this.collidesWith(this.history[i])) {
+                return true;
             }
         }
     };
