@@ -1,3 +1,11 @@
+import Game = require('../shared/Game');
+import $ = require('jquery');
+import CanvasDisplay = require('./CanvasDisplay');
+import Tools = require('../shared/Tools');
+import io = require('socket.io-client');
+import bootstrap = require('bootstrap');
+import requestAnimationFrame = require('requestanimationframe');
+
 var socket;
 var game;
 var pause = false;
@@ -7,22 +15,6 @@ var key_right_pressed = false;
 var onlinePlayerId = null;
 var canvas;
 var pseudo = null;
-
-function end(fps, panic) {
-    if (panic) {
-        var discardedTime = Math.round(MainLoop.resetFrameDelta());
-        console.warn('Main loop panicked, probably because the browser tab was put in the background. Discarding ' + discardedTime + 'ms');
-    }
-}
-
-function onlineUpdate(delta) {
-    if (!pause) {
-        game.update(delta);
-        if (game.collisionInFrame) {
-            updateScoresTable();
-        }
-    }
-}
 
 function update(delta) {
     if (!pause) {
@@ -55,25 +47,17 @@ function update(delta) {
     }
 }
 
-function draw(interpolationPercentage) {
-    game.draw(interpolationPercentage);
-}
-
 function run() {
     game.setRandomPositions();
     game.run();
-    MainLoop.setUpdate(update).setDraw(draw).setEnd(end).start();
 }
 
 function onlineRun() {
     game.run();
-    MainLoop.setUpdate(onlineUpdate).setDraw(draw).setEnd(end).start();
 }
 
-function updateScoresTable(players) {
-    if (players === undefined) {
-        players = game.getPlayersOrdered();
-    }
+function updateScoresTable() {
+    var players = game.getPlayersOrdered();
     $('#scores').html('');
     for (var i = 0; i < players.length; i++) {
         $('#scores').append('<div class="row scores-line" id="player-' + i + '" style="color: ' + players[i].color + '"><div class="col-xs-2 scores-color"><span style="background-color: ' + players[i].color + ';"></span></div><div class="col-xs-7 scores-name">' + players[i].name + '</div><div class="col-xs-3 scores-points">' + players[i].score + '</div></div>');
@@ -84,25 +68,25 @@ function checkPlayersKey(keyCode, isKeyPressed) {
     if (game.gameRunning && !game.gamePaused) {
         if (onlineGame) {
             var currentPlayer = game.getPlayer(onlinePlayerId);
-            currentPlayer.checkKey(keyCode, KEY_CODES[0], isKeyPressed);
+            currentPlayer.checkKey(keyCode, Tools.KEY_CODES[0], isKeyPressed);
             if (isKeyPressed) {
-                if ((keyCode === KEY_CODES[0][0]) && (!key_left_pressed)) {
+                if ((keyCode === Tools.KEY_CODES[0][0]) && (!key_left_pressed)) {
                     key_left_pressed = true;
                     socket.emit('playerInput', {keyCode: keyCode, isKeyPressed: isKeyPressed});
-                } else if ((keyCode === KEY_CODES[0][1]) && (!key_right_pressed)) {
+                } else if ((keyCode === Tools.KEY_CODES[0][1]) && (!key_right_pressed)) {
                     key_right_pressed = true;
                     socket.emit('playerInput', {keyCode: keyCode, isKeyPressed: isKeyPressed});
                 }
-            } else if (keyCode === KEY_CODES[0][0]) {
+            } else if (keyCode === Tools.KEY_CODES[0][0]) {
                 key_left_pressed = false;
                 socket.emit('playerInput', {keyCode: keyCode, isKeyPressed: isKeyPressed});
-            } else if (keyCode === KEY_CODES[0][1]) {
+            } else if (keyCode === Tools.KEY_CODES[0][1]) {
                 key_right_pressed = false;
                 socket.emit('playerInput', {keyCode: keyCode, isKeyPressed: isKeyPressed});
             }
         } else {
             for (var i = 0; i < game.players.length; i++) {
-                game.players[i].checkKey(keyCode, KEY_CODES[i], isKeyPressed);
+                game.players[i].checkKey(keyCode, Tools.KEY_CODES[i], isKeyPressed);
             }
         }
     }
@@ -161,7 +145,7 @@ function onNewPlayer(data) {
 function onMovePlayer(data) {
     var player = game.getPlayer(data.playerId);
     if (player) {
-        player.checkKey(data.data.keyCode, KEY_CODES[0], data.data.isKeyPressed);
+        player.checkKey(data.data.keyCode, Tools.KEY_CODES[0], data.data.isKeyPressed);
     }
 }
 
@@ -186,7 +170,7 @@ function onRoundStart(data) {
 // Event: Mise à jour des scores
 // TODO: à appliquer lorsqu'un joueur perd
 function onUpdateScores(data) {
-    updateScoresTable(data.players);
+    updateScoresTable();
 }
 
 // Event: Fin d'un round
@@ -194,7 +178,7 @@ function onRoundEnd(data) {
     var winner = game.getPlayer(data.winner);
     $('#gameover .modal-body').html('<p style="color:' + winner.color + '"><span class="modal-playername">' + winner.name + '</span> wins !</p>');
     $('#gameover').modal('show');
-    updateScoresTable(data.players);
+    updateScoresTable();
 }
 
 // Event: Récupération d'un message
@@ -217,7 +201,7 @@ function onSocketDisconnect() {
 
 $(document).ready(function () {
     $('.startButton, .onlineGameButton, .waitButton').prop('disabled', true);
-    game = new Game();
+    game = new Game(60, 60);
     $('#canvas').attr('width', Math.min(700, $('.panel-game').width()))
         .attr('height', Math.min(700, $('.panel-game').width()));
     var canvasDOM = $('#canvas').get(0);
@@ -245,7 +229,7 @@ $(document).ready(function () {
     $('.onlineGameButton').click(function () {
         pseudo = prompt('Quel est votre pseudo ?');
         if (pseudo) {
-            game.mode = GAME_MODE_ONLINE;
+            game.mode = Tools.GAME_MODE_ONLINE;
             socket = io();
             setEventHandlers();
         } else {
@@ -254,14 +238,14 @@ $(document).ready(function () {
     });
 
     $('.localGameButton').click(function () {
-        game.mode = GAME_MODE_LOCAL;
+        game.mode = Tools.GAME_MODE_LOCAL;
         $('.gameModeButtons, .playersButtons, .startButton').slideToggle();
     });
 
     // Add player
     $('.addPlayerButton').click(function () {
         var playerId = game.players.length;
-        game.addPlayer('Player ' + (playerId + 1), PLAYER_COLORS[playerId]);
+        game.addPlayer('Player ' + (playerId + 1), Tools.PLAYER_COLORS[playerId]);
 
         // Update players score
         updateScoresTable();
@@ -271,7 +255,7 @@ $(document).ready(function () {
         $('.startButton').prop('disabled', false);
 
         // Hide button if the max amount of player is reached
-        if (game.players.length === KEY_CODES.length || game.players.length === PLAYER_COLORS.length) {
+        if (game.players.length === Tools.KEY_CODES.length || game.players.length === Tools.PLAYER_COLORS.length) {
             $(this).addClass('hide');
         }
     });

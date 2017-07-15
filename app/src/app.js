@@ -1,4 +1,5 @@
 /* Node.js API - https://nodejs.org/api */
+global.window = global.document = global;
 var fs = require('fs'),
     http = require('http'),
     path = require('path'),
@@ -27,7 +28,7 @@ var config = require('./config.json');
  * @TODO : Effectuer la copie de ce fichier vers le dossier /dist (Gruntfile.js)
  */
 /* Curvation - Tools */
-include('./src/js/shared/tools.js');
+var Tools = require('./js/shared/Tools.js');
 
 /* Variables */
 var socket;
@@ -100,8 +101,4 @@ function onClientDisconnect() {
 function logFormatter(args) {
     var dateTimeComponents = new Date().toISOString();
     return dateTimeComponents + ' ' + args.level.toUpperCase() + ' ' + args.message;
-}
-
-function include(f) {
-    eval.apply(global, [fs.readFileSync(f).toString()]);
 }

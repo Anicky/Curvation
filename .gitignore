@@ -13,3 +13,5 @@ vagrant/config_local.yml
 /app/node_modules
 /app/npm-debug.log
 /app/logs
+/app/src/js/*/*.js
+/app/src/js/*/*.js.map

@@ -12,6 +12,7 @@ module.exports = function (grunt) {
             src: {
                 folder: 'src/',
                 js: ['<%= paths.src.folder %>js/shared/*.js', '<%= paths.src.folder %>js/client/*.js'],
+                ts: ['<%= paths.src.folder %>js/**/*.ts'],
                 css: '<%= paths.src.folder %>css/**/*.css',
                 less: '<%= paths.src.folder %>less/**/*.less',
                 img: '<%= paths.src.folder %>img/**/*.png',
@@ -19,7 +20,7 @@ module.exports = function (grunt) {
             },
             dest: {
                 folder: 'dist/',
-                js: '<%= paths.dest.folder %>js/<%= pkg.name %>.js',
+                js: '<%= paths.dest.fol %>js/<%= pkg.name %>.js',
                 jsMin: '<%= paths.dest.folder %>js/<%= pkg.name %>.min.js',
                 css: '<%= paths.dest.folder %>css/<%= pkg.name %>.css',
                 cssMin: '<%= paths.dest.folder %>css/<%= pkg.name %>.min.css',
@@ -44,30 +45,15 @@ module.exports = function (grunt) {
         },
 
         // JSHint task
-        jshint: {
+        tslint: {
             options: {
                 esnext: true
             },
             gruntfile: {
                 src: 'Gruntfile.js'
             },
-            js: {
-                src: '<%= paths.src.js %>'
-            }
-        },
-
-        // Concatenation task
-        concat: {
-            options: {
-                separator: ''
-            },
-            js: {
-                src: ['<%= paths.dest.tmp %>*.js', '<%= paths.src.js %>'],
-                dest: '<%= paths.dest.js %>'
-            },
-            css: {
-                src: ['<%= paths.dest.cssMin %>', '<%= paths.src.css %>'],
-                dest: '<%= paths.dest.cssMin %>'
+            ts: {
+                src: '<%= paths.src.ts %>'
             }
         },
 
@@ -116,16 +102,15 @@ module.exports = function (grunt) {
             },
             gruntfile: {
                 files: 'Gruntfile.js',
-                tasks: ['jshint:gruntfile'],
+                tasks: ['tslint:gruntfile'],
                 options: {
                     spawn: false
                 }
             },
-            js: {
-                files: '<%= paths.src.js %>',
+            ts: {
+                files: '<%= paths.src.ts %>',
                 tasks: [
-                    'jshint:js',
-                    'concat:js',
+                    'tslint:ts',
                     'uglify:dev',
                     'clean:js'
                 ],
@@ -201,22 +186,32 @@ module.exports = function (grunt) {
 
         browserify: {
             dist: {
-                src: ['<%= paths.src.folder %>libs.js'],
-                dest: '<%= paths.dest.tmp %>bundle.js'
+                src: ['<%= paths.src.js %>'],
+                dest: '<%= paths.dest.js %>'
+            }
+        },
+
+        ts: {
+            default : {
+                src: '<%= paths.src.ts %>',
+                options: {
+                    sourceMap: false
+                }
             }
         }
+
     });
 
     // Tasks definition
     grunt.registerTask('default', 'build:prod');
     grunt.registerTask('build', function (target) {
         grunt.task.run([
-            'jshint',
+            'tslint',
+            'ts',
+            'browserify',
+            'uglify:' + target,
             'less:' + target,
             'sprite',
-            'browserify',
-            'concat',
-            'uglify:' + target,
             'cssmin:' + target,
             'copy',
             'clean:' + target]

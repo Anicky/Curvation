@@ -2,5 +2,7 @@
   "serverUrl": "dev.curvation.fr",
   "serverPort": 3000,
   "serverLog": "logs/server.log",
-  "serverLocale" : "en-us"
+  "serverLocale" : "en-us",
+  "gameFPSmax": 60,
+  "gameFPSintended" : 60
 }

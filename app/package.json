@@ -30,7 +30,6 @@
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-clean": "^1.1.0",
-    "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-cssmin": "^2.2.0",
     "grunt-contrib-jshint": "^1.1.0",
@@ -38,8 +37,12 @@
     "grunt-contrib-uglify": "^3.0.1",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-spritesmith": "^6.4.0",
+    "grunt-ts": "^6.0.0-beta.16",
+    "grunt-tslint": "^5.0.1",
     "jit-grunt": "^0.10.0",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "tslint": "^5.5.0",
+    "typescript": "^2.4.1"
   },
   "dependencies": {
     "bootstrap": "^3.3.7",
@@ -47,8 +50,8 @@
     "font-awesome": "^4.7.0",
     "express": "^4.15.3",
     "jquery": "^3.2.1",
-    "mainloop.js": "^1.0.4",
     "socket.io": "^2.0.3",
+    "requestanimationframe": "^0.0.23",
     "vhost": "^3.0.2",
     "winston": "^2.3.1"
   }
